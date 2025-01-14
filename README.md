@@ -1,10 +1,10 @@
 # Project Name
 
-Developer Names:
+Developer Names: Yuanqi Xue
 
-Date of project start:
+Date of project start: Jan. 14, 2025
 
-This project is ...
+This project involves re-implementing an existing paper titled "...".
 
 The folders and files for this project are as follows:
 
