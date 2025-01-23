@@ -4,7 +4,7 @@ Developer Names: Yuanqi Xue
 
 Date of project start: Jan. 14, 2025
 
-This project involves re-implementing an existing paper titled "...".
+This project involves re-implementing an existing paper titled "Approximate Network Motif Mining Via Graph Learning".
 
 The folders and files for this project are as follows:
 
