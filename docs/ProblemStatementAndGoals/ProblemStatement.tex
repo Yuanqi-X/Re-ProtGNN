@@ -29,28 +29,30 @@ Jan.22, 2025 & Yuanqi Xue & First Draft\\
 
 \section{Problem Statement}
 \subsection{Problem}
-Identifying frequent and structurally related subgraphs (i.e., network motifs) is computationally challenging due to the NP-hard nature of subgraph search and matching. Traditional methods are often inefficient and suffer from this complexity. The paper “Approximate Network Motif Mining via Graph Learning” introduces MotiFiesta, a machine learning-based approach that redefines motif mining as a node labeling task. Its fully differentiable framework enables efficient discovery of approximate motifs through graph representation learning.
+Identifying frequent and structurally related subgraphs (i.e., network motifs) is computationally challenging due to the NP-hard nature of subgraph search and matching. Traditional methods are often inefficient and suffer from this complexity. The paper ''Approximate Network Motif Mining via Graph Learning'' introduces MotiFiesta, a machine learning-based approach that redefines motif mining as a node labeling task. Its fully differentiable framework enables efficient discovery of approximate motifs through graph representation learning.
 
 \subsection{Inputs and Outputs}
-The input is a synthetic graph dataset constructed according to the procedure described in the Appendix of the paper “Approximate Network Motif Mining via Graph Learning”. The output is identified motifs within the input graphs.
+The input is a synthetic graph dataset constructed according to the procedure described in the Appendix of the paper ''Approximate Network Motif Mining via Graph Learning''. The output is identified motifs within the input graphs.
 
 
 \subsection{Stakeholders}
-Researchers or students interested in the reproducibility and validation of the paper “Approximate Network Motif Mining via Graph Learning”.
+Researchers or students interested in the reproducibility and validation of the paper ''Approximate Network Motif Mining via Graph Learning''.
 
 \subsection{Environment}
 As stated in the original paper, training on the synthetic dataset was conducted using an NVIDIA GeForce GTX 1080 GPU, taking 4-8 hours, while decoding was performed on a personal laptop with a 1.6 GHz dual-core Intel Core i5 processor. For our implementation, we will use an NVIDIA GeForce RTX 3060 GPU for training and a personal laptop with a 2.80 GHz quad-core Intel Core i7 processor for decoding.
 
 
 \section{Goals}
-1. Create a synthetic dataset using the procedure described in the original paper.
-2. Implement the proposed method MotiFiesta.
-3. Reproduce the paper's results by identifying motifs from the synthetic dataset with comparable quality to those reported in the original study.
+\begin{itemize}
+    \item Create a synthetic dataset using the procedure described in the original paper.
+    \item Implement the proposed method MotiFiesta.
+    \item Reproduce the paper's results by identifying motifs from the synthetic dataset with comparable quality to those reported in the original study.
+\end{itemize}
 
 \section{Stretch Goals}
-Examine the reproducability of the paper “Approximate Network Motif Mining via Graph Learning” and validate its results.
+Examine the reproducability of the paper ''Approximate Network Motif Mining via Graph Learning'' and validate its results.
 \section{Challenge Level and Extras}
-Challenge Level: Research Project
+Challenge Level: Research Project \\
 Extras: None
 
 
