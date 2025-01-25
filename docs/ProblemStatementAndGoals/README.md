@@ -2,7 +2,7 @@
 
 The folders and files for this folder are as follows:
 
-\textbf{README.md}: info about folder structure
+README.md: info about folder structure
 
 ProblemStatement.tex: problem statement for this project
 
