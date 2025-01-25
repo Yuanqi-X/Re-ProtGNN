@@ -4,7 +4,7 @@ This folder holds information and resources of interest for the project.
 
 Approximate Network Motif Mining Via Graph Learning.pdf: I will be re-implementing the algorithm from this paper and validating some of its experiments.
 
-Original source code: The source code for the paper can be found [here]([https://www.genome.gov/](https://github.com/BorgwardtLab/MotiFiesta)) (https://github.com/BorgwardtLab/MotiFiesta).
+Original source code: The source code for the paper can be found [here](https://github.com/BorgwardtLab/MotiFiesta) (https://github.com/BorgwardtLab/MotiFiesta).
 
 <!---This is intended to be a convenient location for project members to access
 support material for the project.-->
