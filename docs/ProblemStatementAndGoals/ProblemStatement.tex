@@ -11,8 +11,11 @@
 
 \input{../Comments}
 \input{../Common}
+%\input{Comments}
+%\input{Common}
 
 \begin{document}
+\setlength{\parindent}{0pt}
 
 \maketitle
 
@@ -24,30 +27,33 @@
 \midrule
 Jan.22, 2025 & Yuanqi Xue & First Draft\\
 Jan.22, 2025 & Yuanqi Xue & Updated Based on Feedback (Issue 1)\\
+Jan.30, 2025 & Yuanqi Xue & Second Draft\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
 \section{Problem Statement}
 \subsection{Problem}
-Identifying frequent and structurally related subgraphs (i.e., network motifs) is computationally challenging due to the NP-hard nature of subgraph search and matching. Traditional methods are often inefficient and suffer from this complexity. The paper  \href{https://arxiv.org/abs/2206.01008}{\textit{Approximate Network Motif Mining via Graph Learning}} [1] introduces MotiFiesta, a machine learning-based approach that redefines motif mining as a node labeling task. Its fully differentiable framework enables efficient discovery of approximate motifs through graph representation learning.
+Graph Neural Networks (GNNs) have shown strong performance in node classification, graph classification, and link prediction tasks. However, their black-box nature makes it difficult to understand their decision-making process, limiting their usage in critical areas such as medical diagnosis. To address this, the paper \href{https://ojs.aaai.org/index.php/AAAI/article/view/20898}{\textit{ProtGNN: Towards Self-Explaining Graph Neural Networks}} [1] proposes ProtGNN, a GNN model with built-in interpretability.
+ 
 
 \subsection{Inputs and Outputs}
-The input is a synthetic graph dataset constructed according to the procedure described in the Appendix of [1]. The output is a trained model and the identified motifs (i.e., the frequent subgraphs) within the input graphs.
+To maintain consistency with [1], we will be using the \href{https://pubmed.ncbi.nlm.nih.gov/1995902/}{\textit{MUTAG}} [2] dataset.\\
+
+The input is a graph dataset. The output includes a trained model, classification results for the input graphs, and a set of learned prototypes, representing the key structural characteristics of each class.
 
 
 \subsection{Stakeholders}
 Researchers or students interested in the reproducibility and validation of [1].
 
 \subsection{Environment}
-As stated in the original paper, training on the synthetic dataset was conducted using an NVIDIA GeForce GTX 1080 GPU, taking 4-8 hours, while decoding was performed on a personal laptop with a 1.6 GHz dual-core Intel Core i5 processor. For our implementation, we will use an NVIDIA GeForce RTX 3060 GPU for training and a personal laptop with a 2.80 GHz quad-core Intel Core i7 processor for decoding.
+For our implementation, we will use an NVIDIA GeForce RTX 3060 GPU for training and testing. However, testing should also be feasible on a personal laptop.
 
 
 \section{Goals}
 \begin{itemize}
-    \item Create a synthetic dataset using the procedure described in the original paper.
-    \item Implement the proposed method MotiFiesta.
-    \item Reproduce the paper's results by identifying motifs from the synthetic dataset with comparable quality to those reported in the original study.
+    \item Implement the ProtGNN model as proposed in [1].
+    \item Reproduce the classification accuracy on the MUTAG [2] dataset, and ensure that the identified prototypes (i.e., key structural characteristics of each class) have comparable quality to the original study.
 \end{itemize}
 
 \section{Stretch Goals}
@@ -57,6 +63,8 @@ Challenge Level: Research Project \\
 Extras: None
 
 \section{Reference}
-[1] C. Oliver, D. Chen, V. Mallet, P. Philippopoulos, and K. Borgwardt, “Approximate network motif mining via graph learning,” arXiv:2206.01008, 2022.
+[1] Z. Zhang, Q. Liu, H. Wang, C. Lu, and C. Lee, “ProtGNN: Towards self-explaining graph neural networks,” in Proc. AAAI Conf. Artif. Intell., vol. 36, no. 8, pp. 9127–9135, Jun. 2022.\\
+
+[2] A. K. Debnath, R. L. Lopez de Compadre, G. Debnath, A. J. Shusterman, and C. Hansch, “Structure-activity relationship of mutagenic aromatic and heteroaromatic nitro compounds. Correlation with molecular orbital energies and hydrophobicity,” J. Med. Chem., vol. 34, no. 2, pp. 786–797, Feb. 1991.
 
 \end{document}
