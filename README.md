@@ -1,6 +1,6 @@
 # Re-ProtGNN
 
-Developer Names: Yuanqi Xue
+Developer Name: Yuanqi Xue
 
 Date of project start: Jan. 14, 2025
 
