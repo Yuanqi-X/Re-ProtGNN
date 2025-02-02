@@ -1,4 +1,4 @@
-# Project Name
+# Re-ProtGNN
 
 Developer Names: Yuanqi Xue
 
