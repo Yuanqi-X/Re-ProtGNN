@@ -34,6 +34,8 @@
 
 \input{../Comments}
 \input{../Common}
+%\input{Comments}
+%\input{Common}
 
 % For easy change of table widths
 \newcommand{\colZwidth}{1.0\textwidth}
@@ -128,7 +130,7 @@
 
 \begin{document}
 
-\title{Software Requirements Specification for \progname: subtitle describing software} 
+\title{Software Requirements Specification for Re-ProtGNN: Re-implementation of the ProtGNN model} 
 \author{\authname}
 \date{\today}
 	
@@ -147,17 +149,11 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Feb 6, 2024 & 1.0 & First Draft\\
 \bottomrule
 \end{tabularx}
 
 ~\\
-\plt{This template is intended for use by CAS 741.  For CAS 741 the template
-should be used exactly as given, except the Reflection Appendix can be deleted.
-For the capstone course it is a source of ideas, but shouldn't be followed
-exactly.  The exception is the reflection appendix.  All capstone SRS documents
-should have a reflection appendix.}
 
 ~\newpage
 
@@ -166,47 +162,7 @@ should have a reflection appendix.}
 This section records information for easy reference.
 
 \subsection{Table of Units}
-
-Throughout this document SI (Syst\`{e}me International d'Unit\'{e}s) is employed
-as the unit system.  In addition to the basic units, several derived units are
-used as described below.  For each unit, the symbol is given followed by a
-description of the unit and the SI name.
-~\newline
-
-\renewcommand{\arraystretch}{1.2}
-%\begin{table}[ht]
-  \noindent \begin{tabular}{l l l} 
-    \toprule		
-    \textbf{symbol} & \textbf{unit} & \textbf{SI}\\
-    \midrule 
-    \si{\metre} & length & metre\\
-    \si{\kilogram} & mass	& kilogram\\
-    \si{\second} & time & second\\
-    \si{\celsius} & temperature & centigrade\\
-    \si{\joule} & energy & joule\\
-    \si{\watt} & power & watt (W = \si{\joule\per\second})\\
-    \bottomrule
-  \end{tabular}
-  %	\caption{Provide a caption}
-%\end{table}
-
-\plt{Only include the units that your SRS actually uses.}
-
-\plt{Derived units, like newtons, pascal, etc, should show their derivation
-    (the units they are derived from) if their constituent units are in the
-    table of units (that is, if the units they are derived from are used in the
-    document).  For instance, the derivation of pascals as
-    $\si{\pascal}=\si{\newton\per\square\meter}$ is shown if newtons and m are
-    both in the table.  The derivations of newtons would not be shown if kg and
-    s are not both in the table.}
-
-\plt{The symbol for units named after people use capital letters, but the name
-  of the unit itself uses lower case.  For instance, pascals use the symbol Pa,
-  watts use the symbol W, teslas use the symbol T, newtons use the symbol N,
-  etc.  The one exception to this is degree Celsius.  Details on writing metric
-  units can be found on the 
-  \href{https://www.nist.gov/pml/weights-and-measures/writing-metric-units}
-  {NIST} web-page.}
+Not applicable, as there is no unit in this software.
 
 \subsection{Table of Symbols}
 
@@ -216,19 +172,40 @@ transfer literature and with existing documentation for solar water heating
 systems.  The symbols are listed in alphabetical order.
 
 \renewcommand{\arraystretch}{1.2}
-%\noindent \begin{tabularx}{1.0\textwidth}{l l X}
 \noindent \begin{longtable*}{l l p{12cm}} \toprule
-\textbf{symbol} & \textbf{unit} & \textbf{description}\\
+\textbf{symbol} & \textbf{unit} & \textbf{description} \\
 \midrule 
-$A_C$ & \si[per-mode=symbol] {\square\metre} & coil surface area
-\\
-$A_\text{in}$ & \si[per-mode=symbol] {\square\metre} & surface area over 
-which heat is transferred in
-\\ 
+$X$ & Unitless & Node feature matrix \\
+$X_p$ & Unitless & Prototype node feature matrix \\
+$A$ & Unitless & Adjacency matrix \\
+$A_p$ & Unitless & Prototype adjacency matrix \\
+$y$ & Unitless & True class label \\
+$\hat{y}$ & Unitless & Predicted class label \\
+$W$ & Unitless & Weight matrix for the fully connected layer \\
+$b$ & Unitless & Bias term \\
+$W_g$ & Unitless & Weight matrix for GNN encoder \\
+$P$ & Unitless & Prototype representations \\
+$h$ & Unitless & Graph embedding \\
+$\sigma$ & Unitless & Sigmoid activation function \\
+$\mathcal{L}$ & Unitless & Loss function \\
+$L_{CE}$ & Unitless & Cross-entropy loss \\
+$L_{Clst}$ & Unitless & Cluster loss \\
+$L_{Sep}$ & Unitless & Separation loss \\
+$L_{Div}$ & Unitless & Diversity loss \\
+$\eta$ & Unitless & Learning rate \\
+$\lambda_1, \lambda_2, \lambda_3$ & Unitless & Regularization parameters \\
+$h_v^{k+1}$ & Unitless & Node representation at layer $k+1$ \\
+$h_u^k$ & Unitless & Representation vector of node $u$ at layer $k$ \\
+$\tilde{A}$ & Unitless & Normalized adjacency matrix \\
+$\hat{A}$ & Unitless & Adjacency matrix with self-connections \\
+$\hat{D}$ & Unitless & Diagonal degree matrix where $\hat{D}_{ii} = \sum_j \hat{A}_{ij}$ \\
+$W^k$ & Unitless & Trainable weight matrix at layer $k$ \\
+$\mathcal{N}(v)$ & Unitless & Neighborhood of node $v$, i.e., set of adjacent nodes \\
+$s_{\max}$ & Unitless & Cosine similarity threshold for prototype diversity loss \\
+$C$ & Unitless & Number of classes in the classification task \\
 \bottomrule
 \end{longtable*}
-\plt{Use your problems actual symbols.  The si package is a good idea to use for
-  units.}
+
 
 \subsection{Abbreviations and Acronyms}
 
@@ -246,271 +223,133 @@ which heat is transferred in
   PS & Physical System Description\\
   R & Requirement\\
   SRS & Software Requirements Specification\\
-  \progname{} & \plt{put an expanded version of your program name here (as appropriate)}\\
   TM & Theoretical Model\\
+  ProtGNN & Prototype-based Graph Neural Network\\
+  Re-ProtGNN & Re-implementation of the ProtGNN model\\
+  GNN & Graph Neural Network\\
+  GCN & Graph Convolutional Network\\
+  GIN & Graph Isomorphism Network\\
   \bottomrule
 \end{tabular}\\
 
-\plt{Add any other abbreviations or acronyms that you add}
 
 \subsection{Mathematical Notation}
 
-\plt{This section is optional, but should be included for projects that make use
-  of notation to convey mathematical information.  For instance, if typographic
-  conventions (like bold face font) are used to distinguish matrices, this
-  should be stated here.  If symbols are used to show mathematical operations,
-  these should be summarized here.  In some cases the easiest way to summarize
-  the notation is to point to a text or other source that explains the
-  notation.}
+\renewcommand{\arraystretch}{1.2}
+\noindent \begin{longtable*}{l p{7cm} l} 
+\toprule
+\textbf{Notation} & \textbf{Description} & \textbf{Source} \\
+\midrule 
+$num\_rows(\cdot)$ & Number of rows in a matrix & - \\
+$num\_cols(\cdot)$ & Number of columns in a matrix & -\\
+$\dim(\cdot)$ & Dimension of a matrix & - \\
+$M[i, j]$ & Element at row $i$, column $j$ in matrix $M$ & - \\
+$f(\cdot)$ & A function representing the graph encoder, as defined in \tref{TM1:GNNFP} & - \\
+$\cos(\cdot, \cdot)$ & Cosine similarity function & ~\cite{sciencedirect_cosine_similarity} \\
+$\text{ReLU}(\cdot)$ & ReLU activation function & ~\cite{wikipedia_relu} \\
+$\nabla$ & Gradient operator & ~\cite{wikipedia_gradient} \\
+\bottomrule
+\end{longtable*}
 
-\plt{This section was added to the template because some students use very
-  domain specific notation.  This notation will not be readily understandable to
-  people outside of your domain.  It should be explained.}
 
-\newpage
 
-\pagenumbering{arabic}
-
-\plt{This SRS template is based on \citet{SmithAndLai2005, SmithEtAl2007,
-  SmithAndKoothoor2016}.  It will get you started.  You should not modify the
-  section headings, without first discussing the change with the course
-  instructor.  Modification means you are not following the template, which
-  loses some of the advantage of a template, especially standardization.
-  Although the bits shown below do not include type information, you may need to
-  add this information for your problem.  If you are unsure, please can ask the
-  instructor.}
-
-\plt{Feel free to change the appearance of the report by modifying the LaTeX
-  commands.}
-
-\plt{This template document assumes that a single program is being documented.
-  If you are documenting a family of models, you should start with a commonality
-  analysis.  A separate template is provided for this.  For program
-  families you should look at \cite{Smith2006, SmithMcCutchanAndCarette2017}.
-  Single family member programs are often programs based on a single physical
-  model.  General purpose tools are usually documented as a family.  Families of
-  physical models also come up.}
-
-\plt{The SRS is not generally written, or read, sequentially.  The SRS is a
-  reference document.  It is generally read in an ad hoc order, as the need
-  arises.  For writing an SRS, and for reading one for the first time, the
-  suggested order of sections is:
-\begin{itemize}
-\item Goal Statement
-\item Instance Models
-\item Requirements
-\item Introduction
-\item Specific System Description
-\end{itemize}
-}
-
-\plt{Guiding principles for the SRS document:
-\begin{itemize}
-\item Do not repeat the same information at the same abstraction level.  If
-  information is repeated, the repetition should be at a different abstraction
-  level.  For instance, there will be overlap between the scope section and the
-  assumptions, but the scope section will not go into as much detail as the
-  assumptions section.
-\end{itemize}
-}
-
-\plt{The template description comments should be disabled before submitting this
-  document for grading.}
-
-\plt{You can borrow any wording from the text given in the template.  It is part
-  of the template, and not considered an instance of academic integrity.  Of
-  course, you need to cite the source of the template.}
-
-\plt{When the documentation is done, it should be possible to trace back to the
-  source of every piece of information.  Some information will come from
-  external sources, like terminology.  Other information will be derived, like
-  General Definitions.}
-
-\plt{An SRS document should have the following qualities: unambiguous,
-  consistent, complete, validatable, abstract and traceable.}
-
-\plt{The overall goal of the SRS is that someone that meets the Characteristics
-  of the Intended Reader (Section~\ref{sec_IntendedReader}) can learn,
-  understand and verify the captured domain knowledge.  They should not have to
-  trust the authors of the SRS on any statements.  They should be able to
-  independently verify/derive every statement made.}
 
 \section{Introduction}
 
-\plt{The introduction section is written to introduce the problem.  It starts
-  general and focuses on the problem domain. The general advice is to start with
-a paragraph or two that describes the problem, followed by a ``roadmap''
-paragraph.  A roadmap orients the reader by telling them what sub-sections to
-expect in the Introduction section.}
+Graph Neural Networks (GNNs) have shown strong performance in node classifi-
+cation, graph classification, and link prediction tasks. However, their black-box
+nature makes it difficult to understand their decision-making process, limiting
+their usage in critical areas such as medical diagnosis. 
+
+To address this, the paper \textit{ProtGNN: Towards Self-Explaining Graph Neural Networks} ~\cite{zhang2022} proposes ProtGNN (Prototype-based Graph Neural Network), an interpretable GNN model designed to improve explainability by learning representative prototypes for each class. The goal of this project is to re-implement ProtGNN and validate its results. Further details on the problem and motivation behind this project can be found in the Problem Statement document~\cite{yuanqi2025protgnn}.
+
+The introduction section outlines the Software Requirement Specifications (SRS) for Re-ProtGNN (Re-implementation of the ProtGNN model), detailing its purpose, scope, target audience, and organization.
 
 \subsection{Purpose of Document}
+The purpose of this SRS document is to define and communicate the requirements, constraints, and models for the Re-ProtGNN project. It serves as a formal reference and links to the other documents of this project.
 
-\plt{This section summarizes the purpose of the SRS document.  It does not focus
-  on the problem itself.  The problem is described in the ``Problem
-  Description'' section (Section~\ref{Sec_pd}).  The purpose is for the document
-  in the context of the project itself, not in the context of this course.
-  Although the ``purpose'' of the document is to get a grade, you should not
-  mention this.  Instead, ``fake it'' as if this is a real project.  The purpose
-  section will be similar between projects.  The purpose of the document is the
-  purpose of the SRS, including communication, planning for the design stage,
-  etc.}
 
 \subsection{Scope of Requirements} 
+Re-ProtGNN is a re-implementation of the existing ProtGNN model, aimed at reproducing its results and validating its performance on graph datasets. The model operates in a supervised setting, performing graph classification while incorporating built-in interpretability. 
 
-\plt{Modelling the real world requires simplification.  The full complexity of
-  the actual physics, chemistry, biology is too much for existing models, and
-  for existing computational solution techniques.  Rather than say what is in
-  the scope, it is usually easier to say what is not.  You can think of it as
-  the scope is initially everything, and then it is constrained to create the
-  actual scope.  For instance, the problem can be restricted to 2 dimensions, or
-  it can ignore the effect of temperature (or pressure) on the material
-  properties, etc.}  
+The input graphs for training must be valid labeled graphs, ensuring they contain both structural and node feature information necessary for classification. Further details on data constraints and assumptions can be found in (Section~\ref{sec_assumpt}).
 
-\plt{The scope section is related to the assumptions section
-  (Section~\ref{sec_assumpt}).  However, the scope and the assumptions are not
-  at the same level of abstraction.  The scope is at a high level.  The focus is
-  on the ``big picture'' assumptions.  The assumptions section lists, and
-  describes, all of the assumptions.}
-
-\plt{The scope section is relevant for later determining typical values of inputs. The scope should make it clear what inputs are reasonable to expect. This is a distinction between scope and context (context is a later section).  Scope affects the inputs while context affects how the software will be used.}
 
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
 
-\plt{This section summarizes the skills and knowledge of the readers of the
-  SRS.  It does NOT have the same purpose as the ``User Characteristics''
-  section (Section~\ref{SecUserCharacteristics}).  The intended readers are the
-  people that will read, review and maintain the SRS.  They are the people that
-  will conceivably design the software that is intended to meet the
-  requirements.  The user, on the other hand, is the person that uses the
-  software that is built.  They may never read this SRS document.  Of course,
-  the same person could be a ``user'' and an ``intended reader.''}
+This document is intended for machine learning researchers, AI practitioners, and students who are interested in interpretable GNNs and prototype-based learning. To effectively understand and utilize this document, the reader should have:
+\begin{itemize}
+    \item High-school knowledge of calculus, particularly partial derivatives and gradient-based optimization.
+    \item Completion of an undergrad-level course or equivalent experience in
+supervised learning (e.g., logistic regression) and
+neural networks (including backpropagation, loss functions, and optimization).
+    \item Familiarity with graph-based learning (e.g., message-passing mechanisms in GNNs) is recommended but not required.
+    \item Experience with Python and PyTorch, including implementing and training neural networks.
+    \item Basic knowledge of model explainability in AI, including the concept of prototypes in classification models.
+\end{itemize}
 
-\plt{The intended reader characteristics should be written as unambiguously and
-  as specifically as possible.  Rather than say, the user should have an
-  understanding of physics, say what kind of physics and at what level.  For
-  instance, is high school physics adequate, or should the reader have had a
-  graduate course on advanced quantum mechanics?}
+This document is designed to be accessible to readers with the above qualifications. However, researchers with limited exposure to graph neural networks can still benefit from the explanations provided, as long as they have a strong foundation in deep learning and optimization methods.
 
 \subsection{Organization of Document}
 
-\plt{This section provides a roadmap of the SRS document.  It will help the
-  reader orient themselves.  It will provide direction that will help them
-  select which sections they want to read, and in what order.  This section will
-  be similar between project.}
+This SRS document is based on the template by ~\citet{SmithAndLai2005, SmithEtAl2007}. It systematically presents the system's objectives, theoretical foundations, assumptions, and models. For a structured reading approach, readers may start with the goal statements (Section~\ref{sec_goals}), followed by the theoretical models (Section~\ref{sec_theoretical}) and general definitions (Section~\ref{sec_gendef}), which build upon these goals. The document concludes with instance models (Section~\ref{sec_instance}), providing a concrete understanding of the system’s actual implementation.
 
 \section{General System Description}
 
 This section provides general information about the system.  It identifies the
 interfaces between the system and its environment, describes the user
-characteristics and lists the system constraints.  \plt{This text can likely be
-  borrowed verbatim.}
-
-\plt{The purpose of this section is to provide general information about the
-  system so the specific requirements in the next section will be easier to
-  understand. The general system description section is designed to be
-  changeable independent of changes to the functional requirements documented in
-  the specific system description. The general system description provides a
-  context for a family of related models.  The general description can stay the
-  same, while specific details are changed between family members.}
+characteristics and lists the system constraints.
 
 \subsection{System Context}
 
-\plt{Your system context will include a figure that shows the abstract view of
-  the software.  Often in a scientific context, the program can be viewed
-  abstractly following the design pattern of Inputs $\rightarrow$ Calculations
-  $\rightarrow$ Outputs.  The system context will therefore often follow this
-  pattern.  The user provides inputs, the system does the calculations, and then
-  provides the outputs to the user.  The figure should not show all of the
-  inputs, just an abstract view of the main categories of inputs (like material
-  properties, geometry, etc.).  Likewise, the outputs should be presented from
-  an abstract point of view.  In some cases the diagram will show other external
-  entities, besides the user.  For instance, when the software product is a
-  library, the user will be another software program, not an actual end user.
-  If there are system constraints that the software must work with external
-  libraries, these libraries can also be shown on the System Context diagram.
-  They should only be named with a specific library name if this is required by
-  the system constraint.}
 
 \begin{figure}[h!]
 \begin{center}
- \includegraphics[width=0.6\textwidth]{SystemContextFigure}
+ \includegraphics[width=0.9\textwidth]{SystemContextFigure}
 \caption{System Context}
 \label{Fig_SystemContext} 
 \end{center}
 \end{figure}
 
-\plt{For each of the entities in the system context diagram its responsibilities
-  should be listed.  Whenever possible the system should check for data quality,
-  but for some cases the user will need to assume that responsibility.  The list
-  of responsibilities should be about the inputs and outputs only, and they
-  should be abstract.  Details should not be presented here.  However, the
-  information should not be so abstract as to just say ``inputs'' and
-  ``outputs''.  A summarizing phrase can be used to characterize the inputs.
-  For instance, saying ``material properties'' provides some information, but it
-  stays away from the detail of listing every required properties.}
-
 \begin{itemize}
 \item User Responsibilities:
 \begin{itemize}
-\item 
+\item Download the MUTAG dataset and load it to Re-ProtGNN. 
+\item Run Re-ProtGNN on a system with appropriate computational resources.
+\item Interpret the model’s output, including classifications and prototype-based explanations.
 \end{itemize}
-\item \progname{} Responsibilities:
+\item Re-ProtGNN Responsibilities:
 \begin{itemize}
-\item Detect data type mismatch, such as a string of characters instead of a
-  floating point number
-\item 
+\item Train a GNN model using gradient-based optimization.
+\item Provide classification predictions.
+\item Learn prototype representations.
+\item Offer visualization tools for understanding learned prototypes.
 \end{itemize}
 \end{itemize}
-
-\plt{Identify in what context the software will typically be used.  Is it for
-exploration? education? engineering work? scientific work?. Identify whether it
-will be used for mission-critical or safety-critical applications.} \plt{This
-additional context information is needed to determine how much effort should be
-devoted to the rationale section.  If the application is safety-critical, the
-bar is higher.  This is currently less structured, but analogous to, the idea to
-the Automotive Safety Integrity Levels (ASILs) that McSCert uses in their
-automotive hazard analyses.}
 
 \subsection{User Characteristics} \label{SecUserCharacteristics}
 
-\plt{This section summarizes the knowledge/skills expected of the user.
-  Measuring usability, which is often a required non-function requirement,
-  requires knowledge of a typical user.  As mentioned above, the user is a
-  different role from the ``intended reader,'' as given in
-  Section~\ref{sec_IntendedReader}.  As in Section~\ref{sec_IntendedReader}, the
-  user characteristics should be specific an unambiguous.  For instance, ``The
-  end user of \progname{} should have an understanding of undergraduate Level 1
-  Calculus and Physics.''}
+The end user of Re-ProtGNN includes anyone working with GNNs or those interested in interpretable deep learning models. While prior experience with interpretable machine learning is beneficial, it is not required. The basic skill set needed to use Re-ProtGNN includes basic computer literacy and a high school-level understanding of graphs.
+
+
+
 
 \subsection{System Constraints}
 
-\plt{System constraints differ from other type of requirements because they
-  limit the developers' options in the system design and they identify how the
-  eventual system must fit into the world. This is the only place in the SRS
-  where design decisions can be specified.  That is, the quality requirement for
-  abstraction is relaxed here.  However, system constraints should only be
-  included if they are truly required.}
+The Re-ProtGNN system has the constraints that the input must be a valid graph dataset (i.e., adjacency matrices, node features).
 
 \section{Specific System Description}
 
 This section first presents the problem description, which gives a high-level
 view of the problem to be solved.  This is followed by the solution characteristics
 specification, which presents the assumptions, theories, definitions and finally
-the instance models.  \plt{Add any project specific details that are relevant
-  for the section overview.}
+the instance models.
 
 \subsection{Problem Description} \label{Sec_pd}
+Traditional GNNs excel in graph classification tasks but function as black-box models, making it difficult for users to understand their classification decisions. ProtGNN addresses this lack of interpretability by incorporating prototype-based explanations into graph classification. This project, Re-ProtGNN, is a re-implementation of ProtGNN, aimed at validating its reproducibility and performance on benchmark datasets.
 
-\progname{} is intended to solve ... \plt{What problem does your program solve?
-The description here should be in the problem space, not the solution space.}
 
 \subsubsection{Terminology and  Definitions}
-
-\plt{This section is expressed in words, not with equations.  It provide the
-  meaning of the different words and phrases used in the domain of the problem.
-The terminology is used to introduce concepts from the world outside of the
-mathematical model  The terminology provides a real world connection to give the
-mathematical model meaning.}
 
 This subsection provides a list of terms that are used in the subsequent
 sections and their meaning, with the purpose of reducing ambiguity and making it
@@ -518,152 +357,83 @@ easier to correctly understand the requirements:
 
 \begin{itemize}
 
-\item 
+\item Graph: A structure consisting of nodes and edges, typically represented by a node feature matrix and an adjacency matrix.
+\item Graph Classification: The task of assigning a label to an entire graph based on its structure and node attributes.
+\item Graph Neural Networks: A type of deep learning model designed to process graph-structured data by aggregating and transforming node information.
+\item Prototype: A representative subgraph that highlights the key structural patterns influencing classification decisions.
+\item MUTAG Dataset: A benchmark dataset for molecular graph classification, distinguishing between mutagenic and non-mutagenic compounds ~\cite{debnath1991structure}.
+\item Supervised Learning: A training approach where the model learns from labeled data, mapping input graphs to their corresponding class labels.
 
 \end{itemize}
 
 \subsubsection{Physical System Description} \label{sec_phySystDescrip}
 
-\plt{The purpose of this section is to clearly and unambiguously state the
-  physical system that is to be modelled. Effective problem solving requires a
-  logical and organized approach. The statements on the physical system to be
-  studied should cover enough information to solve the problem. The physical
-  description involves element identification, where elements are defined as
-  independent and separable items of the physical system. Some example elements
-  include acceleration due to gravity, the mass of an object, and the size and
-  shape of an object. Each element should be identified and labelled, with their
-  interesting properties specified clearly. The physical description can also
-  include interactions of the elements, such as the following: i) the
-  interactions between the elements and their physical environment; ii) the
-  interactions between elements; and, iii) the initial or boundary conditions.}
-
-\plt{The elements of the physical system do not have to correspond to an actual
-physical entity.  They can be conceptual.  This is particularly important when
-the documentation is for a numerical method. }
-
-The physical system of \progname{}, as shown in Figure~?,
+The physical system of Re-ProtGNN, as shown in Figure ~\ref{PS_Figure},
 includes the following elements:
 
 \begin{itemize}
 
-\item[PS1:] 
+    \item[PS1:] Graph Inputs: The dataset consists of labeled graphs used for graph classification (e.g., MUTAG).
 
-\item[PS2:] ...
+    \item[PS2:] GNN Encoder: A GNN-based encoder (e.g., GCN, GIN) extracts node and graph-level embeddings through message passing. Graph embeddings are used for both classification and prototype learning.
+
+    \item[PS3:] Prototype Layer: A prototype layer learns representative subgraph embeddings that characterize structural patterns of different classes. Prototypes are updated during training to match key graph structures associated with class labels.
+
+    \item[PS4:] Fully Connected Layer: The model classifies graphs based on their learned representations. The most similar prototype is retrieved to justify the classification result.
+
+    \item[PS5:] Training Process: The model is trained using supervised learning, optimizing a combined cross-entropy loss and prototype-based losses.
+
+    \item[PS6:] Inference Process: The trained model classifies new graphs and provides prototype-based explanations. Prototype similarity scores are used to explain classification decisions.
 
 \end{itemize}
 
-\plt{A figure here makes sense for most SRS documents}
 
-% \begin{figure}[h!]
-% \begin{center}
+\begin{figure}[h!]
+\begin{center}
 % %\rotatebox{-90}
-% {
-%  \includegraphics[width=0.5\textwidth]{<FigureName>}
-% }
-% \caption{\label{<Label>} <Caption>}
-% \end{center}
-% \end{figure}
+{
+  \includegraphics[width=1\textwidth]{PhysicalSystem.png}
+ }
+     \caption{\label{PS_Figure} The ProtGNN Framework}
+ \end{center}
+ \end{figure}
 
-\subsubsection{Goal Statements}
+\subsubsection{Goal Statements} \label{sec_goals}
 
-\plt{The goal statements refine the ``Problem Description''
-  (Section~\ref{Sec_pd}).  A goal is a functional objective the system under
-  consideration should achieve. Goals provide criteria for sufficient
-  completeness of a requirements specification and for requirements
-  pertinence. Goals will be refined in Section “Instanced Models”
-  (Section~\ref{sec_instance}). Large and complex goals should be decomposed
-  into smaller sub-goals.  The goals are written abstractly, with a minimal
-  amount of technical language.  They should be understandable by non-domain
-  experts.}
-
-\noindent Given the \plt{inputs}, the goal statements are:
+\noindent Given the input graphs, the goal statement is:
 
 \begin{itemize}
 
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] \plt{One
-    sentence description of the goal.  There may be more than one.  Each Goal
-    should have a meaningful label.}
+\item[GS\refstepcounter{goalnum}\thegoalnum \label{GS1}:] Output a trained model that classifies the input graphs and identifies a few prototypes (i.e., key graph structures that contribute to classification) for each class.
 
 \end{itemize}
 
 \subsection{Solution Characteristics Specification}
 
-\plt{This section specifies the information in the solution domain of the system
-  to be developed. This section is intended to express what is required in
-  such a way that analysts and stakeholders get a clear picture, and the
-  latter will accept it. The purpose of this section is to reduce the problem
-  into one expressed in mathematical terms. Mathematical expertise is used to
-  extract the essentials from the underlying physical description of the
-  problem, and to collect and substantiate all physical data pertinent to the
-  problem.}
-
-\plt{This section presents the solution characteristics by successively refining
-  models.  It starts with the abstract/general Theoretical Models (TMs) and
-  refines them to the concrete/specific Instance Models (IMs).  If necessary
-  there are intermediate refinements to General Definitions (GDs).  All of these
-  refinements can potentially use Assumptions (A) and Data Definitions (DD).
-  TMs are refined to create new models, that are called GMs or IMs. DDs are not
-  refined; they are just used. GDs and IMs are derived, or refined, from other
-  models. DDs are not derived; they are just given. TMs are also just given, but
-  they are refined, not used.  If a potential DD includes a derivation, then
-  that means it is refining other models, which would make it a GD or an IM.}
-
-\plt{The above makes a distinction between ``refined'' and ``used.'' A model is
-  refined to another model if it is changed by the refinement. When we change a
-  general 3D equation to a 2D equation, we are making a refinement, by applying
-  the assumption that the third dimension does not matter. If we use a
-  definition, like the definition of density, we aren't refining, or changing
-  that definition, we are just using it.}
-
-\plt{The same information can be a TM in one problem and a DD in another.  It is
-  about how the information is used.  In one problem the definition of
-  acceleration can be a TM, in another it would be a DD.}
-
-\plt{There is repetition between the information given in the different chunks
-  (TM, GDs etc) with other information in the document.  For instance, the
-  meaning of the symbols, the units etc are repeated.  This is so that the
-  chunks can stand on their own when being read by a reviewer/user.  It also
-  facilitates reuse of the models in a different context.}
-
-\noindent \plt{The relationships between the parts of the document are show in
-  the following figure.  In this diagram ``may ref'' has the same role as
-  ``uses'' above.  The figure adds ``Likely Changes,'' which are able to
-  reference (use) Assumptions.}
-
-\begin{figure}[H]
-  \includegraphics[scale=0.9]{RelationsBetweenTM_GD_IM_DD_A.pdf}
-\end{figure}
-
-The instance models that govern \progname{} are presented in
+The instance models that govern Re-ProtGNN are presented in
 Subsection~\ref{sec_instance}.  The information to understand the meaning of the
 instance models and their derivation is also presented, so that the instance
 models can be verified.
 
 \subsubsection{Types}
 
-\plt{This section is optional. Defining types can make the document easier to
-understand.}
+\begin{tabular}{l l} 
+  \toprule		
+  \textbf{symbol} & \textbf{description}\\
+  \midrule 
+  $\mathbb{Z}$ & Integer\\
+  $\mathbb{R}$ & Real number\\
+  \bottomrule
+\end{tabular}\\
 
-\subsubsection{Scope Decisions}
+\subsection{Scope Decisions} \label{sec_scopeDec}
+Re-ProtGNN focuses on validating the classification accuracy and prototype quality of the ProtGNN model using the MUTAG dataset~\cite{debnath1991structure}.
 
-\plt{This section is optional.}
+
 \subsubsection{Modelling Decisions}
-
-\plt{This section is optional.}
+Re-ProtGNN follows the same model design and has the same Loss Function (see \iref{TM2:LF}) as ProtGNN.
 
 \subsubsection{Assumptions} \label{sec_assumpt}
-
-\plt{The assumptions are a refinement of the scope.  The scope is general, where
-  the assumptions are specific.  All assumptions should be listed, even those
-  that domain experts know so well that they are rarely (if ever) written down.}
-\plt{The document should not take for granted that the reader knows which
-  assumptions have been made. In the case of unusual assumptions, it is
-  recommended that the documentation either include, or point to, an explanation
-  and justification for the assumption.} 
-\plt{If it helps with the organization and understandability, the assumptions
-can be presented as sub sections.  The following sub-sections are options:
-background theory assumptions, helper theory assumptions, generic theory
-assumptions, problem specific assumptions, and rationale assumptions}
 
 This section simplifies the original problem and helps in developing the
 theoretical model by filling in the missing information for the physical system.
@@ -673,67 +443,58 @@ change [LC], in which the respective assumption is used.
 
 \begin{itemize}
 
-\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:]
-  \plt{Short description of each assumption.  Each assumption
-    should have a meaningful label.  Use cross-references to identify the
-    appropriate traceability to TM, GD, DD etc., using commands like dref, ddref
-    etc.  Each assumption should be atomic - that is, there should not be an
-    explicit (or implicit) ``and'' in the text of an assumption.}
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A1}:]
+  The node features of input graphs are relevant to classification, as required by \tref{TM1:GNNFP} to produce meaningful graph embeddings.
 
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A2}:]
+  The structural patterns of input graphs are relevant to classification, as required by \tref{TM1:GNNFP} to produce meaningful graph embeddings.
+
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A3}:]
+    For the training phase \iref{Training} to produce an accurate model and the inference phase \iref{Inference} to generate reasonable predictions and prototypes, each input graph must belong to one of the two predefined classes (i.e., mutagenic or non-mutagenic) as defined in the MUTAG dataset~\cite{debnath1991structure}.
+
+    
 \end{itemize}
 
 \subsubsection{Theoretical Models}\label{sec_theoretical}
 
-\plt{Theoretical models are sets of abstract mathematical equations or axioms
-  for solving the problem described in Section ``Physical System Description''
-  (Section~\ref{sec_phySystDescrip}). Examples of theoretical models are
-  physical laws, constitutive equations, relevant conversion factors, etc.}
+This section focuses on the general equations and laws that Re-ProtGNN is based
+on.
 
-\plt{Optionally the theory section could be divided into subsections to provide
-more structure and improve understandability and reusability.  Potential
-subsections include the following: Context theories, background theories, helper
-theories, generic theories, problem specific theories, final theories and
-rationale theories.}
-
-This section focuses on the general equations and laws that \progname{} is based
-on.  \plt{Modify the examples below for your problem, and add additional models
-  as appropriate.}
-
-~\newline
-
+%TM1
 \noindent
 \deftheory
 % #2 refname of theory
-{TM:COE}
+{TM1:GNNFP}
 % #3 label
-{Conservation of thermal energy}
+{Graph Neural Network (GNN) Forward Pass}
 % #4 equation
 {
-  $-{\bf \nabla \cdot q} + g$ = $\rho C \frac{\partial T}{\partial t}$
+  $h_v^{k+1} = ReLU \left( \sum_{u \in \mathcal{N}(v)} W^k h_u^k \tilde{A}_{uv} \right),$
 }
 % #5 description
-{
-  The above equation gives the conservation of energy for transient heat transfer in a material
-  of specific heat capacity $C$ (\si{\joule\per\kilogram\per\celsius}) and density $\rho$ 
-  (\si{\kilogram\per\cubic\metre}), where $\bf q$ is the thermal flux vector (\si{\watt\per\square\metre}),
-  $g$ is the volumetric heat generation
-  (\si{\watt\per\cubic\metre}), $T$ is the temperature
-  (\si{\celsius}),  $t$ is time (\si{\second}), and $\nabla$ is
-  the gradient operator.  For this equation to apply, other forms
-  of energy, such as mechanical energy, are assumed to be negligible in the
-  system (\aref{A_OnlyThermalEnergy}).  In general, the material properties ($\rho$ and $C$) depend on temperature.
+{The above equation describes the message-passing paradigm of Graph Convolutional Networks (GCNs), where the representation of each node \( v \) is iteratively updated by aggregating representations from its neighboring nodes \( \mathcal{N}(v) \), using a trainable weight matrix \( W^k \) and an activation function \(ReLU(\cdot)\).
+
+
+\begin{itemize}
+    \item \( h_u^k \): Representation vector of node \( u \) at the \( k \)-th layer. (Type: a vector of $\mathbb{R}$)
+    \item \( \tilde{A} = \hat{D}^{-\frac{1}{2}} \hat{A} \hat{D}^{-\frac{1}{2}} \) :  Normalized adjacency matrix. (Type: a matrix of $\mathbb{R}$)
+    \item \( \hat{A} = A + I \):  Adjacency matrix of graph \( G \) with self-connections. (Type: a matrix of $\mathbb{R}$)
+    \item \( \hat{D} \):  Diagonal degree matrix where \( \hat{D}_{ii} = \sum_j \hat{A}_{ij} \). (Type: a matrix of $\mathbb{R}$)
+    \item \(ReLU (\cdot) \):  ReLU activation function.
+    \item \( W^k \):  Trainable weight matrix at the \( k \)-th layer. (Type: a matrix of $\mathbb{R}$)
+\end{itemize}
 }
 % #6 Notes
 {
-None.
+None
 }
 % #7 Source
 {
-  \url{http://www.efunda.com/formulae/heat_transfer/conduction/overview_cond.cfm}
+  ~\cite{kipf2016}
 }
 % #8 Referenced by
 {
-  \dref{ROCT}
+  \aref{A1}, \aref{A2}, \tref{TM2:LF}, \dref{GDS}, \dref{GDG}, \dref{GDP}, \ddref{LAM}, \iref{Training}
 }
 % #9 Preconditions
 {
@@ -742,31 +503,123 @@ None
 % #1 derivation - not applicable by default
 {}
 
-\plt{``Ref.\ By'' is used repeatedly with the different types of information.
-  This stands for Referenced By.  It means that the models, definitions and
-  assumptions listed reference the current model, definition or assumption.
-  This information is given for traceability.  Ref. By provides a pointer in the
-  opposite direction to what we commonly do.  You still need to have a reference
-  in the other direction pointing to the current model, definition or
-  assumption.  As an example, if TM1 is referenced by GD2, that means that GD2 will
-  explicitly include a reference to TM1.}
+
+%TM2
+\noindent
+\deftheory
+% #2 refname of theory
+{TM2:LF}
+% #3 label
+{Loss Function for Re-ProtGNN}
+% #4 equation
+{
+  $\mathcal{L} = \mathcal{L}_{CE} + \lambda_1 \mathcal{L}_{\text{Clst}} + \lambda_2 \mathcal{L}_{\text{Sep}} + \lambda_3 \mathcal{L}_{\text{Div}}$
+}
+% #5 description
+{
+  The overall loss function consists of multiple terms:
+\begin{itemize}
+    \item \(\mathcal{L}_{CE} = -y \log \hat{y} - (1 - y) \log (1 - \hat{y})\) : Cross-entropy loss for classification. (Type: $\mathbb{R}$)
+    \item \(\mathcal{L}_{\text{Clst}} = \frac{1}{n} \sum_{i=1}^{n} \min_{j : p_j \in P_{y_i}} \| f(x_i) - p_j \|_2^2 \): Cluster loss to ensure embeddings are close to prototypes of the same class. (Type: $\mathbb{R}$)
+    \item \(\mathcal{L}_{\text{Sep}} = = -\frac{1}{n} \sum_{i=1}^{n} \min_{j : p_j \notin P_{y_i}} \| f(x_i) - p_j \|_2^2 \): Separation loss to push embeddings away from prototypes of other classes. (Type: $\mathbb{R}$)
+    \item \(\mathcal{L}_{\text{Div}} = \sum_{k=1}^{C} \sum_{\substack{i \neq j \\ p_i, p_j \in P_k}} \max(0, \cos(p_i, p_j) - s_{\max})\): Diversity loss to prevent prototypes from collapsing. (Type: $\mathbb{R}$)
+    \item \(y\): Ground-truth label of an input graph. (Type: $\mathbb{Z}$)
+    \item \(\hat{y}\): Predicted label of an input graph. (Type: $\mathbb{R}$)
+    \item \(p_j\): A prototype embedding representing a characteristic subgraph associated with a specific class. (Type: a vector of $\mathbb{R}$)
+    \item \(x_i\): The node feature representation of the i-th input graph in the dataset. (Type: a matrix of $\mathbb{R}$)
+    \item \(f(\cdot)\): A function representing the graph encoder, as defined in \tref{TM1:GNNFP}.
+    \item \(s_{\max}\): Threshold of the cosine similarity measured by \(cos(\cdot, \cdot)\) in the diversity loss. (Type: $\mathbb{R}$)
+    \item \(\lambda_1, \lambda_2, \lambda_3\): Hyper-parameters (see \ddref{LAM}) balancing between prediction accuracy (imposed by cross-entropy loss), and prototype finding (imposed by cluster loss, separation loss, and divergence loss). (Type: $\mathbb{R}$)
+\end{itemize}
+}
+% #6 Notes
+{
+The cross-entropy loss is a common loss used in many ML models, while the other losses (i.e., cluster loss, separation loss, and diversity loss) are proposed in the context of Re-ProtGNN.
+}
+% #7 Source
+{
+  ~\cite{wikipedia_crossentropy}, ~\cite{zhang2022}
+}
+% #8 Referenced by
+{
+  \dref{GDB}, \dref{GDW}, \dref{GDG}, \dref{GDP}, \iref{Training}
+}
+% #9 Preconditions
+{
+None
+}
+% #1 derivation - not applicable by default
+{}
+
+
+
+% \noindent
+% \deftheory
+% #2 refname of theory
+% {TM:PSC}
+% #3 label
+%{Prototype Similarity Calculation}
+% #4 equation
+%{
+%  $S_{i,j} = \text{sim}(h_i, p_j) = \frac{h_i \cdot p_j}{||h_i|| \cdot ||p_j||}$
+%}
+% #5 description
+% {
+% The equation above computes the similarity score between a node embedding \( h_i \) and a prototype vector \( p_j \). It is used to identify which prototype best represents a given node's structure. \\
+% }
+% #6 Notes
+% {
+% None.
+% }
+% #7 Source
+% {
+  % \url{http://www.efunda.com/formulae/heat_transfer/conduction/overview_cond.cfm}
+% }
+% #8 Referenced by
+% {
+  % \dref{ROCT}
+%}
+% #9 Preconditions
+% {
+% None
+% }
+% #1 derivation - not applicable by default
+% {}
 
 ~\newline
 
 \subsubsection{General Definitions}\label{sec_gendef}
 
-\plt{General Definitions (GDs) are a refinement of one or more TMs, and/or of
-  other GDs.  The GDs are less abstract than the TMs.  Generally the reduction
-  in abstraction is possible through invoking (using/referencing) Assumptions.
-  For instance, the TM could be Newton's Law of Cooling stated abstracting.  The
-  GD could take the general law and apply it to get a 1D equation.}
-
 This section collects the laws and equations that will be used in building the
 instance models.
 
-\plt{Some projects may not have any content for this section, but the section
-  heading should be kept.}  \plt{Modify the examples below for your problem, and
-  add additional definitions as appropriate.}
+~\newline
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
+Number& GD\refstepcounter{defnum}\thedefnum \label{GDC}\\
+\hline
+Label &\bf Chain Rule\\
+\hline
+% \hline
+SI Units&Unitless\\
+\hline
+Equation&$ \frac{dz}{dx} = \frac{dz}{dy} \cdot \frac{dy}{dx}$\\
+\hline
+Description &
+The chain rule states that the derivative of a function with respect to an independent variable can be computed as the product of the derivative of the function with respect to an intermediate variable and the derivative of the intermediate variable with respect to the independent variable.\\
+
+\hline
+  Source & ~\cite{wikipedia_chainrule}\\
+  \hline
+  Ref.\ By & \dref{GDB}, \dref{GDW}, \dref{GDG}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
 
 ~\newline
 
@@ -776,56 +629,302 @@ instance models.
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 \hline
 \rowcolor[gray]{0.9}
-Number& GD\refstepcounter{defnum}\thedefnum \label{NL}\\
+Number& GD\refstepcounter{defnum}\thedefnum \label{GDS}\\
 \hline
-Label &\bf Newton's law of cooling \\
+Label &\bf Sigmoid Function for Fully Connected Layer\\
 \hline
-% Units&$MLt^{-3}T^0$\\
 % \hline
-SI Units&\si{\watt\per\square\metre}\\
+SI Units&Unitless\\
 \hline
-Equation&$ q(t) = h \Delta T(t)$  \\
+Equation&$ \hat{y} = \sigma(z) = \frac{1}{1+e^{-z}}, \quad \text{where} \quad z = W^\top h + b$\\
 \hline
 Description &
-Newton's law of cooling describes convective cooling from a surface.  The law is
-stated as: the rate of heat loss from a body is proportional to the difference
-in temperatures between the body and its surroundings.
-\\
-& $q(t)$ is the thermal flux (\si{\watt\per\square\metre}).\\
-& $h$ is the heat transfer coefficient, assumed independent of $T$ (\aref{A_hcoeff})
-	(\si{\watt\per\square\metre\per\celsius}).\\
-&$\Delta T(t)$= $T(t) - T_{\text{env}}(t)$ is the time-dependent thermal gradient
-between the environment and the object (\si{\celsius}).
-\\
+\( h \): Graph embedding obtained after processing input node features \( X \) through the GNN encoder (see \tref{TM1:GNNFP}). (Type: a vector of $\mathbb{R}$)
+\vspace{1em}
+
+\( W \): Trainable weight matrix of Fully Connected Layer (Section~\ref{sec_phySystDescrip})  that maps graph embeddings to classification results. (Type: a matrix of $\mathbb{R}$)
+\vspace{1em}
+
+\( b \): Bias term introduced to adjust predictions when feature values are near zero. (Type: a vector of $\mathbb{R}$)\\
+
 \hline
-  Source & Citation here \\
+  Source & ~\cite{wikipedia_chainrule}\\
   \hline
-  Ref.\ By & \ddref{FluxCoil}, \ddref{FluxPCM}\\
+  Ref.\ By & \dref{GDB}, \dref{GDW}, \dref{GDG}\\
   \hline
 \end{tabular}
 \end{minipage}\\
 
-\subsubsection*{Detailed derivation of simplified rate of change of temperature}
+~\newline
 
-\plt{This may be necessary when the necessary information does not fit in the
-  description field.}
-\plt{Derivations are important for justifying a given GD.  You want it to be
-  clear where the equation came from.}
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
+Number& GD\refstepcounter{defnum}\thedefnum \label{GDB}\\
+\hline
+Label &\bf Gradient of Loss Function with respect to the bias b of Fully Connected Layer\\
+\hline
+% \hline
+SI Units&Unitless\\
+\hline
+Equation&$ \nabla_b \mathcal{L} = (\hat{y} - y)$\\
+\hline
+Description &
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to b using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
+
+\hline
+  Source & ~\cite{Turin2020}\\
+  \hline
+  Ref.\ By & \iref{Training}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
+~\newline
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
+Number& GD\refstepcounter{defnum}\thedefnum \label{GDW}\\
+\hline
+Label &\bf Gradient of Loss Function with respect to the weight W of Fully Connected Layer\\
+\hline
+% \hline
+SI Units&Unitless\\
+\hline
+Equation&$ \nabla_W \mathcal{L} = (\hat{y} - y)h$\\
+\hline
+Description &
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to W using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
+
+\hline
+  Source & ~\cite{Turin2020}\\
+  \hline
+  Ref.\ By & \iref{Training}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
+
+
+~\newline
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
+Number& GD\refstepcounter{defnum}\thedefnum \label{GDG}\\
+\hline
+Label &\bf Gradient of Loss Function with respect to the weight $W_g$ of GNN Encoder\\
+\hline
+% \hline
+SI Units&Unitless\\
+\hline
+Equation&$\nabla_{W_g} \mathcal{L} = (\hat{y} - y) W \sum_{u \in \mathcal{N}(v)} \tilde{A}_{vu} h_u$\\
+\hline
+Description &
+\( W_g \): Trainable weight matrix of GNN Encoder (see \tref{TM1:GNNFP})  that maps input graphs to graph embeddings. (Type: a matrix of $\mathbb{R}$)
+\vspace{1em}
+
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $W_g$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
+
+
+
+\hline
+  Source & ~\cite{Turin2020}\\
+  \hline
+  Ref.\ By & \iref{Training}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
+~\newline
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
+Number& GD\refstepcounter{defnum}\thedefnum \label{GDP}\\
+\hline
+Label &\bf Gradient of Loss Function with respect to P\\
+\hline
+% \hline
+SI Units&Unitless\\
+\hline
+Equation&$ \nabla_{P} \mathcal{L} = 2 (h_i - p_j) - 2 (h_i - p_k) + \sum_{j \neq i} \textbf{1} [\cos(p_i, p_j) > s_{\max}] \left( \frac{p_j}{||p_i|| ||p_j||} - \frac{(p_i \cdot p_j) p_i}{||p_i||^3 ||p_j||} \right) $\\
+\hline
+Description &
+\( h_i \): Embedding representation of input graph \( i \), computed by the graph encoder \( f(\cdot) \) (see \tref{TM1:GNNFP}). (Type: a vector of $\mathbb{R}$)
+\vspace{1em}
+
+We derive the gradient of the Loss Function (see \tref{TM2:LF}) with respect to P. This allows us to minimize the Loss Function for training the model (see \iref{Training}).\\
+
+\hline
+  Source & ~\cite{Turin2020}\\
+  \hline
+  Ref.\ By & \iref{Training}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
+
+
+
+
+\subsubsection*{Detailed derivation of gradients for Re-ProtGNN}
+
+To optimize Re-ProtGNN, we minimize the objective function:
+\begin{equation*}
+    \mathcal{L} = \mathcal{L}_{CE} + \lambda_1 \mathcal{L}_{\text{Clst}} + \lambda_2 \mathcal{L}_{\text{Sep}} + \lambda_3 \mathcal{L}_{\text{Div}}
+\end{equation*}
+where
+\begin{itemize}
+    \item $\mathcal{L}_{CE}$: Cross-entropy loss for classification.
+    \item $\mathcal{L}_{\text{Clst}}$: Cluster loss ensuring embeddings stay close to correct prototypes.
+    \item $\mathcal{L}_{\text{Sep}}$: Separation loss ensuring embeddings are far from incorrect prototypes.
+    \item $\mathcal{L}_{\text{Div}}$: Diversity loss preventing prototype collapse.
+\end{itemize}
+
+\subsection*{Step 1: Gradient of Cross-Entropy Loss on W and b}
+For a given prediction $\hat{y}$ with label $y$, the cross-entropy loss is
+\begin{equation*}
+    \mathcal{L}_{CE} = - y \log \hat{y} - (1 - y) \log (1 - \hat{y}).
+\end{equation*}
+Taking the derivative with respect to $\hat{y}$ gives
+\begin{equation*}
+    \frac{d}{d\hat{y}} \mathcal{L}_{CE} = -\frac{y}{\hat{y}} + \frac{1 - y}{1 - \hat{y}}.
+\end{equation*}
+Using the property of the sigmoid function
+\begin{equation*}
+    \hat{y} = \sigma(Z) = \frac{1}{1 + e^{-z}},
+\end{equation*}
+We differentiate $\hat{y}$ with respect to $z$
+\begin{equation*}
+    \frac{d}{dZ} \sigma(Z) = \sigma(Z)(1 - \sigma(Z)) = \hat{y} (1 - \hat{y})
+\end{equation*}
+and apply the chain rule
+\begin{equation*}
+    \frac{d}{dZ} \mathcal{L}_{CE} = (\hat{y} - y).
+\end{equation*}
+Since Z = Wh + b, we apply the chain rule again to get the gradients with respect to W and b:
+\begin{equation*}
+    \frac{d\mathcal{L}_{CE}}{dW} = \frac{d}{dZ} \frac{dZ}{W}\mathcal{L}_{CE} = (\hat{y} - y)h,
+\end{equation*}
+\begin{equation*}
+     \frac{d\mathcal{L}_{CE}}{db} = \frac{d}{dZ} \frac{dZ}{b}\mathcal{L}_{CE} = (\hat{y} - y).
+\end{equation*}
+
+\subsection*{Step 2: Gradient of Cross-Entropy Loss on $W_g$}
+The GNN encoder generates the embeddings $h$ using message passing:
+
+\begin{equation*}
+    h_v = \sigma \left( \sum_{u \in \mathcal{N}(v)} \tilde{A}_{vu} W_g h_u \right),
+\end{equation*}
+where $\tilde{A}$ is the normalized adjacency matrix, $W_g$ is the trainable weight matrix of the GNN, and $\sigma(\cdot)$ is a non-linear activation function.
+
+Taking the derivative of the loss function with respect to $W_g$, we apply the chain rule:
+
+\begin{equation*}
+    \nabla_{W_g} \mathcal{L} = \frac{d\mathcal{L}}{d\hat{y}} \cdot \frac{d\hat{y}}{dh} \cdot \frac{dh}{dW_g}.
+\end{equation*}
+
+From Step 1, we already derived:
+
+\begin{equation*}
+    \frac{d\mathcal{L}}{d\hat{y}} = (\hat{y} - y),
+\end{equation*}
+
+and
+
+\begin{equation*}
+    \frac{d\hat{y}}{dh} = W.
+\end{equation*}
+
+Since the GNN encoder propagates node features through message passing, differentiating $h$ with respect to $W_g$ gives:
+
+\begin{equation*}
+    \nabla_{W_g} h_v = \sum_{u \in \mathcal{N}(v)} \tilde{A}_{vu} h_u.
+\end{equation*}
+
+Thus, combining these terms, the final gradient is:
+
+\begin{equation*}
+    \nabla_{W_g} \mathcal{L} = (\hat{y} - y) W \sum_{u \in \mathcal{N}(v)} \tilde{A}_{vu} h_u.
+\end{equation*}
+
+This expression shows that computing $\nabla_{W_g} \mathcal{L}$ requires propagating gradients through the entire graph, making the computation iterative rather than explicit.
+
+
+
+\subsection*{Step 3: Gradient of Prototype Cluster Loss on P}
+The cluster loss is defined as
+\begin{equation*}
+    \mathcal{L}_{\text{Clst}} = \sum_{i=1}^{n} \min_{j:p_j \in P_{y_i}} ||h_i - p_j||^2
+\end{equation*}
+Differentiating with respect to $p_j$,
+\begin{equation*}
+    \frac{d}{dp_j} \mathcal{L}_{\text{Clst}} = -2(h_i - p_j)
+\end{equation*}
+
+\subsection*{Step 4: Gradient of Prototype Separation Loss  on P}
+The separation loss is
+\begin{equation*}
+    \mathcal{L}_{\text{Sep}} = - \sum_{i=1}^{n} \min_{j:p_j \notin P_{y_i}} ||h_i - p_j||^2
+\end{equation*}
+Differentiating with respect to $p_j$
+\begin{equation*}
+    \frac{d}{dp_j} \mathcal{L}_{\text{Sep}} = 2(h_i - p_j)
+\end{equation*}
+
+\subsection*{Step 5: Gradient of the Diversity Loss  on P}
+To prevent prototype collapse, we enforce diversity via cosine similarity
+\begin{equation*}
+    \mathcal{L}_{\text{Div}} = \sum_{k=1}^{C} \sum_{i \neq j, p_i, p_j \in P_k} \max(0, \cos(p_i, p_j) - s_{\max})
+\end{equation*}
+where
+\begin{equation*}
+    \cos(p_i, p_j) = \frac{p_i \cdot p_j}{||p_i|| ||p_j||}
+\end{equation*}
+Using the gradient of cosine similarity
+\begin{equation*}
+    \frac{d}{dp_i} \cos(p_i, p_j) = \frac{p_j}{||p_i|| ||p_j||} - \frac{(p_i \cdot p_j) p_i}{||p_i||^3 ||p_j||}
+\end{equation*}
+The final update step for prototype diversity
+\begin{equation*}
+    \frac{d}{dp_i} \mathcal{L}_{\text{Div}} = \sum_{j \neq i} \mathbf{1}[\cos(p_i, p_j) > s_{\max}] \left( \frac{p_j}{||p_i|| ||p_j||} - \frac{(p_i \cdot p_j) p_i}{||p_i||^3 ||p_j||} \right)
+\end{equation*}
+
+\subsection*{Gradients Summary }
+To sum up, Cross-entropy loss $\mathcal{L}_{CE}$ updates the weight W and the bias b of the Fully Connected Layer, as well as updates the weight $W_g$ of GNN Encoder. Cluster Loss, separation Loss, and diversity Loss update the prototype P:
+\begin{equation*}
+    \frac{d\mathcal{L}}{db} =  \frac{d\mathcal{L}_{CE}}{db},
+\end{equation*}
+\begin{equation*}
+    \frac{d\mathcal{L}}{dW} =  \frac{d\mathcal{L}_{CE}}{dW},
+\end{equation*}
+\begin{equation*}
+    \frac{d\mathcal{L}}{dW_g} =  \frac{d\mathcal{L}_{CE}}{dW_g},
+\end{equation*}
+\begin{equation*}
+    \frac{d\mathcal{L}}{dP} = \frac{d\mathcal{L}_{Clst}}{dP} + \frac{d\mathcal{L}_{Sep}}{dP} + \frac{d\mathcal{L}_{Div}}{dP}.
+\end{equation*}
+This leads to the final formula seen in \dref{GDB}, \dref{GDW}, \dref{GDG}, \dref{GDP}.
+
+
 
 \subsubsection{Data Definitions}\label{sec_datadef}
 
-\plt{The Data Definitions are definitions of symbols and equations that are
-  given for the problem.  They are not derived; they are simply used by other
-  models.  For instance, if a problem depends on density, there may be a data
-  definition for the equation defining density.  The DDs are given information
-  that you can use in your other modules.}
-
-\plt{All Data Definitions should be used (referenced) by at least one other
-  model.}
-
 This section collects and defines all the data needed to build the instance
-models. The dimension of each quantity is also given.  \plt{Modify the examples
-  below for your problem, and add additional definitions as appropriate.}
+models. The dimension of each quantity is also given.
 
 ~\newline
 
@@ -835,55 +934,28 @@ models. The dimension of each quantity is also given.  \plt{Modify the examples
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 \hline
 \rowcolor[gray]{0.9}
-Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{FluxCoil}\\
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{LR}\\
 \hline
-Label& \bf Heat flux out of coil\\
+Label& \bf Learning Rate\\
 \hline
-Symbol &$q_C$\\
+Symbol &$\eta$\\
 \hline
 % Units& $Mt^{-3}$\\
 % \hline
-  SI Units & \si{\watt\per\square\metre}\\
+  SI Units & Unitless\\
   \hline
-  Equation&$q_C(t) = h_C (T_C - T_W(t))$, over area $A_C$\\
+  Equation&Not Applicable\\
   \hline
   Description & 
-                $T_C$ is the temperature of the coil (\si{\celsius}).  $T_W$ is the temperature of the water (\si{\celsius}).  
-                The heat flux out of the coil, $q_C$ (\si{\watt\per\square\metre}), is found by
-                assuming that Newton's Law 
-                of Cooling applies (\aref{A_Newt_coil}).  This law (\dref{NL}) is used on the surface of
-                the coil, which has area $A_C$ (\si{\square\metre}) and heat 
-                transfer coefficient $h_C$
-                (\si{\watt\per\square\metre\per\celsius}).  This equation
-                assumes that the temperature of the coil is constant over time (\aref{A_tcoil}) and that it does not vary along the length
-                of the coil (\aref{A_tlcoil}).
-  \\
+                The learning rate is a hyperparameter that controls the step size at each iteration while moving toward a minimum of the loss function. It plays an important role in balancing convergence speed and stability.\\
   \hline
-  Sources& Citation here \\
+  Sources& ~\cite{wikipedia_learningrate}\\
   \hline
-  Ref.\ By & \iref{ewat}\\
+  Ref.\ By & \iref{Training}\\
   \hline
 \end{tabular}
 \end{minipage}\\
 
-\subsubsection{Data Types}\label{sec_datatypes}
-
-\plt{This section is optional.  In many scientific computing programs it isn't
-  necessary, since the inputs and outpus are straightforward types, like reals,
-  integers, and sequences of reals and integers.  However, for some problems it
-  is very helpful to capture the type information.}
-
-\plt{The data types are not derived; they are simply stated and used by other
-  models.}
-
-\plt{All data types must be used by at least one of the models.}
-
-\plt{For the mathematical notation for expressing types, the recommendation is
-  to use the notation of~\citet{HoffmanAndStrooper1995}.}
-
-This section collects and defines all the data types needed to document the
-models. \plt{Modify the examples below for your problem, and add additional
-  definitions as appropriate.}
 
 ~\newline
 
@@ -891,37 +963,44 @@ models. \plt{Modify the examples below for your problem, and add additional
 \begin{minipage}{\textwidth}
 \renewcommand*{\arraystretch}{1.5}
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
-  \hline
-  \rowcolor[gray]{0.9}
-  Type Name & Name for Type\\
-  \hline
-  Type Def & mathematical definition of the type\\
-  \hline
-  Description & description here
-  \\
-  \hline
-  Sources & Citation here, if the type is borrowed from another source\\
-  \hline
+\hline
+\rowcolor[gray]{0.9}
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{LAM}\\
+\hline
+Label& \bf Regularization Parameters\\
+\hline
+Symbol &$\lambda_1, \lambda_2, \lambda_3$\\
+\hline
+% Units& $Mt^{-3}$\\
+% \hline
+SI Units & Unitless\\
+\hline
+Equation&Not Applicable\\
+\hline
+Description & 
+    The regularization parameters control the trade-off between the main classification loss and additional constraints (see \tref{TM1:GNNFP}) to enhance interpretability and prevent overfitting. \\
+\hline
+Sources& ~\cite{wikipedia_regularization}\\
+\hline
+Ref.\ By & \tref{TM2:LF}\\
+\hline
 \end{tabular}
 \end{minipage}\\
 
-\subsubsection{Instance Models} \label{sec_instance}    
 
-\plt{The motivation for this section is to reduce the problem defined in
-  ``Physical System Description'' (Section~\ref{sec_phySystDescrip}) to one
-  expressed in mathematical terms. The IMs are built by refining the TMs and/or
-  GDs.  This section should remain abstract.  The SRS should specify the
-  requirements without considering the implementation.}
+
+\subsubsection{Data Types}\label{sec_datatypes}
+
+Not applicable, as the inputs and outputs consist of straightforward types, such as sequences of integers or matrices of real numbers.
+
+\subsubsection{Instance Models} \label{sec_instance}    
 
 This section transforms the problem defined in Section~\ref{Sec_pd} into 
 one which is expressed in mathematical terms. It uses concrete symbols defined 
 in Section~\ref{sec_datadef} to replace the abstract symbols in the models 
 identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
 
-The goals \plt{reference your goals} are solved by \plt{reference your instance
-  models}.  \plt{other details, with cross-references where appropriate.}
-\plt{Modify the examples below for your problem, and add additional models as
-  appropriate.}
+The goal \gsref{GS1} is achieved through \iref{Training} and \iref{Inference}. \iref{Training} trains the model to ensure that \iref{Inference} delivers accurate classifications and reliable interpretations.
 
 ~\newline
 
@@ -930,45 +1009,62 @@ The goals \plt{reference your goals} are solved by \plt{reference your instance
 \noindent
 \begin{minipage}{\textwidth}
 \renewcommand*{\arraystretch}{1.5}
-\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\begin{tabular}{| p{\colAwidth}  |p{\colBwidth}|}
   \hline
   \rowcolor[gray]{0.9}
-  Number& IM\refstepcounter{instnum}\theinstnum \label{ewat}\\
+  Number& IM\refstepcounter{instnum}\theinstnum \label{Training}\\
   \hline
-  Label& \bf Energy balance on water to find $T_W$\\
+  Label& \bf Model Training via Gradient Descent\\
   \hline
-  Input&$m_W$, $C_W$, $h_C$, $A_C$, $h_P$, $A_P$, $t_\text{final}$, $T_C$, 
-  $T_\text{init}$, $T_P(t)$ from \iref{epcm}\\
-  & The input is constrained so that $T_\text{init} \leq T_C$ (\aref{A_charge})\\
+  Input& Node features \( X \), adjacency matrix \( A \), prototypes \( P \), learning rate \( \eta \).\\
   \hline
-  Output&$T_W(t)$, $0\leq t \leq t_\text{final}$, such that\\
-  &$\frac{dT_W}{dt} = \frac{1}{\tau_W}[(T_C - T_W(t)) + {\eta}(T_P(t) - T_W(t))]$,\\
-  &$T_W(0) = T_P(0) = T_\text{init}$ (\aref{A_InitTemp}) and $T_P(t)$ from \iref{epcm} \\
+  Output&Optimized parameters \( W, b, P \)\\
   \hline
-  Description&$T_W$ is the water temperature (\si{\celsius}).\\
-  &$T_P$ is the PCM temperature (\si{\celsius}).\\
-  &$T_C$ is the coil temperature (\si{\celsius}).\\
-  &$\tau_W = \frac{m_W C_W}{h_C A_C}$ is a constant (\si{\second}).\\
-  &$\eta = \frac{h_P A_P}{h_C A_C}$ is a constant (dimensionless).\\
-  & The above equation applies as long as the water is in liquid form,
-  $0<T_W<100^o\text{C}$, where $0^o\text{C}$ and $100^o\text{C}$ are the melting
-  and boiling points of water, respectively (\aref{A_OpRange}, \aref{A_Pressure}).
-  \\
+  Description&The model is trained by iteratively updating the parameters via gradient descent:
+    \begin{enumerate}
+        \item Compute embeddings using GNN layers (see \tref{TM1:GNNFP}).
+        \item Compute the loss function \( \mathcal{L} \) (see \tref{TM2:LF}).
+        \item Update parameters using 
+            $W \leftarrow W - \eta \frac{\partial \mathcal{L}}{\partial W}$,
+            $b \leftarrow b - \eta \frac{\partial \mathcal{L}}{\partial b}$,
+            $P \leftarrow P - \eta \frac{\partial \mathcal{L}}{\partial P}$
+            (see \ddref{LR}, \dref{GDB}, \dref{GDW}, \dref{GDG}, \dref{GDP}, \tref{TM2:LF}).
+    \end{enumerate}\\  
   \hline
-  Sources& Citation here \\
+  Sources& ~\cite{zhang2022}\\
   \hline
-  Ref.\ By & \iref{epcm}\\
+  Ref. by& \aref{A3}, \rref{R_Train}, \dref{GDB}, \dref{GDW}, \dref{GDG}, \dref{GDP}, \iref{Inference}\\
   \hline
 \end{tabular}
 \end{minipage}\\
 
-%~\newline
+~\newline
 
-\subsubsection*{Derivation of ...}
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth}  |p{\colBwidth}|}
+  \hline
+  \rowcolor[gray]{0.9}
+  Number& IM\refstepcounter{instnum}\theinstnum \label{Inference}\\
+  \hline
+  Label& \bf Model Inference via Forward Propagation\\
+  \hline
+  Input& Node features \( X \), adjacency matrix \( A \), trained parameters \( W, b, P \).\\
+  \hline
+  Output& Predicted class labels \( \hat{y} \) and prototypes.\\
+  \hline
+  Description&During inference, the model forwards input features through the trained model (see \iref{Training}) and directly gets the classification results and prototypes.\\ 
+  \hline
+  Sources& ~\cite{runai_ml_inference}\\
+  \hline
+  Ref. by& \aref{A3}, \rref{R_VerifyOutput}\\
+  \hline
+\end{tabular}
+\end{minipage}\\
 
-\plt{The derivation shows how the IM is derived from the TMs/GDs.  In cases
-  where the derivation cannot be described under the Description field, it will
-  be necessary to include this subsection.}
+
+
 
 \subsubsection{Input Data Constraints} \label{sec_DataConstraints}    
 
@@ -995,16 +1091,14 @@ Table~\ref{TblSpecParams}.
   \textbf{Var} & \textbf{Physical Constraints} & \textbf{Software Constraints} &
                              \textbf{Typical Value} & \textbf{Uncertainty}\\
   \midrule 
-  $L$ & $L > 0$ & $L_{\text{min}} \leq L \leq L_{\text{max}}$ & 1.5 \si[per-mode=symbol] {\metre} & 10\%
-  \\
+  $X$ & $X[i,j] \in \{-\infty, +\infty\}$ & $X[i,j] \in \{-\infty, +\infty\}$ & depends on the dataset & - \\
+  $A$ & $A[i,j] \in \{0, 1\}$ & $A[i,j] \in \{0, 1\}$ & depends on the dataset & - \\
+  $y$ & $y \in \{-\infty, +\infty\}$ & $y \in \{1, ..., C\}$ & depends on the dataset & - \\
+
   \bottomrule
 \end{longtable*}
 \end{table}
 
-\noindent 
-\begin{description}
-\item[(*)] \plt{you might need to add some notes or clarifications}
-\end{description}
 
 \begin{table}[!h]
 \caption{Specification Parameter Values} \label{TblSpecParams}
@@ -1013,7 +1107,7 @@ Table~\ref{TblSpecParams}.
   \toprule
   \textbf{Var} & \textbf{Value} \\
   \midrule 
-  $L_\text{min}$ & 0.1 \si{\metre}\\
+  $C$ & depends on the dataset\\
   \bottomrule
 \end{longtable*}
 \end{table}
@@ -1021,12 +1115,8 @@ Table~\ref{TblSpecParams}.
 \subsubsection{Properties of a Correct Solution} \label{sec_CorrectSolution}
 
 \noindent
-A correct solution must exhibit \plt{fill in the details}.  \plt{These
-  properties are in addition to the stated requirements.  There is no need to
-  repeat the requirements here.  These additional properties may not exist for
-  every problem.  Examples include conservation laws (like conservation of
-  energy or mass) and known constraints on outputs, which are usually summarized
-  in tabular form.  A sample table is shown in Table~\ref{TblOutputVar}}
+A correct solution must ensure that the predicted class is a valid label and that the prototypes are valid graphs, following the constraints in Table~\ref{TblOutputVar}. In addition, each prototype should be a subgraph of at least one input graph.
+
 
 \begin{table}[!h]
 \caption{Output Variables} \label{TblOutputVar}
@@ -1035,20 +1125,16 @@ A correct solution must exhibit \plt{fill in the details}.  \plt{These
   \toprule
   \textbf{Var} & \textbf{Physical Constraints} \\
   \midrule 
-  $T_W$ & $T_\text{init} \leq T_W \leq T_C$ (by~\aref{A_charge})
+  $X_p$ & $num\_rows(X_p) < num\_rows(X)$ \\
+  $A_p$ & $num\_rows(A_p) = num\_cols(A_p)$, $dim(A_p) < dim(A)$\\
+  $\hat{y}$ & $\hat{y} \in \{1,...,C\}$ 
   \\
   \bottomrule
 \end{longtable*}
 \end{table}
 
-\plt{This section is not for test cases or techniques for verification and
-  validation.  Those topics will be addressed in the Verification and Validation
-  plan.}
 
 \section{Requirements}
-
-\plt{The requirements refine the goal statement.  They will make heavy use of
-  references to the instance models.}
 
 This section provides the functional requirements, the business tasks that the
 software is expected to complete, and the nonfunctional requirements, the
@@ -1058,105 +1144,62 @@ qualities that the software is expected to exhibit.
 
 \noindent \begin{itemize}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:] \plt{Requirements
-    for the inputs that are supplied by the user.  This information has to be
-    explicit.}
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:] The system should be able to load the MUTAG dataset ~\cite{debnath1991structure} .
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:] \plt{It isn't
-    always required, but often echoing the inputs as part of the output is a
-    good idea.}
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Train}:] During the training phase, the system should update model parameters by optimizing the Loss Function (see \iref{Training}).
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Calculate}:] \plt{Calculation
-    related requirements.}
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:] During the inference phase, the system should compute classification accuracy and prototypes. (see \iref{Inference}).
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:]
-  \plt{Verification related requirements.}
-
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \plt{Output related
-    requirements.}
 
 \end{itemize}
 
-\plt{Every IM should map to at least one requirement, but not every requirement
-  has to map to a corresponding IM.}
 
 \subsection{Nonfunctional Requirements}
-
-\plt{List your nonfunctional requirements.  You may consider using a fit
-  criterion to make them verifiable.}
-\plt{The goal is for the nonfunctional requirements to be unambiguous, abstract
-  and verifiable.  This isn't easy to show succinctly, so a good strategy may be
-to give a ``high level'' view of the requirement, but allow for the details to
-be covered in the Verification and Validation document.}
-\plt{An absolute requirement on a quality of the system is rarely needed.  For
-  instance, an accuracy of 0.0101 \% is likely fine, even if the requirement is
-  for 0.01 \% accuracy.  Therefore, the emphasis will often be more on
-  describing now well the quality is achieved, through experimentation, and
-  possibly theory, rather than meeting some bar that was defined a priori.}
-\plt{You do not need an entry for correctness in your NFRs.  The purpose of the
-  SRS is to record the requirements that need to be satisfied for correctness.
-  Any statement of correctness would just be redundant. Rather than discuss
-  correctness, you can characterize how far away from the correct (true)
-  solution you are allowed to be.  This is discussed under accuracy.}
 
 \noindent \begin{itemize}
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-  \textbf{Accuracy} \plt{Characterize the accuracy by giving the context/use for
-    the software.  Maybe something like, ``The accuracy of the computed
-    solutions should meet the level needed for $<$engineering or scientific
-    application$>$.  The level of accuracy achieved by \progname{} shall be
-    described following the procedure given in Section~X of the Verification and
-    Validation Plan.''  A link to the VnV plan would be a nice extra.}
+  \textbf{Accuracy} The system should achieve classification accuracy and prototype quality comparable to those reported in the original paper~\cite{zhang2022}, with at most a 5\% variation.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
-  \plt{Characterize the usability by giving the context/use for the software.
-    You should likely reference the user characteristics section.  The level of
-    usability achieved by the software shall be described following the
-    procedure given in Section~X of the Verification and Validation Plan.  A
-    link to the VnV plan would be a nice extra.}
+  The system should visualize learned prototypes as graphs represented by images rather than node features and adjacency matrices to enhance interpretability.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
-  \textbf{Maintainability} \plt{The effort required to make any of the likely
-    changes listed for \progname{} should be less than FRACTION of the original
-    development time.  FRACTION is then a symbolic constant that can be defined
-    at the end of the report.}
+  \textbf{Maintainability} The implementation should include modular function abstractions, documentation, and unit tests to facilitate future adaptations.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
-  \textbf{Portability} \plt{This NFR is easier to write than the others.  The
-    systems that \progname{} should run on should be listed here.  When possible
-    the specific versions of the potential operating environments should be
-    given.  To make the NFR verifiable a statement could be made that the tests
-    from a given section of the VnV plan can be successfully run on all of the
-    possible operating environments.}
-
-\item Other NFRs that might be discussed include verifiability,
-  understandability and reusability.
+  \textbf{Portability} Re-ProtGNN should be compatible with Windows and macOS and run with PyTorch 1.8.0 and Torch-Geometric 2.0.2.
+  
 
 \end{itemize}
 
+
 \subsection{Rationale}
 
-\plt{Provide a rationale for the decisions made in the documentation.  Rationale
-should be provided for scope decisions, modelling decisions, assumptions and
-typical values.}
+The rationale for the scope decisions (Section~\ref{sec_scopeDec}) is that Re-ProtGNN uses the MUTAG dataset~\cite{debnath1991structure} because the original ProtGNN model was evaluated on it. Additionally, MUTAG is a well-established benchmark for graph classification, ensuring a fair validation of ProtGNN's performance.
+
+In addition, the model is designed to follow the structure of the original ProtGNN framework to ensure consistency.
+
 
 \section{Likely Changes}    
 
 \noindent \begin{itemize}
 
-\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] \plt{Give
-    the likely changes, with a reference to the related assumption (aref), as appropriate.}
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_Data}:] \aref{A3} The system may be extended to support training on a broader range of datasets, such as BA-shape,  to further validate the reproducibility and robustness of ProtGNN's results.
+
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_Encoder}:] The model may use alternative GNN encoders, such as Graph Isomorphism Networks (GINs), to evaluate the impact of different architectures on classification accuracy and interpretability.
 
 \end{itemize}
+
+
 
 \section{Unlikely Changes}    
 
 \noindent \begin{itemize}
 
-\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] \plt{Give
-    the unlikely changes.  The design can assume that the changes listed will
-    not occur.}
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_Unsupervised}:] It is unlikely that the system will transition to a fully unsupervised setting, as ProtGNN relies on labeled data to learn prototype representations.
+
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_Prot}:] The system is unlikely to remove the prototype-based interpretability mechanism, as this is a fundamental aspect of ProtGNN.
 
 \end{itemize}
 
@@ -1173,42 +1216,30 @@ other. Table~\ref{Table:A_trace} shows the dependencies of theoretical models,
 general definitions, data definitions, instance models, and likely changes on
 the assumptions.
 
-\plt{You will have to modify these tables for your problem.}
-
-\plt{The traceability matrix is not generally symmetric.  If GD1 uses A1, that
-  means that GD1's derivation or presentation requires invocation of A1.  A1
-  does not use GD1.  A1 is ``used by'' GD1.}
-
-\plt{The traceability matrix is challenging to maintain manually.  Please do
-  your best.  In the future tools (like Drasil) will make this much easier.}
-
 \afterpage{
 \begin{landscape}
 \begin{table}[h!]
 \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|}
 \hline
-	& \aref{A_OnlyThermalEnergy}& \aref{A_hcoeff}& \aref{A_mixed}& \aref{A_tpcm}& \aref{A_const_density}& \aref{A_const_C}& \aref{A_Newt_coil}& \aref{A_tcoil}& \aref{A_tlcoil}& \aref{A_Newt_pcm}& \aref{A_charge}& \aref{A_InitTemp}& \aref{A_OpRangePCM}& \aref{A_OpRange}& \aref{A_htank}& \aref{A_int_heat}& \aref{A_vpcm}& \aref{A_PCM_state}& \aref{A_Pressure} \\
+	                   & \aref{A1}& \aref{A2}& \aref{A3} \\
 \hline
-\tref{T_COE}        & X& & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_LHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\dref{NL}           & & X& & & & & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}         & & & X& X& X& X& & & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil}    & & & & & & & X& X& X& & & & & & & & & & \\ \hline
-\ddref{FluxPCM}     & & & X& X& & & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}       & & & & & & & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\iref{ewat}         & & & & & & & & & & & X& X& & X& X& X& & & X \\ \hline
-\iref{epcm}         & & & & & & & & & & & & X& X& & & X& X& X& \\ \hline
-\iref{I_HWAT}       & & & & & & & & & & & & & & X& & & & & X \\ \hline
-\iref{I_HPCM}       & & & & & & & & & & & & & X& & & & & X & \\ \hline
-\lcref{LC_tpcm}     & & & & X& & & & & & & & & & & & & & & \\ \hline
-\lcref{LC_tcoil}    & & & & & & & & X& & & & & & & & & & & \\ \hline
-\lcref{LC_tlcoil}   & & & & & & & & & X& & & & & & & & & & \\ \hline
-\lcref{LC_charge}   & & & & & & & & & & & X& & & & & & & & \\ \hline
-\lcref{LC_InitTemp} & & & & & & & & & & & & X& & & & & & & \\ \hline
-\lcref{LC_htank}    & & & & & & & & & & & & & & & X& & & & \\
+\tref{TM1:GNNFP}           &  X      &  X     &             \\ \hline
+\tref{TM2:LF}              &  X      &  X     &             \\ \hline
+\dref{GDC}                 &         &        &             \\ \hline
+\dref{GDS}                 &  X      &        &             \\ \hline
+\dref{GDB}                 &  X      &  X     &   X         \\ \hline
+\dref{GDW}                 &  X      &  X     &   X         \\ \hline
+\dref{GDG}                 &  X      &  X     &   X         \\ \hline
+\dref{GDP}                 &  X      &  X     &   X         \\ \hline
+\ddref{LR}                 &         &        &             \\ \hline
+\ddref{LAM}                &  X      &  X     &             \\ \hline
+\iref{Training}            &  X      &  X     &   X         \\ \hline
+\iref{Inference}           &         &        &   X         \\ \hline
+\lcref{LC_Data}            &         &        &   X         \\ \hline  
+\lcref{LC_Encoder}         &         &        &             \\ \hline  
+\lcref{LC_Unsupervised}    &         &        &             \\ \hline 
+\lcref{LC_Prot}            &         &        &             \\
 \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Assumptions and Other Items}
@@ -1219,24 +1250,22 @@ the assumptions.
 
 \begin{table}[h!]
 \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
-\hline        
-	& \tref{T_COE}& \tref{T_SHE}& \tref{T_LHE}& \dref{NL}& \dref{ROCT} & \ddref{FluxCoil}& \ddref{FluxPCM} & \ddref{D_HOF}& \ddref{D_MF}& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM} \\
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
-\tref{T_COE}     & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}     & & & X& & & & & & & & & & \\ \hline
-\tref{T_LHE}     & & & & & & & & & & & & & \\ \hline
-\dref{NL}        & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}      & X& & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil} & & & & X& & & & & & & & & \\ \hline
-\ddref{FluxPCM}  & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}    & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}     & & & & & & & & X& & & & & \\ \hline
-\iref{ewat}      & & & & & X& X& X& & & & X& & \\ \hline
-\iref{epcm}      & & & & & X& & X& & X& X& & & X \\ \hline
-\iref{I_HWAT}    & & X& & & & & & & & & & & \\ \hline
-\iref{I_HPCM}    & & X& X& & & & X& X& X& & X& & \\
+	                   & \tref{TM1:GNNFP} & \tref{TM2:LF} & \dref{GDC} & \dref{GDS} & \dref{GDB} & \dref{GDW} & \dref{GDG} & \dref{GDP} & \ddref{LR} & \ddref{LAM} & \iref{Training} & \iref{Inference} \\
 \hline
+\tref{TM1:GNNFP}      &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\tref{TM2:LF}         & X &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\dref{GDC}            &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\dref{GDS}            & X &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\dref{GDB}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
+\dref{GDW}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
+\dref{GDG}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
+\dref{GDP}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
+\ddref{LR}            &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\ddref{LAM}           & X &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\iref{Training}       & X & X & X & X  & X  & X  & X  & X  & X  & X &   &   \\ \hline
+\iref{Inference}      & X  & X  & X  & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
 \label{Table:trace}
@@ -1244,40 +1273,25 @@ the assumptions.
 
 \begin{table}[h!]
 \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
 \hline
-	& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM}& \ref{sec_DataConstraints}& \rref{R_RawInputs}& \rref{R_MassInputs} \\
+	& \iref{Training} & \iref{Inference} & \rref{R_Inputs} & \rref{R_Train} & \rref{R_VerifyOutput} & \nfrref{NFR_Accuracy} & \nfrref{NFR_Usability} & \nfrref{NFR_Maintainability} & \nfrref{NFR_Portability} \\
 \hline
-\iref{ewat}            & & X& & & & X& X \\ \hline
-\iref{epcm}            & X& & & X& & X& X \\ \hline
-\iref{I_HWAT}          & & & & & & X& X \\ \hline
-\iref{I_HPCM}          & & X& & & & X& X \\ \hline
-\rref{R_RawInputs}     & & & & & & & \\ \hline
-\rref{R_MassInputs}    & & & & & & X& \\ \hline
-\rref{R_CheckInputs}   & & & & & X& & \\ \hline
-\rref{R_OutputInputs}  & X& X& & & & X& X \\ \hline
-\rref{R_TempWater}     & X& & & & & & \\ \hline 
-\rref{R_TempPCM}       & & X& & & & & \\ \hline
-\rref{R_EnergyWater}   & & & X& & & & \\ \hline
-\rref{R_EnergyPCM}     & & & & X& & & \\ \hline
-\rref{R_VerifyOutput}  & & & X& X& & & \\ \hline
-\rref{R_timeMeltBegin} & & X& & & & & \\ \hline
-\rref{R_timeMeltEnd}   & & X& & & & & \\ 
-\hline
+\iref{Training}            &  &  &  &  &  &  &  &  &  \\ \hline
+\iref{Inference}           & X &  &  &  &  &  &  &  &  \\ \hline
+\rref{R_Inputs}            &  &  &  &  &  &  &  &  &  \\ \hline
+\rref{R_Train}             & X &  &  &  &  &  &  &  &  \\ \hline
+\rref{R_VerifyOutput}      & X & X &  &  &  &  &  &  &  \\ \hline
+\nfrref{NFR_Accuracy}      &  &  &  &  &  &  &  &  &  \\ \hline 
+\nfrref{NFR_Usability}     &  &  &  &  &  &  &  &  &  \\ \hline
+\nfrref{NFR_Maintainability} &  &  &  &  &  &  &  &  &  \\ \hline
+\nfrref{NFR_Portability}   &  &  &  &  &  &  &  &  &  \\ \hline
 \end{tabular}
+
 \caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
 \label{Table:R_trace}
 \end{table}
 
-The purpose of the traceability graphs is also to provide easy references on
-what has to be additionally modified if a certain component is changed.  The
-arrows in the graphs represent dependencies. The component at the tail of an
-arrow is depended on by the component at the head of that arrow. Therefore, if a
-component is changed, the components that it points to should also be
-changed. Figure~\ref{Fig_ATrace} shows the dependencies of theoretical models,
-general definitions, data definitions, instance models, likely changes, and
-assumptions on each other. Figure~\ref{Fig_RTrace} shows the dependencies of
-instance models, requirements, and data constraints on each other.
 
 % \begin{figure}[h!]
 % 	\begin{center}
@@ -1302,69 +1316,18 @@ instance models, requirements, and data constraints on each other.
 
 \section{Development Plan}
 
-\plt{This section is optional.  It is used to explain the plan for developing
-  the software.  In particular, this section gives a list of the order in which
-  the requirements will be implemented.  In the context of a course  this is
-  where you can indicate which requirements will be implemented as part of the
-  course, and which will be ``faked'' as future work.  This section can be
-  organized as a prioritized list of requirements, or it could should the
-  requirements that will be implemented for ``phase 1'', ``phase 2'', etc.}
+Not applicable.
 
 \section{Values of Auxiliary Constants}
-
-\plt{Show the values of the symbolic parameters introduced in the report.}
-
-\plt{The definition of the requirements will likely call for SYMBOLIC\_CONSTANTS.
-Their values are defined in this section for easy maintenance.}
-
-\plt{The value of FRACTION, for the Maintainability NFR would be given here.}
+Not applicable, as no auxiliary constants are defined in this document.
 
 \newpage
 
 \bibliographystyle {plainnat}
-\bibliography {../../refs/References}
+%\bibliography {../../refs/References}
+\bibliography {References}
 
 \newpage
-
-\noindent \plt{The following is not part of the template, just some things to consider
-  when filing in the template.}
-
-\noindent \plt{Grammar, flow and \LaTeX advice:
-\begin{itemize}
-\item For Mac users \texttt{*.DS\_Store} should be in \texttt{.gitignore}
-\item \LaTeX{} and formatting rules
-\begin{itemize}
-\item Variables are italic, everything else not, includes subscripts (link to
-  document)
-\begin{itemize}
-\item \href{https://physics.nist.gov/cuu/pdf/typefaces.pdf}{Conventions}
-\item Watch out for implied multiplication
-\end{itemize}
-\item Use BibTeX
-\item Use cross-referencing
-\end{itemize}
-\item Grammar and writing rules
-\begin{itemize}
-\item Acronyms expanded on first usage (not just in table of acronyms)
-\item ``In order to'' should be ``to''
-\end{itemize}
-\end{itemize}}
-
-\noindent \plt{Advice on using the template:
-\begin{itemize}
-\item Difference between physical and software constraints
-\item Properties of a correct solution means \emph{additional} properties, not
-  a restating of the requirements (may be ``not applicable'' for your problem).
-  If you have a table of output constraints, then these are properties of a
-  correct solution.
-\item Assumptions have to be invoked somewhere
-\item ``Referenced by'' implies that there is an explicit reference
-\item Think of traceability matrix, list of assumption invocations and list of
-  reference by fields as automatically generatable
-\item If you say the format of the output (plot, table etc), then your
-  requirement could be more abstract
-\end{itemize}
-}
 
 \newpage{}
 \section*{Appendix --- Reflection}
@@ -1375,7 +1338,9 @@ The information in this section will be used to evaluate the team members on the
 graduate attribute of Lifelong Learning.  
 
 \input{../Reflection.tex}
+%\input{Reflection.tex}
 
 \input{../SRS_Reflection.tex}
+%\input{SRS_Reflection.tex}
 
 \end{document}
