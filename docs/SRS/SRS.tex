@@ -1159,13 +1159,14 @@ qualities that the software is expected to exhibit.
 \noindent \begin{itemize}
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-  \textbf{Accuracy} The system should achieve classification accuracy and prototype quality comparable to those reported in the original paper~\cite{zhang2022}, with at most a 5\% variation.
+  %\textbf{Accuracy} The system should achieve classification accuracy and prototype quality comparable to those reported in the original paper~\cite{zhang2022}, with at most a 5\% variation.
+  \textbf{Accuracy} The system should achieve a satisfactory classification accuracy (>=80\%).
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
   The system should visualize learned prototypes as graphs represented by images rather than node features and adjacency matrices to enhance interpretability.
 
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
-  \textbf{Maintainability} The implementation should include modular function abstractions, documentation, and unit tests to facilitate future adaptations.
+%\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
+%  \textbf{Maintainability} The implementation should include modular function abstractions, documentation, and unit tests to facilitate future adaptations.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
   \textbf{Portability} Re-ProtGNN should be compatible with Windows and macOS and run with PyTorch 1.8.0 and Torch-Geometric 2.0.2.
