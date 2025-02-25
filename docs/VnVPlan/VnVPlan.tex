@@ -15,6 +15,7 @@
 \input{../Comments}
 \input{../Common}
 
+
 \begin{document}
 
 \title{System Verification and Validation Plan for \progname{}} 
@@ -30,35 +31,21 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Feb 24 & 1.0 & Initial Draft\\
 \bottomrule
 \end{tabularx}
 
 ~\\
-\wss{The intention of the VnV plan is to increase confidence in the software.
-However, this does not mean listing every verification and validation technique
-that has ever been devised.  The VnV plan should also be a \textbf{feasible}
-plan. Execution of the plan should be possible with the time and team available.
-If the full plan cannot be completed during the time available, it can either be
-modified to ``fake it'', or a better solution is to add a section describing
-what work has been completed and what work is still planned for the future.}
 
-\wss{The VnV plan is typically started after the requirements stage, but before
-the design stage.  This means that the sections related to unit testing cannot
-initially be completed.  The sections will be filled in after the design stage
-is complete.  the final version of the VnV plan should have all sections filled
-in.}
 
 \newpage
 
 \tableofcontents
 
 \listoftables
-\wss{Remove this section if it isn't needed}
 
-\listoffigures
-\wss{Remove this section if it isn't needed}
+%section: list of figures
+%\listoffigures
 
 \newpage
 
@@ -70,292 +57,330 @@ in.}
   \textbf{symbol} & \textbf{description}\\
   \midrule 
   T & Test\\
+  A & Assumption\\
+  R & Requirement\\
+  SRS & Software Requirements Specification\\
+  ProtGNN & Prototype-based Graph Neural Network\\
+  Re-ProtGNN & Re-implementation of the ProtGNN model\\
+  GNN & Graph Neural Network\\
+  GIN & Graph Isomorphism Network\\
   \bottomrule
 \end{tabular}\\
-
-\wss{symbols, abbreviations, or acronyms --- you can simply reference the SRS
-  \citep{SRS} tables, if appropriate}
-
-\wss{Remove this section if it isn't needed}
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document ... \wss{provide an introductory blurb and roadmap of the
-  Verification and Validation plan}
+This document outlines the Verification and Validation (VnV) plan for Re-ProtGNN, a prototype-based interpretable Graph Neural Network. The objective of this plan is to ensure that the system meets the functional and non-functional requirements specified in the Software Requirements Specification (SRS). The document is structured as follows: Section 2 provides general information about Re-ProtGNN, including its objectives and scope. Section 3 details the verification strategies, covering SRS verification, design verification, and implementation verification. Section 4 describes the system tests, including functional and non-functional testing. Finally, Section 5 will cover additional test descriptions as needed.
 
 \section{General Information}
 
 \subsection{Summary}
 
-\wss{Say what software is being tested.  Give its name and a brief overview of
-  its general functions.}
+The software under validation is Re-ProtGNN, a model designed to enhance the interpretability of Graph Neural Networks. It aims to classify graph-structured data while generating prototypes that explain its predictions. The system consists of two main components:
+
+\begin{itemize}
+    \item Training Phase: Learns meaningful representations of graphs while optimizing a loss function to improve both classification accuracy and prototype relevance.
+    \item Inference Phase: Uses the trained model to classify unseen graphs and generate a set of representative prototypes that provide human-interpretable explanations.
+\end{itemize}
+
+Re-ProtGNN is implemented in Python, utilizing PyTorch Geometric for graph learning and Pytest for automated testing.
+
 
 \subsection{Objectives}
 
-\wss{State what is intended to be accomplished.  The objective will be around
-  the qualities that are most important for your project.  You might have
-  something like: ``build confidence in the software correctness,''
-  ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
-  just those that are most important.}
+The main goals of this VnV plan are:
 
-\wss{You should also list the objectives that are out of scope.  You don't have 
-the resources to do everything, so what will you be leaving out.  For instance, 
-if you are not going to verify the quality of usability, state this.  It is also 
-worthwhile to justify why the objectives are left out.}
+\begin{itemize}
+    \item Correctness: Ensure that the system correctly processes graph-structured inputs, trains models effectively, and generates meaningful prototype-based explanations.
+    \item Accuracy: Assess whether the model attains a minimum classification accuracy of 80\% on the MUTAG dataset and confirm that the selected prototypes align with expected graph representations.
+    \item Interpretability: Validate that the extracted prototypes contribute to a clearer understanding of the model’s decision-making process.
+\end{itemize}
 
-\wss{The objectives are important because they highlight that you are aware of 
-limitations in your resources for verification and validation.  You can't do everything, 
-so what are you going to prioritize?  As an example, if your system depends on an 
-external library, you can explicitly state that you will assume that external library 
-has already been verified by its implementation team.}
+Out-of-Scope Objectives:
+\begin{itemize}
+    \item External Library Verification: Core dependencies such as PyTorch and Torch-Geometric are presumed to be reliable and are not explicitly tested in this plan.
+    \item Graph Encoder Validation: Graph encoders, including Graph Isomorphism Networks (GINs), are adopted from prior research, and their correctness is assumed without additional validation.
+\end{itemize}
 
 \subsection{Challenge Level and Extras}
-
-\wss{State the challenge level (advanced, general, basic) for your project.
-Your challenge level should exactly match what is included in your problem
-statement.  This should be the challenge level agreed on between you and the
-course instructor.  You can use a pull request to update your challenge level
-(in TeamComposition.csv or Repos.csv) if your plan changes as a result of the
-VnV planning exercise.}
-
-\wss{Summarize the extras (if any) that were tackled by this project.  Extras
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  Extras should have already
-been approved by the course instructor as included in your problem statement.
-You can use a pull request to update your extras (in TeamComposition.csv or
-Repos.csv) if your plan changes as a result of the VnV planning exercise.}
+This is a research project, but extras may be included if time permits.
 
 \subsection{Relevant Documentation}
 
-\wss{Reference relevant documentation.  This will definitely include your SRS
-  and your other project documents (design documents, like MG, MIS, etc).  You
-  can include these even before they are written, since by the time the project
-  is done, they will be written.  You can create BibTeX entries for your
-  documents and within those entries include a hyperlink to the documents.}
+The Re-ProtGNN project is supported by several key documents that ensure the system is properly designed, implemented, and validated. These documents include:
 
-\citet{SRS}
-
-\wss{Don't just list the other documents.  You should explain why they are relevant and 
-how they relate to your VnV efforts.}
+\begin{itemize}
+    \item Problem Statement: This document~\cite{yuanqi2025protgnn} introduces the motivation of Re-ProtGNN and the core problem it aims to solve.
+    
+    \item Software Requirements Specification (SRS): The SRS~\cite{Yuanqi_ReProtGNN_SRS} defines the functional and non-functional requirements of Re-ProtGNN, and it also outlines the expected behavior of the system.
+\end{itemize}
 
 \section{Plan}
 
-\wss{Introduce this section.  You can provide a roadmap of the sections to
-  come.}
+This section outlines the Verification and Validation (VnV) plan for Re-ProtGNN. It starts with an introduction to the verification and validation team (Subsection~\ref{sec:vvt}), detailing the members and their roles. Next, it covers the SRS verification plan (Subsection~\ref{sec:srsvp}), followed by the design verification plan (Subsection ~\ref{sec:dvp}). The document then presents the VnV verification plan (Subsection~\ref{sec:vvp}) and the implementation verification plan (Subsection~\ref{sec:ivp}). Finally, it includes automated testing and verification tools (Subsection~\ref{sec:att}) and concludes with the software validation plan (Subsection~\ref{sec:svp}).
 
 \subsection{Verification and Validation Team}
+\label{sec:vvt}
 
-\wss{Your teammates.  Maybe your supervisor.
-  You should do more than list names.  You should say what each person's role is
-  for the project's verification.  A table is a good way to summarize this information.}
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|l|l|p{5cm}|}
+        \hline
+        \textbf{Name} & \textbf{Document} & \textbf{Role} & \textbf{Description} \\ 
+        \hline
+        Yuanqi Xue & All & Author & Create and manage all required documents, develop the VnV plan, conduct VnV testing, and verify the implementation. \\ 
+        \hline
+        Dr. Spencer Smith & All & Instructor/ Reviewer & Review all the documents. \\ 
+        \hline
+        Yinying Huo & All & Domain Expert & Review all the documents. \\ 
+        \hline
+    \end{tabular}
+    \caption{Verification and Validation Team}
+\end{table}
 
 \subsection{SRS Verification Plan}
+\label{sec:srsvp}
+An initial review of the SRS will be conducted by Dr. Spencer Smith and Yinying Huo to ensure its accuracy, completeness, and feasibility. The review will follow a manual inspection process using an SRS Checklist to assess the clarity and alignment of SRS with project objectives.
 
-\wss{List any approaches you intend to use for SRS verification.  This may
-  include ad hoc feedback from reviewers, like your classmates (like your
-  primary reviewer), or you may plan for something more rigorous/systematic.}
-
-\wss{If you have a supervisor for the project, you shouldn't just say they will
-read over the SRS.  You should explain your structured approach to the review.
-Will you have a meeting?  What will you present?  What questions will you ask?
-Will you give them instructions for a task-based inspection?  Will you use your
-issue tracker?}
-
-\wss{Maybe create an SRS checklist?}
+Reviewers will provide feedback via GitHub issues, and Yuanqi Xue, as the author, will be responsible for addressing revisions.
 
 \subsection{Design Verification Plan}
+\label{sec:dvp}
+The design verification process, covering the Module Guide (MG) and Module Interface Specification (MIS), will be conducted by Dr. Spencer Smith and domain expert Yinying Huo. Their feedback will be shared through GitHub issues, and Yuanqi Xue will be responsible for making the necessary revisions.
 
-\wss{Plans for design verification}
-
-\wss{The review will include reviews by your classmates}
-
-\wss{Create a checklists?}
+To ensure a structured verification process, Dr. Spencer Smith has created an MG checklist and MIS checklist, both of which will be used to evaluate clarity, consistency, and correctness in the design documents. The verification process will ensure that the system architecture, module interactions, and design choices align with the project objectives.
 
 \subsection{Verification and Validation Plan Verification Plan}
+\label{sec:vvp}
+The Verification and Validation (VnV) Plan will be reviewed by Dr. Spencer Smith and domain expert Yinying Huo to ensure that the validation methodology aligns with the project’s objectives. Feedback from reviewers will be provided via GitHub issues, where all necessary revisions and updates will be documented.
 
-\wss{The verification and validation plan is an artifact that should also be
-verified.  Techniques for this include review and mutation testing.}
+To maintain consistency and thorough evaluation, a VnV checklist prepared by Dr. Spencer Smith will be used to assess the completeness, correctness, and applicability of the verification and validation process. 
 
-\wss{The review will include reviews by your classmates}
-
-\wss{Create a checklists?}
 
 \subsection{Implementation Verification Plan}
+\label{sec:ivp}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
+The implementation of Re-ProtGNN will be verified through a combination of unit tests, system tests, and a final code walkthrough during the class presentation. This ensures that both functional and non-functional requirements are met, as outlined in Section~\ref{sec:system-tests}.
 
-\wss{In this section you would also give any details of any plans for static
-  verification of the implementation.  Potential techniques include code
-  walkthroughs, code inspection, static analyzers, etc.}
+\subsubsection{Static Verification Techniques} 
+    \begin{itemize} 
+    \item A code walkthrough will be conducted during the final class presentation, where the author, Yuanqi Xue, will present the system architecture, key implementation details, and model behavior.
+    
+    \item The walkthrough will provide an opportunity for peer review, allowing classmates and the instructor to identify potential issues and suggest improvements. 
 
-\wss{The final class presentation in CAS 741 could be used as a code
-walkthrough.  There is also a possibility of using the final presentation (in
-CAS741) for a partial usability survey.}
+\end{itemize}
+
+\subsubsection{Dynamic Testing} 
+\begin{itemize} 
+    \item The system will undergo unit and system testing, validating both functional and non-functional requirements as specified in Section~\ref{sec:system-tests}. 
+    \item Unit tests will focus on key components such as data preprocessing, model training, and prototype generation. 
+    \item System tests will evaluate the end-to-end performance of Re-ProtGNN, ensuring a desired classification accuracy and prototype demonstration. 
+    \item The testing tools and methodologies are detailed in Section~\ref{subsec: verification-tools}, and test cases are outlined in Section~\ref{sec:system-tests}. 
+\end{itemize}
+
 
 \subsection{Automated Testing and Verification Tools}
+\label{sec:att}
+\label{subsec: verification-tools}
+Re-ProtGNN will use a combination of automated testing and verification tools to ensure code correctness:
 
-\wss{What tools are you using for automated testing.  Likely a unit testing
-  framework and maybe a profiling tool, like ValGrind.  Other possible tools
-  include a static analyzer, make, continuous integration tools, test coverage
-  tools, etc.  Explain your plans for summarizing code coverage metrics.
-  Linters are another important class of tools.  For the programming language
-  you select, you should look at the available linters.  There may also be tools
-  that verify that coding standards have been respected, like flake9 for
-  Python.}
+Unit Testing:
+Pytest will be used for testing individual components, including data processing, loss functions, and inference logic. These tests will help verify that each module functions as expected before integration into the full system.
 
-\wss{If you have already done this in the development plan, you can point to
-that document.}
+Continuous Integration (CI):
+GitHub Actions will be configured to automate testing after each commit. The workflow will include:
+\begin{itemize}
+    \item Running unit tests to verify functionality.
+    \item Performing data integrity checks.
+    \item Validating dependencies to prevent compatibility issues.
+\end{itemize}
 
-\wss{The details of this section will likely evolve as you get closer to the
-  implementation.}
+Regression Testing:
+A dedicated test suite will ensure that changes do not negatively impact previously validated functionality. Logs from test runs will be automatically recorded and analyzed to track issues over time, ensuring that updates and modifications do not introduce unexpected errors.
+
+
 
 \subsection{Software Validation Plan}
-
-\wss{If there is any external data that can be used for validation, you should
-  point to it here.  If there are no plans for validation, you should state that
-  here.}
-
-\wss{You might want to use review sessions with the stakeholder to check that
-the requirements document captures the right requirements.  Maybe task based
-inspection?}
-
-\wss{For those capstone teams with an external supervisor, the Rev 0 demo should 
-be used as an opportunity to validate the requirements.  You should plan on 
-demonstrating your project to your supervisor shortly after the scheduled Rev 0 demo.  
-The feedback from your supervisor will be very useful for improving your project.}
-
-\wss{For teams without an external supervisor, user testing can serve the same purpose 
-as a Rev 0 demo for the supervisor.}
-
-\wss{This section might reference back to the SRS verification section.}
+\label{sec:svp}
+A separate 20\% test split from the MUTAG dataset will be used to assess the model’s classification effectiveness and the clarity of its prototype-based explanations, with accuracy serving as the main benchmark.
 
 \section{System Tests}
-
-\wss{There should be text between all headings, even if it is just a roadmap of
-the contents of the subsections.}
+\label{sec:system-tests}
+This section outlines the system tests designed to evaluate both functional and non-functional requirements.
 
 \subsection{Tests for Functional Requirements}
 
-\wss{Subsets of the tests may be in related, so this section is divided into
-  different areas.  If there are no identifiable subsets for the tests, this
-  level of document structure can be removed.}
+This section outlines the tests designed to validate the functional requirements of Re-ProtGNN, ensuring the system behaves as expected under various conditions. The testing areas include input verification, model training correctness, and inference validation, which corresponds to the R1, R2, and R3 of \href{https://github.com/Yuanqi-X/Re-ProtGNN/blob/main/docs/SRS/SRS.pdf}{SRS} ~\cite{Yuanqi_ReProtGNN_SRS}.
 
-\wss{Include a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.}
+\subsubsection{Area of Testing1: Input Verification}
 
-\subsubsection{Area of Testing1}
-
-\wss{It would be nice to have a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good here.  If a section
-  covers tests for input constraints, you should reference the data constraints
-  table in the SRS.}
+We need to make sure that all input graphs follow the correct format and structure before training begins. This test checks whether the system properly handles the input dataset files and follows the constraints listed in the \href{https://github.com/Yuanqi-X/Re-ProtGNN/blob/main/docs/SRS/SRS.pdf}{SRS} ~\cite{Yuanqi_ReProtGNN_SRS}.
 		
-\paragraph{Title for Test}
+\paragraph{Test for Valid Inputs}
 
 \begin{enumerate}
 
-\item{test-id1\\}
 
-Control: Manual versus Automatic
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs.  Output is not how you
-are going to return the results of the test.  The output is the expected
-result.}
+\item{T1: Valid Inputs\\}
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+Control: Automated Test
 					
-How test will be performed: 
+Initial State: Pending Input
 					
-\item{test-id2\\}
+Input: The MUTAG dataset files.
+					
+Output:  If the input is valid, the system should load it successfully. Otherwise, it should return an appropriate error message, as in Table~\ref{tab:graph_validation}.
+					
+Test Case Derivation: Since Graph Neural Networks (GNNs) rely on structured input, this test makes sure the model doesn't break when given bad data.
+					
+How test will be performed: An automated script will try loading the MUTAG dataset using the data loader and check whether the system correctly accepts or rejects them.
 
-Control: Manual versus Automatic
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
-
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
+\begin{table}[h]
+    \centering
+    \setlength{\tabcolsep}{10pt} % Reduce column spacing
+    \begin{tabularx}{\linewidth}{l X c c X} 
+        \toprule
+        \textbf{ID} & \textbf{Graph Type} & \textbf{Valid?} & \textbf{Error Message} \\
+        \midrule
+        TI-1 & MUTAG (Adj+Feat) & Yes & NONE \\
+        TI-2 & MUTAG (Missing Feats) & No & Missing Node Features \\
+        TI-3 & Corrupted Graph & No & Invalid Adjacency Matrix \\
+        TI-4 & Non-Graph Input & No & Incorrect Input Type \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Validation results for loading the MUTAG dataset}
+    \label{tab:graph_validation}
+\end{table}
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Area of Testing2: Model Training Verification}
+We need to make sure the training process work. In other words, the model should be able to optimize its loss function and learn properly.
 
-...
+\paragraph{Test for Training Loss Optimization}
+
+\begin{enumerate}
+					
+\item{T2: Model Training Test\\}
+
+Control: Automatic
+					
+Initial State: Model is initialized with random weights.
+					
+Input: The loaded MUTAG dataset.
+					
+Output: The system should optimize the loss function and display a decreasing loss curve over multiple epochs.
+
+Test Case Derivation: Ensures that the model is learning from the input data instead of failing due to improper gradients or data mismatches.
+
+How test will be performed: Train the model on valid datasets and log the loss over time. A Pytest script will validate loss reduction.
+
+\end{enumerate}
+
+\subsubsection{Area of Testing3: Inference Verification}
+This test ensures that the trained model makes accurate predictions and correctly retrieves prototype-based explanations.
+
+\paragraph{Test for Inference}
+
+\begin{enumerate}
+					
+\item{T3: Inference Test\\}
+
+Control: Automatic
+					
+Initial State: Model is trained and ready for inference.
+					
+Input: The testing dataset.
+					
+Output: The model should output a predicted label for each graph and a set of prototypes.
+
+Test Case Derivation: Ensures that the trained model can be used in the inference phase for classifying inputs and generating a customized numbers of prototypes.
+
+How test will be performed: A Pytest script will run inference on the test dataset, comparing the predicted labels with the ground truth to compute classification accuracy. The system should also generate a set of representative prototypes for the entire dataset. Pytest will verify that the correct number of prototypes is produced.
+
+\end{enumerate}
+
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{The nonfunctional requirements for accuracy will likely just reference the
-  appropriate functional tests from above.  The test cases should mention
-  reporting the relative error for these tests.  Not all projects will
-  necessarily have nonfunctional requirements related to accuracy.}
+This section outlines the tests designed to verify the nonfunctional requirements of Re-ProtGNN, including accuracy, usability, and portability.
 
-\wss{For some nonfunctional tests, you won't be setting a target threshold for
-passing the test, but rather describing the experiment you will do to measure
-the quality for different inputs.  For instance, you could measure speed versus
-the problem size.  The output of the test isn't pass/fail, but rather a summary
-table or graph.}
-
-\wss{Tests related to usability could include conducting a usability test and
-  survey.  The survey will be in the Appendix.}
-
-\wss{Static tests, review, inspections, and walkthroughs, will not follow the
-format for the tests given below.}
-
-\wss{If you introduce static tests in your plan, you need to provide details.
-How will they be done?  In cases like code (or document) walkthroughs, who will
-be involved? Be specific.}
-
-\subsubsection{Area of Testing1}
+\subsubsection{Area of Testing1: Accuracy}
 		
-\paragraph{Title for Test}
+\paragraph{Accuracy}
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{T4: Accuracy Test\\}
 
-Type: Functional, Dynamic, Manual, Static etc.
+Type: Automated
 					
-Initial State: 
+Initial State: A trained Re-ProtGNN model is loaded.
 					
-Input/Condition: 
+Input: The testing dataset.
 					
-Output/Result: 
+Output: The system should achieve a classification accuracy of at least 80\%.
 					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
+How test will be performed: A Pytest script will run inference on the test dataset and compare the predicted labels with ground truth. The script will calculate the overall classification accuracy and ensure it meets the required threshold ($\geq 80\%$). The accuracy percentage will be logged to evaluate model performance.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
+\subsubsection{Area of Testing2: Usability}
 
-...
+\paragraph{Usability}
+
+\begin{enumerate}
+    \item{T5: Usability Test\\}
+
+    Type: Manual
+    					
+    Initial State: Trained Re-ProtGNN model is available.
+    					
+    Input: A set of graphs with learned prototypes.
+    					
+    Output: The system should visualize prototypes as graph images, making them more interpretable than raw adjacency matrices or node feature representations.
+    					
+    How test will be performed: A set of sample graphs will be processed through the system, and the generated prototype visualizations will be reviewed for clarity and interpretability. Testers will manually verify whether the images effectively represent key graph structures and provide meaningful insights into model decisions. Feedback will be collected to assess usability improvements.
+\end{enumerate}
+
+\subsubsection{Area of Testing3: Portability}
+
+\paragraph{Portability}
+
+\begin{enumerate}
+    \item{T6: Portability Test\\}
+
+    Type: Manual
+    					
+    Initial State: None
+    					
+    Condition: The users should have PyTorch 1.8.0 and Torch-Geometric 2.0.2 installed.
+    					
+    Result: The system should successfully run on users' machines, with all functions working as expected.
+    					
+    How test will be performed: The author, Yuanqi Xue, will install the software on Windows, macOS, and Linux systems, verifying that it runs correctly across all platforms.
+\end{enumerate}
 
 \subsection{Traceability Between Test Cases and Requirements}
 
-\wss{Provide a table that shows which test cases are supporting which
-  requirements.}
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|}
+  \hline
+    & T1 & T2 & T3 & T4 & T5 & T6 \\
+  \hline
+  R1        & X  &   &   &   &   &   \\ \hline
+  R2        &   & X  &   &   &   &   \\ \hline
+  R3        &   &   & X  &   & X  &   \\ \hline
+  NFR1      &   &   &   & X  &   &   \\ \hline
+  NFR2      &   &   &   &   &  X &   \\ \hline
+  NFR3      &   &   &   &   &   & X  \\ \hline
+  \end{tabular}
+  \caption{Traceability Matrix of Test Cases and Requirements}
+  \label{Table:trace-test-req}
+  \end{table}
+
 
 \section{Unit Test Description}
 
@@ -485,6 +510,7 @@ How test will be performed:
 \bibliographystyle{plainnat}
 
 \bibliography{../../refs/References}
+%\bibliography{refs/References}
 
 \newpage
 
@@ -518,12 +544,3 @@ graduate attribute of Lifelong Learning.
   \item What knowledge and skills will the team collectively need to acquire to
   successfully complete the verification and validation of your project?
   Examples of possible knowledge and skills include dynamic testing knowledge,
-  static testing knowledge, specific tool usage, Valgrind etc.  You should look to
-  identify at least one item for each team member.
-  \item For each of the knowledge areas and skills identified in the previous
-  question, what are at least two approaches to acquiring the knowledge or
-  mastering the skill?  Of the identified approaches, which will each team
-  member pursue, and why did they make this choice?
-\end{enumerate}
-
-\end{document}
