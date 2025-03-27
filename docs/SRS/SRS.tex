@@ -1052,9 +1052,9 @@ The goal \gsref{GS1} is achieved through \iref{Training} and \iref{Inference}. \
   \hline
   Input& Node features \( X \), adjacency matrix \( A \), trained parameters \( W, b, P \).\\
   \hline
-  Output& Predicted class labels \( \hat{y} \) and prototypes.\\
+  Output& Predicted class labels \( \hat{y} \).\\
   \hline
-  Description&During inference, the model forwards input features through the trained model (see \iref{Training}) and directly gets the classification results and prototypes.\\ 
+  Description&During inference, the model forwards input features through the trained model (see \iref{Training}) and directly gets the classification results.\\ 
   \hline
   Sources& ~\cite{runai_ml_inference}\\
   \hline
@@ -1146,9 +1146,9 @@ qualities that the software is expected to exhibit.
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:] The system should be able to load the MUTAG dataset ~\cite{debnath1991structure} .
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Train}:] During the training phase, the system should update model parameters by optimizing the Loss Function (see \iref{Training}).
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Train}:] During the training phase, the system should update model parameters and learn prototype representations by optimizing the Loss Function (see \iref{Training}).
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:] During the inference phase, the system should compute classification accuracy and prototypes. (see \iref{Inference}).
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:] During the inference phase, the system should compute classification accuracy. (see \iref{Inference}).
 
 
 \end{itemize}
