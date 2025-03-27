@@ -38,7 +38,7 @@ urlcolor=cyan          % color of external links
 
 \begin{document}
 
-\title{Module Interface Specification for \progname{}}
+\title{Module Interface Specification for Re-ProtGNN}
 
 \author{\authname}
 
@@ -53,8 +53,7 @@ urlcolor=cyan          % color of external links
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Mar 19, 2025 & 1.0 & Initial Draft\\
 \bottomrule
 \end{tabularx}
 
@@ -62,9 +61,7 @@ Date 2 & 1.1 & Notes\\
 
 \section{Symbols, Abbreviations and Acronyms}
 
-See SRS Documentation at \wss{give url}
-
-\wss{Also add any additional symbols, abbreviations or acronyms}
+See SRS Documentation at \url{https://github.com/Yuanqi-X/Re-ProtGNN/blob/main/docs/SRS/SRS.pdf}.
 
 \newpage
 
@@ -76,17 +73,13 @@ See SRS Documentation at \wss{give url}
 
 \section{Introduction}
 
-The following document details the Module Interface Specifications for
-\wss{Fill in your project name and description}
+The following document details the Module Interface Specifications for Re-ProtGNN, a re-implementation of an interpretable Graph Neural Network (GNN) Framework.
 
 Complementary documents include the System Requirement Specifications
 and Module Guide.  The full documentation and implementation can be
-found at \url{...}.  \wss{provide the url for your repo}
+found at \url{https://github.com/Yuanqi-X/Re-ProtGNN/tree/main}.
 
 \section{Notation}
-
-\wss{You should describe your notation.  You can use what is below as
-  a starting point.}
 
 The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
 with the addition that template modules have been adapted from
@@ -95,7 +88,7 @@ with the addition that template modules have been adapted from
 multiple assignment statement and conditional rules follow the form $(c_1
 \Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
 
-The following table summarizes the primitive data types used by \progname. 
+The following table summarizes the primitive data types used by Re-ProtGNN. 
 
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
@@ -104,19 +97,24 @@ The following table summarizes the primitive data types used by \progname.
 \toprule 
 \textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
 \midrule
-character & char & a single symbol or digit\\
 integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
 natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
 real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
+boolean & \texttt{bool} & Boolean value: either \texttt{True} or \texttt{False} \\
+string & \texttt{str} & A sequence of Unicode characters \\
+tensor & \texttt{Tensor} & A multi-dimensional array object from PyTorch \\
+graph & \texttt{Data} & A graph object from PyTorch Geometric, with node and edge attributes \\
+dataset & \texttt{Dataset} & A collection of graph objects for training or evaluation \\
+dataloader & \texttt{DataLoader} & A PyTorch Geometric data loader for batching graph data \\
+dictionary & \texttt{dict[K, V]} & A mapping from keys of type \texttt{K} to values of type \texttt{V} \\
+list & \texttt{list[T]} & A sequence of elements of type \texttt{T} \\
+function & \texttt{Customized Function} & A self-defined callable function\\
 \bottomrule
 \end{tabular} 
 \end{center}
 
 \noindent
-The specification of \progname \ uses some derived data types: sequences, strings, and
-tuples. Sequences are lists filled with elements of the same data type. Strings
-are sequences of characters. Tuples contain a list of values, potentially of
-different types. In addition, \progname \ uses functions, which
+Re-ProtGNN uses functions, which
 are defined by the data types of their inputs and outputs. Local functions are
 described by giving their type signature followed by their specification.
 
@@ -134,18 +132,16 @@ The following table is taken directly from the Module Guide document for this pr
 {Hardware-Hiding} & ~ \\
 \midrule
 
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
-& Output Format\\
-& Output Verification\\
-& Temperature ODEs\\
-& Energy Equations\\ 
+\multirow{4}{0.3\textwidth}{Behaviour-Hiding Module} & Configuration Module \\
+& Input Format Module\\
 & Control Module\\
-& Specification Parameters Module\\
+& Training Module\\
+& Output Visualization Module\\
 \midrule
 
-\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
-& ODE Solver\\
-& Plotting\\
+\multirow{3}{0.3\textwidth}{Software Decision Module} & {Model Module}\\
+& Inference Module\\
+& Explanation Module\\
 \bottomrule
 
 \end{tabular}
@@ -153,35 +149,79 @@ The following table is taken directly from the Module Guide document for this pr
 \label{TblMH}
 \end{table}
 
-\newpage
-~\newpage
+%\newpage
+%~\newpage
 
-\section{MIS of \wss{Module Name}} \label{Module} \wss{Use labels for
-  cross-referencing}
 
-\wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
-
-\wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
+\section{MIS of Configuration Module} \label{Configurations}
 
 \subsection{Module}
-
-\wss{Short name for the module}
+Configuration
 
 \subsection{Uses}
-
+Hardware-Hiding Module
 
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
+\begin{itemize}
+  \item \texttt{data\_args}: An instance of \texttt{DataParser}, containing dataset-level configuration such as name, directory, splitting strategy, and seed.
+  \item \texttt{model\_args}: An instance of \texttt{ModelParser}, containing model architecture and prototype-related hyperparameters, including GNN settings.
+  \item \texttt{exp\_args}: An instance of \texttt{ExpParser}, configuring the algorithm used in explanation, such as rollout number and exploration parameters.
+  \item \texttt{reward\_args}: An instance of \texttt{RewardParser}, specifying how explanation rewards are calculated.
+  \item \texttt{train\_args}: An instance of \texttt{TrainParser}, configuring training hyperparameters such as learning rate, epochs, batch size, and prototype projection.
+\end{itemize}
+
+\subsubsection{Exported Access Programs}
+None
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Environment Variables}
+\begin{itemize}
+  \item GPU/CPU environment: used to determine the computing device for training and inference.
+  \item File system: used for checkpoint paths and log saving (e.g., \texttt{checkpoint/}, \texttt{datasets/}).
+  \item Global random seed: applies to PyTorch, NumPy, and Python’s random module for reproducibility.
+\end{itemize}
+
+\subsubsection{Assumptions}
+None
+
+\subsubsection{Access Routine Semantics}
+None -- this module serves as a global container for parameter configurations and does not define any callable functions. Other modules are expected to directly import and access \texttt{data\_args}, \texttt{model\_args}, \texttt{train\_args}, etc.
+
+\subsubsection{Local Functions}
+None
+
+
+
+
+
+\section{MIS of Input Format Module} \label{InputFormat}
+
+\subsection{Module}
+Data
+
+\subsection{Uses}
+Hardware-Hiding Module
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
 
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+\begin{tabular}{p{3.2cm} p{5.5cm} p{4cm} p{2.5cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-\wss{accessProg} & - & - & - \\
+get\_dataset & dataset\_dir: \texttt{str}, dataset\_name: \texttt{str} & \texttt{Dataset} & \texttt{FileNotFoundError} \\
+get\_dataloader & dataset: \texttt{Dataset}, batch\_size: \(\mathbb{N}\), data\_split\_ratio: \texttt{list[\(\mathbb{R}\)]} & \texttt{dict[str \(\rightarrow\) DataLoader]} & \texttt{AssertionError} \\
 \hline
 \end{tabular}
 \end{center}
@@ -189,82 +229,558 @@ The following table is taken directly from the Module Guide document for this pr
 \subsection{Semantics}
 
 \subsubsection{State Variables}
-
-\wss{Not all modules will have state variables.  State variables give the module
-  a memory.}
+None
 
 \subsubsection{Environment Variables}
-
-\wss{This section is not necessary for all modules.  Its purpose is to capture
-  when the module has external interaction with the environment, such as for a
-  device driver, screen interface, keyboard, file, etc.}
+Filesystem: the file system for reading dataset files.
 
 \subsubsection{Assumptions}
-
-\wss{Try to minimize assumptions and anticipate programmer errors via
-  exceptions, but for practical purposes assumptions are sometimes appropriate.}
+None
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \wss{accessProg}():
+\noindent \textbf{get\_dataset(dataset\_dir, dataset\_name)}:
 \begin{itemize}
-\item transition: \wss{if appropriate} 
-\item output: \wss{if appropriate} 
-\item exception: \wss{if appropriate} 
+  \item transition: None
+  \item output: A PyTorch Geometric's \texttt{Dataset} object containing all graphs in the dataset.
+  \item exception:
+  \begin{itemize}
+    \item \texttt{FileNotFoundError}: if the dataset directory is invalid.
+  \end{itemize}
 \end{itemize}
 
-\wss{A module without environment variables or state variables is unlikely to
-  have a state transition.  In this case a state transition can only occur if
-  the module is changing the state of another module.}
+\noindent \textbf{get\_dataloader(dataset, batch\_size, data\_split\_ratio)}:
+\begin{itemize}
+  \item transition: None
+  \item output: A dictionary of PyTorch Geometric's \texttt{DataLoader} objects with keys \texttt{"train"}, \texttt{"eval"}, and \texttt{"test"}.
+  \item exception:
+  \begin{itemize}
+    \item \texttt{AssertionError}: if a custom split is requested but missing from the dataset.
+  \end{itemize}
+\end{itemize}
 
-\wss{Modules rarely have both a transition and an output.  In most cases you
-  will have one or the other.}
+\subsubsection{Local Functions}
+None
+
+
+
+
+
+
+
+
+
+
+\section{MIS of Control Module} \label{Control}
+
+\subsection{Module}
+Main
+
+\subsection{Uses}
+Hardware-Hiding Module, Configuration Module (\ref{Configurations}), Input Format Module (\ref{InputFormat}), Model Module (\ref{Model}), Training Module (\ref{Train}), Inference Module (\ref{Test}), 
+Explanation Module (\ref{Explanation}), Output Visualization Module (\ref{OutputVisualization})
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3cm} p{6cm} p{4.5cm} p{3cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+main & clst: \(\mathbb{R}\), sep: \(\mathbb{R}\) & - & \texttt{RuntimeError} \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Environment Variables}
+\begin{itemize}
+  \item Filesystem: the file system for loading/saving checkpoints and writing logs/images.
+  \item GPU/CPU hardware for model training and inference.
+\end{itemize}
+
+\subsubsection{Assumptions}
+None
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{main(clst, sep)}:
+\begin{itemize}
+  \item transition: Loads the dataset and splits it into training, validation, and test sets. Initializes the GNN model and passes it to the \texttt{train} function for optimization. After training, the \texttt{test} function evaluates the model on the test set. Finally, explanation plots are generated and saved.
+  \item output: None
+  \item exception:
+  \begin{itemize}
+    \item \texttt{RuntimeError}: if device mismatch or model loading fails.
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Local Functions}
+None
+
+
+
+
+
+
+
+\section{MIS of Training Module} \label{Train} 
+
+\subsection{Module}
+Train
+
+\subsection{Uses}
+Hardware-Hiding Module, Configuration Module (\ref{Configurations}), Model Module (\ref{Model}), Explanation Module (\ref{OutputVisualization}), Output Visualization Module (\ref{OutputVisualization})
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{2cm} p{6cm} p{4cm} p{3.5cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+train & model: \texttt{GnnNets}, dataset: \texttt{Dataset}, dataloader: \texttt{dict[str \(\rightarrow\) DataLoader]}, clst: \(\mathbb{R}\), sep: \(\mathbb{R}\) & - & \texttt{FileNotFoundError} \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Environment Variables}
+Filesystem: the file system for saving model checkpoints.
+
+\subsubsection{Assumptions}
+None
+
+\subsubsection{Access Routine Semantics}
+
+\noindent train(model, dataset, dataloader, clst, sep):
+\begin{itemize}
+\item transition: Trains the model using the provided data and hyperparameters. Projects prototypes periodically. Monitors evaluation accuracy, saves the best-performing model to disk.
+\item output: None
+\item exception:     
+    \begin{itemize}
+        \item \texttt{FileNotFoundError}: if the dataset path or checkpoint directory is invalid
+    \end{itemize}
+\end{itemize}
 
 \subsubsection{Local Functions}
 
-\wss{As appropriate} \wss{These functions are for the purpose of specification.
-  They are not necessarily something that is going to be implemented
-  explicitly.  Even if they are implemented, they are not exported; they only
-  have local scope.}
+\noindent
+\textbf{evaluate(loader: \texttt{DataLoader}, model: \texttt{GnnNets}, criterion: \texttt{Customized Function}) \(\rightarrow\) \texttt{dict[str \(\rightarrow\) float]}}
+\begin{itemize}
+  \item transition: None
+  \item output: A dictionary containing the average loss and accuracy over the input dataset split. Specifically:
+    \begin{itemize}
+      \item \texttt{"loss"}: average loss (float)
+      \item \texttt{"acc"}: classification accuracy (float)
+    \end{itemize}
+  \item exception: None
+\end{itemize}
+
+
+
+
+
+
+\section{MIS of Output Visualization Module} \label{OutputVisualization}
+
+\subsection{Module}
+OutputVisualize
+
+\subsection{Uses}
+Hardware-Hiding Module
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3cm} p{5cm} p{4.5cm} p{3cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+PlotUtils & dataset\_name: \texttt{str} & \texttt{PlotUtils instance} & - \\
+plot & graph: \texttt{Data}, nodelist: \texttt{list[int]}, figname: \texttt{str}, kwargs: \texttt{dict} & - & - \\
+append\_record & info: \texttt{str} & - & \texttt{FileNotFoundError} \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Environment Variables}
+\begin{itemize}
+  \item Filesystem: the file system for saving log files and outputting explanation images.
+\end{itemize}
+
+\subsubsection{Assumptions}
+None
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{PlotUtils(dataset\_name)}:
+\begin{itemize}
+  \item transition: None
+  \item output: A \texttt{PlotUtils} object with methods for graph visualization.
+  \item exception: None
+\end{itemize}
+
+
+\noindent \textbf{plot(graph, nodelist, figname, kwargs)}:
+\begin{itemize}
+  \item transition: Generates explanation images and saves them to the specified path.
+  \item output: None
+  \item exception: None
+\end{itemize}
+
+
+\noindent \textbf{append\_record(info)}:
+\begin{itemize}
+  \item transition: Appends the \texttt{info} string to the log file located in the given log directory.
+  \item output: None
+  \item exception: 
+  \begin{itemize}
+    \item \texttt{FileNotFoundError}: if the directory does not exist.
+  \end{itemize}
+\end{itemize}
+
+
+
+\subsubsection{Local Functions}
+None
+
+
+
+
+
+
+
+
+
+\section{MIS of Model Module} \label{Model}
+
+\subsection{Module}
+GnnNets
+
+\subsection{Uses}
+None
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3cm} p{4.5cm} p{4.5cm} p{3cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+GnnNets & input\_dim: \texttt{int}, output\_dim: \texttt{int}, model\_args: \texttt{dict} & \texttt{GnnNets} & \texttt{NotImplementedError} \\
+forward & data: \texttt{Data}, protgnn\_plus: \texttt{bool}, similarity: \texttt{Tensor} & logits: \texttt{Tensor}, prob: \texttt{Tensor}, emb1: \texttt{Tensor}, emb2: \texttt{Tensor}, min\_distances: \texttt{Tensor} & - \\
+update\_state\_dict & state\_dict: \texttt{dict} & - & - \\
+to\_device & - & - & - \\
+
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+\begin{itemize}
+  \item \texttt{self.model}: the internal GNN encoder consisting of learnable layers.
+  \item \texttt{self.prototype\_vectors}: a tensor containing learnable prototype embeddings, where each prototype represents a latent concept tied to a specific class.
+  \item \texttt{self.device}: the computing device (e.g., 'cpu' or 'cuda') on which the model is running.
+\end{itemize}
+
+\subsubsection{Environment Variables}
+GPU/CPU hardware for model training and inference.
+
+\subsubsection{Assumptions}
+None
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{GnnNets(input\_dim, output\_dim, model\_args)}:
+\begin{itemize}
+  \item transition: None
+  \item output: Returns an instance of the \texttt{GnnNets} class with specified input/output dimensions and model hyperparameters.
+  \item exception:     
+    \begin{itemize}
+      \item \texttt{NotImplementedError}: if the specified model name in \texttt{model\_args} is unsupported.
+    \end{itemize}
+\end{itemize}
+
+\noindent \textbf{forward(data, protgnn\_plus, similarity)}:
+\begin{itemize}
+  \item transition: Moves graph data to the correct device and performs a forward pass through the model.
+  \item output:
+    \begin{itemize}
+      \item \texttt{logits}: raw output scores for each class.
+      \item \texttt{prob}: predicted class probabilities for each input graph, obtained by applying softmax to logits.
+      \item \texttt{emb1}: intermediate representation from an early layer of the model.
+      \item \texttt{emb2}: deeper-level embedding capturing higher-level graph features after additional processing layers.
+      \item \texttt{min\_distances}: for each input graph, the minimum distance to each prototype vector.
+    \end{itemize}
+  \item exception: None
+\end{itemize}
+
+\noindent \textbf{update\_state\_dict(state\_dict)}:
+\begin{itemize}
+  \item transition: Loads and updates model parameters from a dictionary of saved weights.
+  \item output: None
+  \item exception: None
+\end{itemize}
+
+\noindent \textbf{to\_device()}:
+\begin{itemize}
+  \item transition: Moves all model components to the device.
+  \item output: None
+  \item exception: None
+\end{itemize}
+
+\subsubsection{Local Functions}
+None
+
+
+
+
+
+\section{MIS of Inference Module} \label{Test}
+
+\subsection{Module}
+Test
+
+\subsection{Uses}
+Model Module (\ref{Model}), Output Visualization Module (\ref{OutputVisualization})
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{2cm} p{6cm} p{4cm} p{3.5cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+test & model: \texttt{GnnNets}, dataloader: \texttt{DataLoader} & - & \texttt{RuntimeError} \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Environment Variables}
+None
+
+\subsubsection{Assumptions}
+The model has been trained and its best checkpoint has been loaded.
+
+\subsubsection{Access Routine Semantics}
+
+\noindent test(model, dataloader):
+\begin{itemize}
+\item transition: Evaluates the trained model on the test set. Computes loss and accuracy, and uses the Output Visualization Module to log results.
+\item output: None
+\item exception:     
+    \begin{itemize}
+        \item \texttt{RuntimeError}: if inference fails due to an invalid model state or shape mismatch
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Local Functions}
+None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{MIS of Explanation Module} \label{Explanation}
+
+\subsection{Module}
+Explanation
+
+\subsection{Uses}
+Configuration Module (\ref{Configurations})
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3cm} p{5cm} p{4.5cm} p{3cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+get\_explanation & data: \texttt{Data}, gnnNet: \texttt{GnnNets}, prototype: \texttt{Tensor} & coalition: \texttt{list[int]}, P: \(\mathbb{R}\), embedding: \texttt{Tensor} & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Environment Variables}
+None
+
+\subsubsection{Assumptions}
+None
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{get\_explanation(data, gnnNet, prototype)}:
+\begin{itemize}
+  \item transition: None
+  \item output:
+  \begin{itemize}
+    \item \texttt{coalition}: list of node indices forming the explanation.
+    \item \texttt{P}: float score indicating similarity to the prototype.
+    \item \texttt{embedding}: matrix of floats representing the masked subgraph embedding.
+  \end{itemize}
+  \item exception: None
+\end{itemize}
+
+\subsubsection{Local Functions}
+
+\noindent 
+\textbf{MCTSNode(coalition: \texttt{list[int]}, data: \texttt{Data}, ori\_graph: \texttt{networkx.Graph}, c\_puct: \(\mathbb{R}\), W: \(\mathbb{R}\), N: \(\mathbb{R}\), P: \(\mathbb{R}\)) \(\rightarrow\) \texttt{MCTSNode}}
+\begin{itemize}
+  \item transition: None
+  \item output: A node object representing a state in the search tree.
+  \item exception: None
+\end{itemize}
+
+\noindent 
+\textbf{mcts\_rollout(tree\_node: \texttt{MCTSNode}, state\_map: \texttt{dict}, data: \texttt{Data}, graph: \texttt{networkx.Graph}, score\_func: \texttt{Customized Function}) \(\rightarrow \mathbb{R}\)}
+\begin{itemize}
+  \item transition: None
+  \item output: Scalar value representing the reward from this rollout.
+  \item exception: None
+\end{itemize}
+
+\noindent 
+\textbf{child\_scores(score\_func: \texttt{Customized Function}, children: \texttt{list[MCTSNode]}) \(\rightarrow\) \texttt{list[\(\mathbb{R}\)]}}
+\begin{itemize}
+  \item transition: None
+  \item output: List of float scores, one for each child.
+  \item exception: None
+\end{itemize}
+
+\noindent 
+\textbf{prot\_score(coalition: \texttt{list[int]}, data: \texttt{Data}, gnnNet: \texttt{GnnNets}, prototype: \texttt{Tensor}) \(\rightarrow \mathbb{R}\)}
+\begin{itemize}
+  \item transition: None
+  \item output: A float similarity score (higher = more aligned with prototype).
+  \item exception: None
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
 \newpage
 
 \bibliographystyle {plainnat}
 \bibliography {../../../refs/References}
+%\bibliography{refs/References}
 
-\newpage
+%\newpage
 
-\section{Appendix} \label{Appendix}
+%\section{Appendix} \label{Appendix}
 
-\wss{Extra information if required}
+%\wss{Extra information if required}
 
-\newpage{}
+%\newpage{}
 
-\section*{Appendix --- Reflection}
+%\section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741 projects}
+%\wss{Not required for CAS 741 projects}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Problem Analysis and Design.
+%The information in this section will be used to evaluate the team members on the
+%graduate attribute of Problem Analysis and Design.
 
-\input{../../Reflection.tex}
+%\input{../../Reflection.tex}
 
-\begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item Which of your design decisions stemmed from speaking to your client(s)
-  or a proxy (e.g. your peers, stakeholders, potential users)? For those that
-  were not, why, and where did they come from?
-  \item While creating the design doc, what parts of your other documents (e.g.
-  requirements, hazard analysis, etc), it any, needed to be changed, and why?
-  \item What are the limitations of your solution?  Put another way, given
-  unlimited resources, what could you do to make the project better? (LO\_ProbSolutions)
-  \item Give a brief overview of other design solutions you considered.  What
-  are the benefits and tradeoffs of those other designs compared with the chosen
-  design?  From all the potential options, why did you select the documented design?
-  (LO\_Explores)
-\end{enumerate}
+%\begin{enumerate}
+%  \item What went well while writing this deliverable? 
+%  \item What pain points did you experience during this deliverable, and how
+%    did you resolve them?
+%  \item Which of your design decisions stemmed from speaking to your client(s)
+%  or a proxy (e.g. your peers, stakeholders, potential users)? For those that
+%  were not, why, and where did they come from?
+%  \item While creating the design doc, what parts of your other documents (e.g.
+%  requirements, hazard analysis, etc), it any, needed to be changed, and why?
+%  \item What are the limitations of your solution?  Put another way, given
+%  unlimited resources, what could you do to make the project better? (LO\_ProbSolutions)
+%  \item Give a brief overview of other design solutions you considered.  What
+%  are the benefits and tradeoffs of those other designs compared with the chosen
+%  design?  From all the potential options, why did you select the documented design?
+%  (LO\_Explores)
+%\end{enumerate}
 
 
 \end{document}
