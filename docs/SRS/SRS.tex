@@ -710,7 +710,15 @@ SI Units&Unitless\\
 Equation&$ \nabla_b \mathcal{L} = (\hat{y} - y)$\\
 \hline
 Description &
-With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $b$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $b$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).
+
+\begin{itemize}
+    \item \( \hat{y} \): Predicted class probability. (Type: scalar in $\mathbb{R}$)
+    \item \( y \): Ground-truth label. (Type: scalar in $\mathbb{Z}$)
+    \item \( b \): Bias term in the fully connected layer. (Type: scalar in $\mathbb{R}$)
+    \item \( \nabla_b \mathcal{L} \): Gradient of loss with respect to \( b \). (Type: scalar in $\mathbb{R}$)
+\end{itemize}
+\\
 
 \hline
   Source & ~\citep{Turin2020}\\
@@ -738,7 +746,16 @@ SI Units&Unitless\\
 Equation&$ \nabla_W \mathcal{L} = (\hat{y} - y)h$\\
 \hline
 Description &
-With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to W using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to W using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).
+
+\begin{itemize}
+    \item \( \hat{y} \): Predicted class probability. (Type: scalar in $\mathbb{R}$)
+    \item \( y \): Ground-truth label. (Type: scalar in $\mathbb{Z}$)
+    \item \( h \): Graph embedding from the GNN encoder. (Type: vector in $\mathbb{R}^d$)
+    \item \( W \): Weight vector of the fully connected layer. (Type: vector in $\mathbb{R}^d$)
+    \item \( \nabla_W \mathcal{L} \): Gradient of loss with respect to \( W \). (Type: vector in $\mathbb{R}^d$)
+\end{itemize}
+\\
 
 \hline
   Source & ~\citep{Turin2020}\\
@@ -768,10 +785,20 @@ SI Units&Unitless\\
 Equation&$\nabla_{W_g} \mathcal{L} = (\hat{y} - y) W \sum_{u \in \mathcal{N}(v)} \tilde{A}_{vu} h_u$\\
 \hline
 Description &
-\( W_g \): Trainable weight matrix of GNN Encoder (see \tref{TM1:GNNFP})  that maps input graphs to graph embeddings. (Type: a matrix of $\mathbb{R}$)
-\vspace{1em}
 
-With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $W_g$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $W_g$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).
+
+\begin{itemize}
+    \item \( \hat{y} \): Predicted class probability. (Type: scalar in $\mathbb{R}$)
+    \item \( y \): Ground-truth label. (Type: scalar in $\mathbb{Z}$)
+    \item \( W \): Weight vector of the fully connected layer. (Type: vector in $\mathbb{R}^d$)
+    \item \( h_u \): Feature vector of neighbor node \( u \). (Type: vector in $\mathbb{R}^d$)
+    \item \( \tilde{A}_{vu} \): Scalar entry from normalized adjacency matrix. (Type: scalar in $\mathbb{R}$)
+    \item \( \sum_{u \in \mathcal{N}(v)} \tilde{A}_{vu} h_u \): Aggregated message from neighbors. (Type: vector in $\mathbb{R}^d$)
+    \item \( W_g \): Trainable weight matrix of GNN Encoder (see \tref{TM1:GNNFP})  that maps input graphs to graph embeddings. (Type: matrix in $\mathbb{R}^{d \times d_{in}}$)
+    \item \( \nabla_{W_g} \mathcal{L} \): Gradient of loss with respect to \( W_g \). (Type: matrix in $\mathbb{R}^{d \times d_{in}}$)
+\end{itemize}
+\\
 
 
 
@@ -801,10 +828,18 @@ SI Units&Unitless\\
 Equation&$ \nabla_{P} \mathcal{L} = 2 (h_i - p_j) - 2 (h_i - p_k) + \sum_{j \neq i} \textbf{1} [\cos(p_i, p_j) > s_{\max}] \left( \frac{p_j}{||p_i|| ||p_j||} - \frac{(p_i \cdot p_j) p_i}{||p_i||^3 ||p_j||} \right) $\\
 \hline
 Description &
-\( h_i \): Embedding representation of input graph \( i \), computed by the graph encoder \( f(\cdot) \) (see \tref{TM1:GNNFP}). (Type: a vector of $\mathbb{R}$)
-\vspace{1em}
 
-We derive the gradient of the Loss Function (see \tref{TM2:LF}) with respect to P. This allows us to minimize the Loss Function for training the model (see \iref{Training}).\\
+We derive the gradient of the Loss Function (see \tref{TM2:LF}) with respect to P. This allows us to minimize the Loss Function for training the model (see \iref{Training}).
+
+\begin{itemize}
+    \item \( h_i \): Embedding representation of input graph \( i \), computed by the graph encoder \( f(\cdot) \) (see \tref{TM1:GNNFP}). (Type: vector in $\mathbb{R}^d$)
+    \item \( p_j, p_k \): Prototype vectors. (Type: vector in $\mathbb{R}^d$)
+    \item \( P \): Set of all prototype vectors. (Type: matrix in $\mathbb{R}^{M \times d}$, where \( M \) is the number of prototypes)
+    \item \( \cos(p_i, p_j) \): Cosine similarity between prototypes. (Type: scalar in $\mathbb{R}$)
+    \item \( s_{\max} \): Threshold for cosine similarity. (Type: scalar in $\mathbb{R}$)
+    \item \( \nabla_P \mathcal{L} \): Gradient of loss with respect to \( P \). (Type: matrix in $\mathbb{R}^{M \times d}$)
+\end{itemize}
+\\
 
 \hline
   Source & ~\citep{Turin2020}\\
