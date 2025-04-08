@@ -665,7 +665,7 @@ Description &
 \rowcolor[gray]{0.9}
 Number& GD\refstepcounter{defnum}\thedefnum \label{GDB}\\
 \hline
-Label &\bf Gradient of Loss Function with respect to the bias b of Fully Connected Layer\\
+Label &\bf Gradient of Loss Function with respect to the bias $b$ of Fully Connected Layer\\
 \hline
 % \hline
 SI Units&Unitless\\
@@ -673,7 +673,7 @@ SI Units&Unitless\\
 Equation&$ \nabla_b \mathcal{L} = (\hat{y} - y)$\\
 \hline
 Description &
-With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to b using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $b$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
 
 \hline
   Source & ~\citep{Turin2020}\\
@@ -904,7 +904,7 @@ The final update step for prototype diversity
 \end{equation*}
 
 \subsection*{Gradients Summary }
-To sum up, Cross-entropy loss $\mathcal{L}_{CE}$ updates the weight W and the bias b of the Fully Connected Layer, as well as updates the weight $W_g$ of GNN Encoder. Cluster Loss, separation Loss, and diversity Loss update the prototype P:
+To sum up, Cross-entropy loss $\mathcal{L}_{CE}$ updates the weight W and the bias $b$ of the Fully Connected Layer, as well as updates the weight $W_g$ of GNN Encoder. Cluster Loss, separation Loss, and diversity Loss update the prototype P:
 \begin{equation*}
     \frac{d\mathcal{L}}{db} =  \frac{d\mathcal{L}_{CE}}{db},
 \end{equation*}
