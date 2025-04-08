@@ -654,25 +654,41 @@ Number& GD\refstepcounter{defnum}\thedefnum \label{GDS}\\
 \hline
 Label &\bf Sigmoid Function for Fully Connected Layer\\
 \hline
-% \hline
 SI Units&Unitless\\
 \hline
 Equation&$ \hat{y} = \sigma(z) = \frac{1}{1+e^{-z}}, \quad \text{where} \quad z = W^\top h + b$\\
 \hline
 Description &
-\( h \): Graph embedding obtained after processing input node features \( X \) through the GNN encoder (see \tref{TM1:GNNFP}). (Type: a vector of $\mathbb{R}$)
+\( h \): Graph embedding obtained after processing input node features \( X \) through the GNN encoder (see \tref{TM1:GNNFP}). (Type: a vector in $\mathbb{R}^d$)
+
 \vspace{1em}
 
-\( W \): Trainable weight matrix of Fully Connected Layer (Section~\ref{sec_phySystDescrip})  that maps graph embeddings to classification results. (Type: a matrix of $\mathbb{R}$)
+\( W \): Trainable weight vector of the Fully Connected Layer that maps graph embeddings to a scalar logit. (Type: a vector in $\mathbb{R}^d$)
+
 \vspace{1em}
 
-\( b \): Bias term introduced to adjust predictions when feature values are near zero. (Type: a vector of $\mathbb{R}$)\\
+\( b \): Bias term added to the logit. (Type: a scalar in $\mathbb{R}$)
+
+\vspace{1em}
+
+\( z = W^\top h + b \): Logit value before activation. (Type: a scalar in $\mathbb{R}$)
+
+\vspace{1em}
+
+\( \sigma(z) \): Sigmoid activation function applied to the scalar logit. (Input/Output: scalar in $\mathbb{R}$)
+
+\vspace{1em}
+
+\( \hat{y} \): Predicted probability for the positive class. (Type: a scalar in $\mathbb{R}$)\\
+\hline
+Notes &
+Since Re-ProtGNN performs binary classification (e.g., for the MUTAG dataset), the output \( \hat{y} \in \mathbb{R} \) represents the probability of the input graph belonging to the positive class. The sigmoid function squashes the logit into a value in \( (0, 1) \), making it suitable for interpretation as a probability.\\
 
 \hline
-  Source & ~\citep{wikipedia_chainrule}\\
-  \hline
-  Ref.\ By & \dref{GDB}, \dref{GDW}, \dref{GDG}\\
-  \hline
+Source & ~\citep{wikipedia_chainrule}\\
+\hline
+Ref.\ By & \dref{GDB}, \dref{GDW}, \dref{GDG}\\
+\hline
 \end{tabular}
 \end{minipage}\\
 
