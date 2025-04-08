@@ -473,17 +473,41 @@ on.
 
 
 \begin{itemize}
-    \item \( h_u^k \): Representation vector of node \( u \) at the \( k \)-th layer. (Type: a vector of $\mathbb{R}$)
-    \item \( \tilde{A} = \hat{D}^{-\frac{1}{2}} \hat{A} \hat{D}^{-\frac{1}{2}} \) :  Normalized adjacency matrix. (Type: a matrix of $\mathbb{R}$)
-    \item \( \hat{A} = A + I \):  Adjacency matrix of graph \( G \) with self-connections. (Type: a matrix of $\mathbb{R}$)
-    \item \( \hat{D} \):  Diagonal degree matrix where \( \hat{D}_{ii} = \sum_j \hat{A}_{ij} \). (Type: a matrix of $\mathbb{R}$)
-    \item \(ReLU (\cdot) \):  ReLU activation function.
-    \item \( W^k \):  Trainable weight matrix at the \( k \)-th layer. (Type: a matrix of $\mathbb{R}$)
+    \item \( h_u^k \): Representation vector of node \( u \) at the \( k \)-th layer. (Type: vector in $\mathbb{R}^{d_k}$)
+    \item \( \tilde{A} = \hat{D}^{-\frac{1}{2}} \hat{A} \hat{D}^{-\frac{1}{2}} \): Normalized adjacency matrix. (Type: matrix in $\mathbb{R}^{N \times N}$)
+    \item \( \hat{A} = A + I \): Adjacency matrix of graph \( G \) with self-connections. (Type: matrix in $\mathbb{R}^{N \times N}$)
+    \item \( \hat{D} \): Diagonal degree matrix where \( \hat{D}_{ii} = \sum_j \hat{A}_{ij} \). (Type: matrix in $\mathbb{R}^{N \times N}$)
+    \item \( W^k \): Trainable weight matrix at the \( k \)-th layer. (Type: matrix in $\mathbb{R}^{d_{k+1} \times d_k}$)
+    \item \(ReLU (\cdot) \): Rectified Linear Unit activation function. (Input: vector in $\mathbb{R}^{d_{k+1}}$, Output: vector in $\mathbb{R}^{d_{k+1}}$), applied element-wise as \( \max(0, x_i) \).
+    \item \( h_v^{k+1} \): Updated representation of node \( v \) at the \( (k+1) \)-th layer. (Type: vector in $\mathbb{R}^{d_{k+1}}$)
 \end{itemize}
 }
 % #6 Notes
 {
-None
+The dimensional consistency of the equation is preserved as follows:
+
+\begin{itemize}
+    \item \( h_u^k \in \mathbb{R}^{d_k} \): the feature vector of node \( u \) at layer \( k \).
+    \item \( W^k \in \mathbb{R}^{d_{k+1} \times d_k} \): when multiplied with \( h_u^k \), gives:
+    \(
+        W^k h_u^k \in \mathbb{R}^{d_{k+1}}
+    \)
+    \item \( \tilde{A}_{uv} \in \mathbb{R} \): a scalar value from the normalized adjacency matrix. Multiplying this scalar does not change the vector's shape:
+    \(
+        W^k h_u^k \tilde{A}_{uv} \in \mathbb{R}^{d_{k+1}}
+    \)
+    \item Summing over all \( u \in \mathcal{N}(v) \) (neighbors of node \( v \)) adds together multiple vectors of shape \( \mathbb{R}^{d_{k+1}} \). The result is also a vector of the same shape:
+    \(
+        \sum_{u \in \mathcal{N}(v)} W^k h_u^k \tilde{A}_{uv} \in \mathbb{R}^{d_{k+1}}
+    \)
+    \item Finally, the ReLU function is applied element-wise. It preserves the vector's shape:
+    \(
+        ReLU\left( \cdot \right) : \mathbb{R}^{d_{k+1}} \rightarrow \mathbb{R}^{d_{k+1}}
+    \)
+    \item Therefore, the updated node representation \( h_v^{k+1} \in \mathbb{R}^{d_{k+1}} \), maintaining consistency across all layers.
+\end{itemize}
+
+This ensures the model can propagate consistent-sized feature vectors through each layer in the network.
 }
 % #7 Source
 {
