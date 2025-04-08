@@ -271,8 +271,7 @@ The purpose of this SRS document is to define and communicate the requirements, 
 \subsection{Scope of Requirements} 
 Re-ProtGNN is a re-implementation of the existing ProtGNN model, aimed at reproducing its results and validating its performance on graph datasets. The model operates in a supervised setting, performing graph classification while incorporating built-in interpretability. 
 
-The input graphs for training must be valid labeled graphs, ensuring they contain both structural and node feature information necessary for classification. Further details on data constraints and assumptions can be found in (Section~\ref{sec_assumpt}).
-
+The model will rely solely on the provided graph structure and features to perform classification tasks. External factors, such as domain-specific knowledge (e.g., the biological context of protein interactions, which may require expert understanding and manual tuning of input), are not considered in this implementation.
 
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
 
