@@ -245,9 +245,9 @@ $num\_cols(\cdot)$ & Number of columns in a matrix & -\\
 $\dim(\cdot)$ & Dimension of a matrix & - \\
 $M[i, j]$ & Element at row $i$, column $j$ in matrix $M$ & - \\
 $f(\cdot)$ & A function representing the graph encoder, as defined in \tref{TM1:GNNFP} & - \\
-$\cos(\cdot, \cdot)$ & Cosine similarity function & ~\cite{sciencedirect_cosine_similarity} \\
-$\text{ReLU}(\cdot)$ & ReLU activation function & ~\cite{wikipedia_relu} \\
-$\nabla$ & Gradient operator & ~\cite{wikipedia_gradient} \\
+$\cos(\cdot, \cdot)$ & Cosine similarity function & ~\citep{sciencedirect_cosine_similarity} \\
+$\text{ReLU}(\cdot)$ & ReLU activation function & ~\citep{wikipedia_relu} \\
+$\nabla$ & Gradient operator & ~\citep{wikipedia_gradient} \\
 \bottomrule
 \end{longtable*}
 
@@ -261,7 +261,7 @@ cation, graph classification, and link prediction tasks. However, their black-bo
 nature makes it difficult to understand their decision-making process, limiting
 their usage in critical areas such as medical diagnosis. 
 
-To address this, the paper \textit{ProtGNN: Towards Self-Explaining Graph Neural Networks} ~\cite{zhang2022} proposes ProtGNN (Prototype-based Graph Neural Network), an interpretable GNN model designed to improve explainability by learning representative prototypes for each class. The goal of this project is to re-implement ProtGNN and validate its results. Further details on the problem and motivation behind this project can be found in the Problem Statement document~\cite{yuanqi2025protgnn}.
+To address this, the paper \textit{ProtGNN: Towards Self-Explaining Graph Neural Networks} ~\citep{zhang2022} proposes ProtGNN (Prototype-based Graph Neural Network), an interpretable GNN model designed to improve explainability by learning representative prototypes for each class. The goal of this project is to re-implement ProtGNN and validate its results. Further details on the problem and motivation behind this project can be found in the Problem Statement document~\citep{yuanqi2025protgnn}.
 
 The introduction section outlines the Software Requirement Specifications (SRS) for Re-ProtGNN (Re-implementation of the ProtGNN model), detailing its purpose, scope, target audience, and organization.
 
@@ -292,7 +292,7 @@ This document is designed to be accessible to readers with the above qualificati
 
 \subsection{Organization of Document}
 
-This SRS document is based on the template by ~\citet{SmithAndLai2005, SmithEtAl2007}. It systematically presents the system's objectives, theoretical foundations, assumptions, and models. For a structured reading approach, readers may start with the goal statements (Section~\ref{sec_goals}), followed by the theoretical models (Section~\ref{sec_theoretical}) and general definitions (Section~\ref{sec_gendef}), which build upon these goals. The document concludes with instance models (Section~\ref{sec_instance}), providing a concrete understanding of the system’s actual implementation.
+This SRS document is based on the template by ~\citep{SmithAndLai2005, SmithEtAl2007}. It systematically presents the system's objectives, theoretical foundations, assumptions, and models. For a structured reading approach, readers may start with the goal statements (Section~\ref{sec_goals}), followed by the theoretical models (Section~\ref{sec_theoretical}) and general definitions (Section~\ref{sec_gendef}), which build upon these goals. The document concludes with instance models (Section~\ref{sec_instance}), providing a concrete understanding of the system’s actual implementation.
 
 \section{General System Description}
 
@@ -361,7 +361,7 @@ easier to correctly understand the requirements:
 \item Graph Classification: The task of assigning a label to an entire graph based on its structure and node attributes.
 \item Graph Neural Networks: A type of deep learning model designed to process graph-structured data by aggregating and transforming node information.
 \item Prototype: A representative subgraph that highlights the key structural patterns influencing classification decisions.
-\item MUTAG Dataset: A benchmark dataset for molecular graph classification, distinguishing between mutagenic and non-mutagenic compounds ~\cite{debnath1991structure}.
+\item MUTAG Dataset: A benchmark dataset for molecular graph classification, distinguishing between mutagenic and non-mutagenic compounds ~\citep{debnath1991structure}.
 \item Supervised Learning: A training approach where the model learns from labeled data, mapping input graphs to their corresponding class labels.
 
 \end{itemize}
@@ -427,7 +427,7 @@ models can be verified.
 \end{tabular}\\
 
 \subsection{Scope Decisions} \label{sec_scopeDec}
-Re-ProtGNN focuses on validating the classification accuracy and prototype quality of the ProtGNN model using the MUTAG dataset~\cite{debnath1991structure}.
+Re-ProtGNN focuses on validating the classification accuracy and prototype quality of the ProtGNN model using the MUTAG dataset~\citep{debnath1991structure}.
 
 
 \subsubsection{Modelling Decisions}
@@ -450,7 +450,7 @@ change [LC], in which the respective assumption is used.
   The structural patterns of input graphs are relevant to classification, as required by \tref{TM1:GNNFP} to produce meaningful graph embeddings.
 
 \item[A\refstepcounter{assumpnum}\theassumpnum \label{A3}:]
-    For the training phase \iref{Training} to produce an accurate model and the inference phase \iref{Inference} to generate reasonable predictions and prototypes, each input graph must belong to one of the two predefined classes (i.e., mutagenic or non-mutagenic) as defined in the MUTAG dataset~\cite{debnath1991structure}.
+    For the training phase \iref{Training} to produce an accurate model and the inference phase \iref{Inference} to generate reasonable predictions and prototypes, each input graph must belong to one of the two predefined classes (i.e., mutagenic or non-mutagenic) as defined in the MUTAG dataset~\citep{debnath1991structure}.
 
     
 \end{itemize}
@@ -490,7 +490,7 @@ None
 }
 % #7 Source
 {
-  ~\cite{kipf2016}
+  ~\citep{kipf2016}
 }
 % #8 Referenced by
 {
@@ -538,7 +538,7 @@ The cross-entropy loss is a common loss used in many ML models, while the other 
 }
 % #7 Source
 {
-  ~\cite{wikipedia_crossentropy}, ~\cite{zhang2022}
+  ~\citep{wikipedia_crossentropy}, ~\citep{zhang2022}
 }
 % #8 Referenced by
 {
@@ -614,7 +614,7 @@ Description &
 The chain rule states that the derivative of a function with respect to an independent variable can be computed as the product of the derivative of the function with respect to an intermediate variable and the derivative of the intermediate variable with respect to the independent variable.\\
 
 \hline
-  Source & ~\cite{wikipedia_chainrule}\\
+  Source & ~\citep{wikipedia_chainrule}\\
   \hline
   Ref.\ By & \dref{GDB}, \dref{GDW}, \dref{GDG}\\
   \hline
@@ -648,7 +648,7 @@ Description &
 \( b \): Bias term introduced to adjust predictions when feature values are near zero. (Type: a vector of $\mathbb{R}$)\\
 
 \hline
-  Source & ~\cite{wikipedia_chainrule}\\
+  Source & ~\citep{wikipedia_chainrule}\\
   \hline
   Ref.\ By & \dref{GDB}, \dref{GDW}, \dref{GDG}\\
   \hline
@@ -676,7 +676,7 @@ Description &
 With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to b using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
 
 \hline
-  Source & ~\cite{Turin2020}\\
+  Source & ~\citep{Turin2020}\\
   \hline
   Ref.\ By & \iref{Training}\\
   \hline
@@ -704,7 +704,7 @@ Description &
 With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to W using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).\\
 
 \hline
-  Source & ~\cite{Turin2020}\\
+  Source & ~\citep{Turin2020}\\
   \hline
   Ref.\ By & \iref{Training}\\
   \hline
@@ -739,7 +739,7 @@ With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the g
 
 
 \hline
-  Source & ~\cite{Turin2020}\\
+  Source & ~\citep{Turin2020}\\
   \hline
   Ref.\ By & \iref{Training}\\
   \hline
@@ -770,7 +770,7 @@ Description &
 We derive the gradient of the Loss Function (see \tref{TM2:LF}) with respect to P. This allows us to minimize the Loss Function for training the model (see \iref{Training}).\\
 
 \hline
-  Source & ~\cite{Turin2020}\\
+  Source & ~\citep{Turin2020}\\
   \hline
   Ref.\ By & \iref{Training}\\
   \hline
@@ -949,7 +949,7 @@ Symbol &$\eta$\\
   Description & 
                 The learning rate is a hyperparameter that controls the step size at each iteration while moving toward a minimum of the loss function. It plays an important role in balancing convergence speed and stability.\\
   \hline
-  Sources& ~\cite{wikipedia_learningrate}\\
+  Sources& ~\citep{wikipedia_learningrate}\\
   \hline
   Ref.\ By & \iref{Training}\\
   \hline
@@ -980,7 +980,7 @@ Equation&Not Applicable\\
 Description & 
     The regularization parameters control the trade-off between the main classification loss and additional constraints (see \tref{TM1:GNNFP}) to enhance interpretability and prevent overfitting. \\
 \hline
-Sources& ~\cite{wikipedia_regularization}\\
+Sources& ~\citep{wikipedia_regularization}\\
 \hline
 Ref.\ By & \tref{TM2:LF}\\
 \hline
@@ -1031,7 +1031,7 @@ The goal \gsref{GS1} is achieved through \iref{Training} and \iref{Inference}. \
             (see \ddref{LR}, \dref{GDB}, \dref{GDW}, \dref{GDG}, \dref{GDP}, \tref{TM2:LF}).
     \end{enumerate}\\  
   \hline
-  Sources& ~\cite{zhang2022}\\
+  Sources& ~\citep{zhang2022}\\
   \hline
   Ref. by& \aref{A3}, \rref{R_Train}, \dref{GDB}, \dref{GDW}, \dref{GDG}, \dref{GDP}, \iref{Inference}\\
   \hline
@@ -1056,7 +1056,7 @@ The goal \gsref{GS1} is achieved through \iref{Training} and \iref{Inference}. \
   \hline
   Description&During inference, the model forwards input features through the trained model (see \iref{Training}) and directly gets the classification results.\\ 
   \hline
-  Sources& ~\cite{runai_ml_inference}\\
+  Sources& ~\citep{runai_ml_inference}\\
   \hline
   Ref. by& \aref{A3}, \rref{R_VerifyOutput}\\
   \hline
@@ -1144,7 +1144,7 @@ qualities that the software is expected to exhibit.
 
 \noindent \begin{itemize}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:] The system should be able to load the MUTAG dataset ~\cite{debnath1991structure} .
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:] The system should be able to load the MUTAG dataset ~\citep{debnath1991structure} .
 
 \item[R\refstepcounter{reqnum}\thereqnum \label{R_Train}:] During the training phase, the system should update model parameters and learn prototype representations by optimizing the Loss Function (see \iref{Training}).
 
@@ -1159,8 +1159,8 @@ qualities that the software is expected to exhibit.
 \noindent \begin{itemize}
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-  %\textbf{Accuracy} The system should achieve classification accuracy and prototype quality comparable to those reported in the original paper~\cite{zhang2022}, with at most a 5\% variation.
-  \textbf{Accuracy} The system should achieve a satisfactory classification accuracy ($\geq80\%$) on the MUTAG dataset ~\cite{debnath1991structure}.
+  %\textbf{Accuracy} The system should achieve classification accuracy and prototype quality comparable to those reported in the original paper~\citep{zhang2022}, with at most a 5\% variation.
+  \textbf{Accuracy} The system should achieve a satisfactory classification accuracy ($\geq80\%$) on the MUTAG dataset ~\citep{debnath1991structure}.
 
 \item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
   The system should visualize learned prototypes as graphs represented by images rather than node features and adjacency matrices to enhance interpretability.
@@ -1177,7 +1177,7 @@ qualities that the software is expected to exhibit.
 
 \subsection{Rationale}
 
-The rationale for the scope decisions (Section~\ref{sec_scopeDec}) is that Re-ProtGNN uses the MUTAG dataset~\cite{debnath1991structure} because the original ProtGNN model was evaluated on it. Additionally, MUTAG is a well-established benchmark for graph classification, ensuring a fair validation of ProtGNN's performance.
+The rationale for the scope decisions (Section~\ref{sec_scopeDec}) is that Re-ProtGNN uses the MUTAG dataset~\citep{debnath1991structure} because the original ProtGNN model was evaluated on it. Additionally, MUTAG is a well-established benchmark for graph classification, ensuring a fair validation of ProtGNN's performance.
 
 In addition, the model is designed to follow the structure of the original ProtGNN framework to ensure consistency.
 
@@ -1326,22 +1326,22 @@ Not applicable, as no auxiliary constants are defined in this document.
 
 \bibliographystyle {plainnat}
 \bibliography {../../refs/References}
-%\bibliography {References}
+%\bibliography{refs/References}
 
-\newpage
+%\newpage
 
-\newpage{}
-\section*{Appendix --- Reflection}
+%\newpage{}
+%\section*{Appendix --- Reflection}
 
-\wss{Not required for CAS 741}
+%\wss{Not required for CAS 741}
 
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Lifelong Learning.  
+%The information in this section will be used to evaluate the team members on the
+%graduate attribute of Lifelong Learning.  
 
-\input{../Reflection.tex}
+%\input{../Reflection.tex}
 %\input{Reflection.tex}
 
-\input{../SRS_Reflection.tex}
+%\input{../SRS_Reflection.tex}
 %\input{SRS_Reflection.tex}
 
 \end{document}
