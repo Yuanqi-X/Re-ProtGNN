@@ -256,10 +256,9 @@ $\nabla$ & Gradient operator & ~\citep{wikipedia_gradient} \\
 
 \section{Introduction}
 
-Graph Neural Networks (GNNs) have shown strong performance in node classifi-
-cation, graph classification, and link prediction tasks. However, their black-box
+Graph Neural Networks (GNNs) have shown strong performance in node classification, graph classification, and link prediction tasks. However, their black-box
 nature makes it difficult to understand their decision-making process, limiting
-their usage in critical areas such as medical diagnosis. 
+their usage in critical areas such as medical diagnosis. For instance, in the MUTAG classification task, GNNs are used to classify molecular graphs based on their mutagenic properties, but the lack of interpretability in the model's decision-making process can hinder its deployment in fields requiring clear explanations, such as drug development and toxicity prediction.
 
 To address this, the paper \textit{ProtGNN: Towards Self-Explaining Graph Neural Networks} ~\citep{zhang2022} proposes ProtGNN (Prototype-based Graph Neural Network), an interpretable GNN model designed to improve explainability by learning representative prototypes for each class. The goal of this project is to re-implement ProtGNN and validate its results. Further details on the problem and motivation behind this project can be found in the Problem Statement document~\citep{yuanqi2025protgnn}.
 
