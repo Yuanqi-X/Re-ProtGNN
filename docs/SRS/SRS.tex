@@ -515,7 +515,7 @@ This ensures the model can propagate consistent-sized feature vectors through ea
 }
 % #8 Referenced by
 {
-  \aref{A1}, \aref{A2}, \tref{TM2:LF}, \dref{GDS}, \dref{GDG}, \dref{GDP}, \ddref{LAM}, \iref{Training}
+  \aref{A1}, \aref{A2}, \tref{TM2:LF}, \dref{GDS}, \dref{GDL}, \dref{GDG}, \dref{GDP}, \ddref{LAM}, \iref{Training}
 }
 % #9 Preconditions
 {
@@ -700,6 +700,43 @@ Ref.\ By & \dref{GDB}, \dref{GDW}, \dref{GDG}\\
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 \hline
 \rowcolor[gray]{0.9}
+Number& GD\refstepcounter{defnum}\thedefnum \label{GDL}\\
+\hline
+Label &\bf Loss Minimization Objective\\
+\hline
+SI Units&Unitless\\
+\hline
+Equation&$ \theta^* = \arg\min_{\theta} \mathcal{L}(\theta)$\\
+\hline
+Description &
+The training process aims to find the optimal set of model parameters \( \theta \) that minimize the loss function \( \mathcal{L}(\theta) \), where \( \theta \) typically includes the GNN encoder weights \( W_g \) (see \tref{TM1:GNNFP}), fully connected layer weights \( W \), bias \( b \), and prototype matrix \( P \).
+
+\begin{itemize}
+    \item \( \mathcal{L}(\theta) \): Overall loss function to be minimized. (Type: scalar in $\mathbb{R}$)
+    \item \( \theta \): Set of all trainable parameters, i.e., \( \theta = \{b, W, W_g, P\} \). (Type: set of matrices/vectors; for detailed types, see \dref{GDB}, \dref{GDW}, \dref{GDG}, \dref{GDP})
+    \item \( \theta^* \): Optimal parameter configuration that minimizes \( \mathcal{L} \).
+\end{itemize}
+\\
+\hline
+Notes &
+This is a standard unconstrained optimization problem in machine learning. The specific technique used to solve it (e.g., gradient descent) is introduced in subsequent general definitions.
+\\
+\hline
+Source & ~\citep{Goodfellow-et-al-2016}\\
+\hline
+Ref.\ By & \dref{GDB}, \dref{GDW}, \dref{GDG}, \dref{GDP}, \iref{Training}\\
+\hline
+\end{tabular}
+\end{minipage}\\
+
+~\newline
+
+\noindent
+\begin{minipage}{\textwidth}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
+\hline
+\rowcolor[gray]{0.9}
 Number& GD\refstepcounter{defnum}\thedefnum \label{GDB}\\
 \hline
 Label &\bf Gradient of Loss Function with respect to the bias $b$ of Fully Connected Layer\\
@@ -710,7 +747,7 @@ SI Units&Unitless\\
 Equation&$ \nabla_b \mathcal{L} = (\hat{y} - y)$\\
 \hline
 Description &
-With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $b$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $b$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \dref{GDL}, \iref{Training}).
 
 \begin{itemize}
     \item \( \hat{y} \): Predicted class probability. (Type: scalar in $\mathbb{R}$)
@@ -746,7 +783,7 @@ SI Units&Unitless\\
 Equation&$ \nabla_W \mathcal{L} = (\hat{y} - y)h$\\
 \hline
 Description &
-With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to W using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to W using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \dref{GDL}, \iref{Training}).
 
 \begin{itemize}
     \item \( \hat{y} \): Predicted class probability. (Type: scalar in $\mathbb{R}$)
@@ -786,7 +823,7 @@ Equation&$\nabla_{W_g} \mathcal{L} = (\hat{y} - y) W \sum_{u \in \mathcal{N}(v)}
 \hline
 Description &
 
-With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $W_g$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \iref{Training}).
+With $\hat{y}$ defined by the Sigmoid Function (see \dref{GDS}), we derive the gradient of Loss Function (see \tref{TM2:LF}) with respect to $W_g$ using the chain rule (see \dref{GDC}). This gradient allows us to minimize Loss Function during model training (see \dref{GDL}, \iref{Training}).
 
 \begin{itemize}
     \item \( \hat{y} \): Predicted class probability. (Type: scalar in $\mathbb{R}$)
@@ -829,7 +866,7 @@ Equation&$ \nabla_{P} \mathcal{L} = 2 (h_i - p_j) - 2 (h_i - p_k) + \sum_{j \neq
 \hline
 Description &
 
-We derive the gradient of the Loss Function (see \tref{TM2:LF}) with respect to P. This allows us to minimize the Loss Function for training the model (see \iref{Training}).
+We derive the gradient of the Loss Function (see \tref{TM2:LF}) with respect to P. This allows us to minimize the Loss Function for training the model (see \dref{GDL}, \iref{Training}).
 
 \begin{itemize}
     \item \( h_i \): Embedding representation of input graph \( i \), computed by the graph encoder \( f(\cdot) \) (see \tref{TM1:GNNFP}). (Type: vector in $\mathbb{R}^d$)
@@ -1100,7 +1137,7 @@ The goal \gsref{GS1} is achieved through \iref{Training} and \iref{Inference}. \
             $W \leftarrow W - \eta \frac{\partial \mathcal{L}}{\partial W}$,
             $b \leftarrow b - \eta \frac{\partial \mathcal{L}}{\partial b}$,
             $P \leftarrow P - \eta \frac{\partial \mathcal{L}}{\partial P}$
-            (see \ddref{LR}, \dref{GDB}, \dref{GDW}, \dref{GDG}, \dref{GDP}, \tref{TM2:LF}).
+            (see \ddref{LR}, \dref{GDL}, \dref{GDB},  \dref{GDW}, \dref{GDG}, \dref{GDP}, \tref{TM2:LF}).
     \end{enumerate}\\  
   \hline
   Sources& ~\citep{zhang2022}\\
@@ -1323,23 +1360,26 @@ the assumptions.
 
 \begin{table}[h!]
 \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
-	                   & \tref{TM1:GNNFP} & \tref{TM2:LF} & \dref{GDC} & \dref{GDS} & \dref{GDB} & \dref{GDW} & \dref{GDG} & \dref{GDP} & \ddref{LR} & \ddref{LAM} & \iref{Training} & \iref{Inference} \\
+	                   & \tref{TM1:GNNFP} & \tref{TM2:LF} & \dref{GDC} & \dref{GDS} & \dref{GDL} & \dref{GDB} & \dref{GDW} & \dref{GDG} & \dref{GDP} & \ddref{LR} & \ddref{LAM} & \iref{Training} & \iref{Inference} \\
 \hline
-\tref{TM1:GNNFP}      &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
-\tref{TM2:LF}         & X &   &   &   &   &   &   &   &   &   &   &   \\ \hline
-\dref{GDC}            &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
-\dref{GDS}            & X &   &   &   &   &   &   &   &   &   &   &   \\ \hline
-\dref{GDB}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
-\dref{GDW}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
-\dref{GDG}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
-\dref{GDP}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
-\ddref{LR}            &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
-\ddref{LAM}           & X &   &   &   &   &   &   &   &   &   &   &   \\ \hline
-\iref{Training}       & X & X & X & X  & X  & X  & X  & X  & X  & X &   &   \\ \hline
-\iref{Inference}      & X  & X  & X  & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
+\tref{TM1:GNNFP}      &   &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\tref{TM2:LF}         & X &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\dref{GDC}            &   &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\dref{GDS}            & X &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\dref{GDL}            & X  & X  &   &   &   & X  & X  & X  & X  &   &   &   &   \\ \hline
+\dref{GDB}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
+\dref{GDW}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
+\dref{GDG}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
+\dref{GDP}            & X & X & X & X  & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
+\ddref{LR}            &   &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\ddref{LAM}           & X &   &   &   &   &   &   &   &   &   &   &   &   \\ \hline
+\iref{Training}       & X & X & X & X  & X  & X  & X  & X  & X  & X  & X &   &   \\ \hline
+\iref{Inference}      & X  & X  & X  & X  & X  & X  & X  & X  & X  & X  & X  & X  &   \\ \hline
 \end{tabular}
+}
 \caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
 \label{Table:trace}
 \end{table}
