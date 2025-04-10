@@ -210,7 +210,7 @@ A separate 20\% test split from the MUTAG dataset will be used to assess the mod
 This section outlines the system tests designed to evaluate both functional and non-functional requirements.
 
 \subsection{Tests for Functional Requirements}
-
+\label{sub:FR}
 This section outlines the tests designed to validate the functional requirements of Re-ProtGNN, ensuring the system behaves as expected under various conditions. The testing areas include input verification, model training correctness, and inference validation, which corresponds to the R1, R2, and R3 of \href{https://github.com/Yuanqi-X/Re-ProtGNN/blob/main/docs/SRS/SRS.pdf}{SRS} ~\cite{Yuanqi_ReProtGNN_SRS}.
 
 \subsubsection{Area of Testing1: Input Verification}
@@ -306,61 +306,62 @@ How test will be performed: A Pytest script will run inference on the test datas
 
 This section outlines the tests designed to verify the nonfunctional requirements of Re-ProtGNN, including accuracy, usability, and portability.
 
-\subsubsection{Area of Testing1: Accuracy}
+\subsubsection{Reliability}
 		
-\paragraph{Accuracy}
+The reliability of the software is demonstrated through the execution of functional requirement tests, as described in Section~\ref{sub:FR} and Section~\ref{sub:unit FR}. These tests ensure the system behaves as expected under defined conditions.
 
-\begin{enumerate}
 
-\item{T4: Accuracy Test\\}
+%\begin{enumerate}
 
-Type: Automated
+%\item{T4: Accuracy Test\\}
+
+%Type: Automated
 					
-Initial State: A trained Re-ProtGNN model is loaded.
+%Initial State: A trained Re-ProtGNN model is loaded.
 					
-Input: The testing dataset.
+%Input: The testing dataset.
 					
-Output: The system should achieve a classification accuracy of at least 80\%.
+%Output: The system should achieve a classification accuracy of at least 80\%.
 					
-How test will be performed: A Pytest script will run inference on the test dataset and compare the predicted labels with ground truth. The script will calculate the overall classification accuracy and ensure it meets the required threshold ($\geq 80\%$). The accuracy percentage will be logged to evaluate model performance.
+%How test will be performed: A Pytest script will run inference on the test dataset and compare the predicted labels with ground truth. The script will calculate the overall classification accuracy and ensure it meets the required threshold ($\geq 80\%$). The accuracy percentage will be logged to evaluate model performance.
 
-\end{enumerate}
+%\end{enumerate}
 
-\subsubsection{Area of Testing2: Usability}
+\subsubsection{Usability}
 
-\paragraph{Usability}
+The usability of the software is measured mainly by the Usability Survey in Section~\ref{sub:survey}.
 
-\begin{enumerate}
-    \item{T5: Usability Test\\}
+%\begin{enumerate}
+%    \item{T5: Usability Test\\}
 
-    Type: Manual
+%    Type: Manual
     					
-    Initial State: Trained Re-ProtGNN model is available.
+%    Initial State: Trained Re-ProtGNN model is available.
     					
-    Input: A set of graphs with learned prototypes.
+%    Input: A set of graphs with learned prototypes.
     					
-    Output: The system should visualize prototypes as graph images, making them more interpretable than raw adjacency matrices or node feature representations.
+%    Output: The system should visualize prototypes as graph images, making them more interpretable than raw adjacency matrices or node feature representations.
     					
-    How test will be performed: A set of sample graphs will be processed through the system, and the generated prototype visualizations will be reviewed for clarity and interpretability. Testers will manually verify whether the images effectively represent key graph structures and provide meaningful insights into model decisions. Feedback will be collected to assess usability improvements.
-\end{enumerate}
+%    How test will be performed: A set of sample graphs will be processed through the system, and the generated prototype visualizations will be reviewed for clarity and interpretability. Testers will manually verify whether the images effectively represent key graph structures and provide meaningful insights into model decisions. Feedback will be collected to assess usability improvements.
+%\end{enumerate}
 
-\subsubsection{Area of Testing3: Portability}
+%\subsubsection{Area of Testing3: Portability}
 
-\paragraph{Portability}
+%\paragraph{Portability}
 
-\begin{enumerate}
-    \item{T6: Portability Test\\}
+%\begin{enumerate}
+%    \item{T6: Portability Test\\}
 
-    Type: Manual
+%    Type: Manual
     					
-    Initial State: None
+%    Initial State: None
     					
-    Condition: The users should have PyTorch 1.8.0 and Torch-Geometric 2.0.2 installed.
+%    Condition: The users should have PyTorch 1.8.0 and Torch-Geometric 2.0.2 installed.
     					
-    Result: The system should successfully run on users' machines, with all functions working as expected.
+%    Result: The system should successfully run on users' machines, with all functions working as expected.
     					
-    How test will be performed: The author, Yuanqi Xue, will install the software on Windows, macOS, and Linux systems, verifying that it runs correctly across all platforms.
-\end{enumerate}
+%    How test will be performed: The author, Yuanqi Xue, will install the software on Windows, macOS, and Linux systems, verifying that it runs correctly across all platforms.
+%\end{enumerate}
 
 \subsection{Traceability Between Test Cases and Requirements}
 
@@ -407,101 +408,213 @@ needs to be well-documented, with meaningful names for all of the tests.}
   explain your rationale for the ranking of module importance.}
 
 \subsection{Tests for Functional Requirements}
+\label{sub:unit FR}
+\subsubsection{Input Format Module (M3)}
 
-\wss{Most of the verification will be through automated unit testing.  If
-  appropriate specific modules can be verified by a non-testing based
-  technique.  That can also be documented in this section.}
-
-\subsubsection{Module 1}
-
-\wss{Include a blurb here to explain why the subsections below cover the module.
-  References to the MIS would be good.  You will want tests from a black box
-  perspective and from a white box perspective.  Explain to the reader how the
-  tests were selected.}
+This module corresponds to the data ingestion and preprocessing layer responsible for loading datasets, applying transformations, and preparing batched dataloaders for graph classification. The tests below follow the specifications outlined in the MIS, covering access programs such as load\_dataset, \_get\_dataloader, and include wrapper functions for MUTAG datasets. Each test is derived from either a normal usage pattern or a defined edge case. The goal is to verify expected input-output behavior and robust error handling.
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{test-M3-1: Dataset Loading Interface Test\\}
+Type: Automatic, Functional \\
+Initial State: No data loaded \\
+Input: Dataset name (e.g., ``MUTAG''), dataset path, and training configuration \\
+Output: Dataset object with correct feature and label dimensions \\
+Test Case Derivation: This test ensures that the top-level load\_dataset() interface returns a dataset and associated metadata as required by the training pipeline. \\
+How test will be performed: Patch internal loaders, call load\_dataset, and verify returned values and internal calls.
 
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
+\item{test-M3-2: Random Split Dataloader Construction Test\\}
+Type: Automatic, Functional \\
+Initial State: Loaded raw dataset \\
+Input: PyG list of data objects and split ratios \\
+Output: Dictionary of train, eval, and test loaders with expected sizes \\
+Test Case Derivation: The module must support random data splitting for cross-validation scenarios. \\
+How test will be performed: Construct a dummy dataset and pass it to \_get\_dataloader() with split flags enabled.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+\item{test-M3-3: Predefined Split Index Test\\}
+Type: Automatic, Functional \\
+Initial State: Dataset object with embedded split indices \\
+Input: Dataset with supplement['split\_indices'] \\
+Output: DataLoader split into subsets based on those indices \\
+Test Case Derivation: Required to support externally defined splits (e.g., molecule benchmarks). \\
+How test will be performed: Patch the dataset to include custom split labels and verify proper loader construction.
 
-How test will be performed: 
-					
-\item{test-id2\\}
+\item{test-M3-4: Dataset Wrapper Invocation Test (MUTAG)\\}
+Type: Automatic, Functional \\
+Initial State: Dataset not yet initialized \\
+Input: Dataset directory and name ``MUTAG'' \\
+Output: Loaded and preprocessed PyG dataset object \\
+Test Case Derivation: The system should route calls correctly to dataset-specific wrappers. \\
+How test will be performed: Patch torch.load, simulate dataset content, and verify the correct class is instantiated.
 
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
+\item{test-M3-5: Unsupported Dataset Handling Test\\}
+Type: Automatic, Functional \\
+Initial State: No dataset selected \\
+Input: An unrecognized dataset name (e.g., ``FakeDataset'') \\
+Output: Raised NotImplementedError \\
+Test Case Derivation: Ensures graceful failure and debuggability for unsupported options. \\
+How test will be performed: Call \_get\_dataset() with an invalid name and assert raised exception.
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-
-How test will be performed: 
-
-\item{...\\}
-    
 \end{enumerate}
 
-\subsubsection{Module 2}
 
-...
+\subsubsection{Output Visualization Module (M6)}
+
+This module handles logging, model checkpoint saving, and visual explanation rendering for subgraph-based GNN interpretability. Unit tests have been designed to cover each public access routine defined in the MIS for this module, including standard operations for logging, model saving, and drawing subgraphs across supported datasets. The tests address both expected behavior and edge case handling (e.g., unsupported dataset types). The module’s correctness is validated by asserting the file writes and method calls.
+
+\begin{enumerate}
+
+\item{test-M6-1: Logging Append Test\\}
+Type: Automatic, Functional \\
+Initial State: Log file empty or exists \\
+Input: A string log entry \\
+Output: Appended log file with a new line containing the input string \\
+Test Case Derivation: Ensures the logging utility appends correctly to a fixed log path. \\
+How test will be performed: Patch file I/O and verify the correct write call was made.
+
+\item{test-M6-2: Model Save with Best Checkpoint\\}
+Type: Automatic, Functional \\
+Initial State: Model in memory \\
+Input: Model object, accuracy, epoch, checkpoint directory, is\_best=True \\
+Output: Saved model file and best checkpoint copy \\
+Test Case Derivation: The system must persist and track the best-performing model. \\
+How test will be performed: Patch torch.save and shutil.copy, then verify both were invoked.
+
+\item{test-M6-3: Model Save without Best Checkpoint\\}
+Type: Automatic, Functional \\
+Initial State: Model in memory \\
+Input: Same as above, but with is\_best=False \\
+Output: Saved model file only \\
+Test Case Derivation: Checkpoint should be saved without updating the best model. \\
+How test will be performed: Patch dependencies and confirm only save was called.
+
+\item{test-M6-4: Explanation Dispatcher Test (MUTAG)\\}
+Type: Automatic, Functional \\
+Initial State: Plot utility initialized with MUTAG context \\
+Input: NetworkX graph, node list, feature tensor \\
+Output: Call to molecule drawing routine \\
+Test Case Derivation: Same as above, adapted for molecular feature mapping. \\
+How test will be performed: Use torch input and patch the draw method for assertion.
+
+\item{test-M6-5: Subgraph Drawing Output Test\\}
+Type: Automatic, Functional \\
+Initial State: Explanation utility instantiated \\
+Input: Simple path graph and output path \\
+Output: PNG image file written to disk \\
+Test Case Derivation: Visualization should execute without error and produce a file. \\
+How test will be performed: Use tmp\_path to save figure and verify file existence.
+
+\item{test-M6-6: Dataset Routing Failure Test\\}
+Type: Automatic, Functional \\
+Initial State: Plot utility initialized with invalid dataset name \\
+Input: Any graph and node list \\
+Output: Raised NotImplementedError \\
+Test Case Derivation: Prevent silent failures when dataset name is unsupported. \\
+How test will be performed: Patch plotting to suppress file writes and assert the exception is raised.
+
+\end{enumerate}
+
+
+\subsubsection{Inference Module (M8)}
+
+This module encapsulates the inference-time behavior of the trained GNN model. It is responsible for computing predictions, evaluating performance on unseen data, and logging results. The primary access routine run\_inference is verified using unit tests that validate its output structure, accuracy computation, loss aggregation, and logging side effects. Both functional and boundary conditions (e.g., single-batch datasets) are tested to ensure stability across usage scenarios defined in the MIS.
+
+\begin{enumerate}
+
+\item{test-M8-1: Inference Execution and Output Test\\}
+Type: Automatic, Functional \\
+Initial State: Trained model and loss function loaded \\
+Input: Evaluation dataloader, model object, and loss function \\
+Output: Dictionary with loss and accuracy, prediction logits and probabilities \\
+Test Case Derivation: Ensures the function executes end-to-end and returns all expected fields. \\
+How test will be performed: Pass a dataloader and model to the inference routine and verify return structure.
+
+\item{test-M8-2: Accuracy Calculation Verification\\}
+Type: Automatic, Functional \\
+Initial State: Model returns known logits and true labels \\
+Input: Model with fixed output and corresponding dataloader \\
+Output: Correct accuracy calculation in result dictionary \\
+Test Case Derivation: Verifies the correctness of the accuracy logic based on class match count. \\
+How test will be performed: Use controlled outputs from a model to assert expected accuracy values.
+
+\item{test-M8-3: Inference Logging Test\\}
+Type: Automatic, Functional \\
+Initial State: Logging file initialized or exists \\
+Input: Same as above \\
+Output: Record appended to log file \\
+Test Case Derivation: The system is expected to log inference results consistently. \\
+How test will be performed: Patch the logging function and verify it is invoked with correctly formatted result.
+
+\item{test-M8-4: Batch Aggregation Consistency Test\\}
+Type: Automatic, Functional \\
+Initial State: Model returns outputs in multiple batches \\
+Input: Multi-batch dataloader and inference model \\
+Output: Concatenated arrays for predictions and probabilities \\
+Test Case Derivation: All batches should be merged for final output consistency. \\
+How test will be performed: Provide two or more batches and check that final arrays match the total batch size.
+
+\end{enumerate}
+
+
+\subsubsection{Explanation Module (M9)}
+
+The Explanation Module is responsible for identifying and visualizing the most relevant subgraph for a given GNN prediction using a Monte Carlo Tree Search (MCTS)–based strategy. The associated unit tests ensure correctness of explanation scores, rollout behavior, subgraph selection, and visualization triggering. Tests are selected to exercise both the black-box interface and key white-box mechanisms described in the MIS, such as prototype similarity scoring, node expansion, and recursive score propagation.
+
+\begin{enumerate}
+
+\item{test-M9-1: MCTS Node Scoring Test\\}
+Type: Automatic, Functional \\
+Initial State: Node created with initialized state parameters \\
+Input: A coalition and dummy graph \\
+Output: Valid computed $Q$ and $U$ scores \\
+Test Case Derivation: Verifies the scoring behavior of tree nodes used in exploration phase \\
+How test will be performed: Instantiate a node and validate returned $Q$ and $U$ values
+
+\item{test-M9-2: Prototype Similarity Test\\}
+Type: Automatic, Functional \\
+Initial State: Model in evaluation mode with fixed embedding output \\
+Input: Coalition and prototype tensor \\
+Output: A scalar similarity score \\
+Test Case Derivation: Ensures prototype-sample similarity is correctly measured \\
+How test will be performed: Use a dummy GNN to compute the similarity for a given coalition
+
+\item{test-M9-3: MCTS Scoring Utility Test\\}
+Type: Automatic, Functional \\
+Initial State: Multiple candidate nodes with varying priors \\
+Input: List of MCTS nodes and scoring function \\
+Output: List of computed scores \\
+Test Case Derivation: Verifies score selection logic in exploration step \\
+How test will be performed: Run scoring on multiple nodes and check ordering and values
+
+\item{test-M9-4: MCTS Rollout Test\\}
+Type: Automatic, Functional \\
+Initial State: Root node initialized with full coalition \\
+Input: Graph and scoring function \\
+Output: Updated node visit counts and scores \\
+Test Case Derivation: Validates recursive search and backpropagation logic \\
+How test will be performed: Perform a rollout and assert structural updates
+
+\item{test-M9-5: Explanation Function Test\\}
+Type: Automatic, Functional \\
+Initial State: Dummy GNN and graph sample \\
+Input: Graph data, model, and prototype \\
+Output: Most relevant subgraph node list, score, and embedding \\
+Test Case Derivation: Checks output consistency for the high-level explanation function \\
+How test will be performed: Call explanation API and verify output types and values
+
+
+\item{test-M9-6: MCTS Rollout Backpropagation Test\\}
+Type: Automatic, Functional \\
+Initial State: Root with one child node with initialized score \\
+Input: Score function \\
+Output: Updated statistics at root node \\
+Test Case Derivation: Verifies that child scores correctly propagate up the tree \\
+How test will be performed: Trigger rollout and validate state updates on the parent
+\end{enumerate}
+
 
 \subsection{Tests for Nonfunctional Requirements}
-
-\wss{If there is a module that needs to be independently assessed for
-  performance, those test cases can go here.  In some projects, planning for
-  nonfunctional tests of units will not be that relevant.}
-
-\wss{These tests may involve collecting performance data from previously
-  mentioned functional tests.}
-
-\subsubsection{Module ?}
-		
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: \wss{Functional, Dynamic, Manual, Automatic, Static etc. Most will
-  be automatic}
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
-
-\end{enumerate}
-
-\subsubsection{Module ?}
-
-...
+Unit testing of nonfunctional requirements is considered out of scope for this project. These requirements will primarily be evaluated through the usability survey in Section~\ref{sub:survey}.
 
 \subsection{Traceability Between Test Cases and Modules}
 
@@ -516,40 +629,26 @@ How test will be performed:
 
 \section{Appendix}
 
-This is where you can place additional information.
-
-\subsection{Symbolic Parameters}
-
-The definition of the test cases will call for SYMBOLIC\_CONSTANTS.
-Their values are defined in this section for easy maintenance.
-
 \subsection{Usability Survey Questions?}
-
-\wss{This is a section that would be appropriate for some projects.}
-
-\newpage{}
-\section*{Appendix --- Reflection}
-
-\wss{This section is not required for CAS 741}
-
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Lifelong Learning.
-
-\input{../Reflection.tex}
+\label{sub:survey}
+Please rate the following statements on a scale from 1 (Strongly Disagree) to 5 (Strongly Agree):
 
 \begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item What knowledge and skills will the team collectively need to acquire to
-  successfully complete the verification and validation of your project?
-  Examples of possible knowledge and skills include dynamic testing knowledge,
-  static testing knowledge, specific tool usage, Valgrind etc.  You should look to
-  identify at least one item for each team member.
-  \item For each of the knowledge areas and skills identified in the previous
-  question, what are at least two approaches to acquiring the knowledge or
-  mastering the skill?  Of the identified approaches, which will each team
-  member pursue, and why did they make this choice?
+    \item The system was easy to learn and use.
+    \item The interface is clear and intuitive.
+    \item The system responded in a reasonable amount of time.
+    \item I felt confident using the system without needing extra help.
+    \item Error messages, if any, were clear and helpful.
+    \item I am satisfied with my overall experience using the system.
 \end{enumerate}
+
+\vspace{1em}
+
+\noindent \textbf{Optional Open-ended Questions:}
+\begin{enumerate}
+    \item What did you like most about the system?
+    \item What improvements would you suggest?
+\end{enumerate}
+
 
 \end{document}
