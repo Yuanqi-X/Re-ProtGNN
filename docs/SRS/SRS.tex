@@ -1262,26 +1262,48 @@ qualities that the software is expected to exhibit.
 
 \end{itemize}
 
-
 \subsection{Nonfunctional Requirements}
 
 \noindent \begin{itemize}
 
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
-  %\textbf{Accuracy} The system should achieve classification accuracy and prototype quality comparable to those reported in the original paper~\citep{zhang2022}, with at most a 5\% variation.
-  \textbf{Accuracy} The system should achieve a satisfactory classification accuracy ($\geq80\%$) on the MUTAG dataset ~\citep{debnath1991structure}.
+\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Reliability}:] 
+    \textbf{Reliability}
+    The system should operate reliably without unexpected failures. Reliability will be evaluated through testings as outlined in the 
+    \href{https://github.com/Yuanqi-X/Re-ProtGNN/blob/main/docs/VnVPlan/VnVPlan.pdf}{VnV Plan}.
 
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] \textbf{Usability}
-  The system should visualize learned prototypes as graphs represented by images rather than node features and adjacency matrices to enhance interpretability.
+\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] 
+    \textbf{Usability}
+    The user interface and interaction flow should be intuitive and require minimal user effort or prior training.
+
+% Optional NFR if accuracy is a major consideration and worth including:
+%\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:] 
+%    \textbf{Accuracy} — The extent to which the system produces correct results.  
+%    The system should achieve classification accuracy and prototype interpretability comparable to the results reported in the original work~\citep{zhang2022}, with at most a 5\% deviation.
+
+\end{itemize}
+
+
+%\subsection{Nonfunctional Requirements}
+
+%\noindent \begin{itemize}
+
+%\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Accuracy}:]
+  %\textbf{Accuracy} The system should achieve classification accuracy and prototype quality comparable to those reported in the original paper~\citep{zhang2022}, with at most a 5\% variation.
+  %\textbf{Accuracy} The system should achieve a satisfactory classification accuracy ($\geq80\%$) on the MUTAG dataset ~\citep{debnath1991structure}.
+
+%\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Usability}:] %\textbf{Usability}
+%    The software should be intuitive and easy to use.
+  
+  %The system should visualize learned prototypes as graphs represented by images rather than node features and adjacency matrices to enhance interpretability.
 
 %\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Maintainability}:]
 %  \textbf{Maintainability} The implementation should include modular function abstractions, documentation, and unit tests to facilitate future adaptations.
 
-\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
-  \textbf{Portability} Re-ProtGNN should be compatible with Windows and macOS and run with PyTorch 1.8.0 and Torch-Geometric 2.0.2.
+%\item[NFR\refstepcounter{nfrnum}\thenfrnum \label{NFR_Portability}:]
+%  \textbf{Portability} Re-ProtGNN should be compatible with Windows and macOS and run with PyTorch 1.8.0 and Torch-Geometric 2.0.2.
   
 
-\end{itemize}
+%\end{itemize}
 
 
 \subsection{Rationale}
@@ -1386,19 +1408,17 @@ the assumptions.
 
 \begin{table}[h!]
 \centering
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-	& \iref{Training} & \iref{Inference} & \rref{R_Inputs} & \rref{R_Train} & \rref{R_VerifyOutput} & \nfrref{NFR_Accuracy} & \nfrref{NFR_Usability} & \nfrref{NFR_Maintainability} & \nfrref{NFR_Portability} \\
+	& \iref{Training} & \iref{Inference} & \rref{R_Inputs} & \rref{R_Train} & \rref{R_VerifyOutput} & \nfrref{NFR_Reliability} & \nfrref{NFR_Usability} \\
 \hline
-\iref{Training}            &  &  &  &  &  &  &  &  &  \\ \hline
-\iref{Inference}           & X &  &  &  &  &  &  &  &  \\ \hline
-\rref{R_Inputs}            &  &  &  &  &  &  &  &  &  \\ \hline
-\rref{R_Train}             & X &  &  &  &  &  &  &  &  \\ \hline
-\rref{R_VerifyOutput}      & X & X &  &  &  &  &  &  &  \\ \hline
-\nfrref{NFR_Accuracy}      &  &  &  &  &  &  &  &  &  \\ \hline 
-\nfrref{NFR_Usability}     &  &  &  &  &  &  &  &  &  \\ \hline
-\nfrref{NFR_Maintainability} &  &  &  &  &  &  &  &  &  \\ \hline
-\nfrref{NFR_Portability}   &  &  &  &  &  &  &  &  &  \\ \hline
+\iref{Training}            &  &  &  &  & X &  &  \\ \hline
+\iref{Inference}           & X &  &  &  & X &  &  \\ \hline
+\rref{R_Inputs}            &  &  &  &  & X & X &   \\ \hline
+\rref{R_Train}             & X &  &  &  & X & X &    \\ \hline
+\rref{R_VerifyOutput}      & X & X &  &  & X & X &    \\ \hline
+\nfrref{NFR_Reliability}      &  &  &  &  &  & X &    \\ \hline 
+\nfrref{NFR_Usability}     &  &  &  &  &  &  &    \\ \hline
 \end{tabular}
 
 \caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
@@ -1427,12 +1447,6 @@ the assumptions.
 % 	\end{center}
 % \end{figure}
 
-\section{Development Plan}
-
-Not applicable.
-
-\section{Values of Auxiliary Constants}
-Not applicable, as no auxiliary constants are defined in this document.
 
 \newpage
 
