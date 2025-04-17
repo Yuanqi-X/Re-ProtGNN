@@ -598,7 +598,7 @@ How test will be performed: Patch torch.save and shutil.copy, then assert both w
 \item{test-M6-3: Model Save without Best Checkpoint\\}
 Type: Automatic, Functional \\
 Initial State: A model object is instantiated \\
-Input: Same as test-M6-2, but with is\_best=False \\
+Input: Checkpoint directory, epoch number, model, model name, accuracy value, and is\_best=False flag \\
 Output: A checkpoint file is saved, but no copy is made for best checkpoint \\
 Test Case Derivation: Validates that saving logic bypasses best checkpoint logic when not applicable \\
 How test will be performed: Patch torch.save and shutil.copy, and assert only the save call is invoked.
