@@ -284,7 +284,7 @@ Test Case Derivation: This test confirms that the model satisfies the training r
 
 How the test will be performed:
 \begin{itemize}
-    \item In the Pytest script sys\_test\_loss\_converge.py, The system’s main training pipeline is launched using the `main` entry point with loss coefficient values set to zero to isolate base training behavior.
+    \item In the Pytest script sys\_test\_loss\_converge.py, The system’s main training pipeline is launched using the main entry point with loss coefficient values set to zero to isolate base training behavior.
     \item The append\_record function is temporarily patched to intercept and store loss values across epochs in a list.
     \item Once training is complete, the list of recorded losses is analyzed.
     \item The test asserts the condition that the final loss must be less than or equal to the initial loss, indicating that training successfully reduced the loss.
@@ -369,6 +369,16 @@ The reliability of the software is demonstrated through the execution of functio
 
 The usability of the software is measured mainly by the Usability Survey in Section~\ref{sub:survey}.
 
+\begin{enumerate}
+  \item{T4: Usability Survey Test\\}
+  Type: Manual \\
+  Initial State: The software is fully set up and operational \\
+  Input/Condition: None \\
+  Output/Result: Completed survey responses from the user \\
+  Test Case Derivation: Measures user perception of ease of use and clarity of the interface, as defined by usability metrics. \\
+  How test will be performed: The user will be asked to complete a survey after using the system. The survey questions are listed in Appendix~\ref{sub:survey}.
+\end{enumerate}
+
 %\begin{enumerate}
 %    \item{T5: Usability Test\\}
 
@@ -405,16 +415,15 @@ The usability of the software is measured mainly by the Usability Survey in Sect
 
 \begin{table}[h!]
   \centering
-  \begin{tabular}{|c|c|c|c|c|c|c|}
+  \begin{tabular}{|c|c|c|c|c|}
   \hline
-    & T1 & T2 & T3 & T4 & T5 & T6 \\
+    & T1 & T2 & T3 & T4 \\
   \hline
-  R1        & X  &   &   &   &   &   \\ \hline
-  R2        &   & X  &   &   &   &   \\ \hline
-  R3        &   &   & X  &   & X  &   \\ \hline
-  NFR1      &   &   &   & X  &   &   \\ \hline
-  NFR2      &   &   &   &   &  X &   \\ \hline
-  NFR3      &   &   &   &   &   & X  \\ \hline
+  R1        & X  &   &   &    \\ \hline
+  R2        &   & X  &   &   \\ \hline
+  R3        &   &   & X  &    \\ \hline
+  NFR1      & X  & X  & X  &    \\ \hline
+  NFR2      &   &   &   & X   \\ \hline
   \end{tabular}
   \caption{Traceability Matrix of Test Cases and Requirements}
   \label{Table:trace-test-req}
@@ -423,75 +432,87 @@ The usability of the software is measured mainly by the Usability Survey in Sect
 
 \section{Unit Test Description}
 
-\wss{This section should not be filled in until after the MIS (detailed design
-  document) has been completed.}
-
-\wss{Reference your MIS (detailed design document) and explain your overall
-philosophy for test case selection.}  
-
-\wss{To save space and time, it may be an option to provide less detail in this section.  
-For the unit tests you can potentially layout your testing strategy here.  That is, you 
-can explain how tests will be selected for each module.  For instance, your test building 
-approach could be test cases for each access program, including one test for normal behaviour 
-and as many tests as needed for edge cases.  Rather than create the details of the input 
-and output here, you could point to the unit testing code.  For this to work, you code 
-needs to be well-documented, with meaningful names for all of the tests.}
-
 \subsection{Unit Testing Scope}
 
-\wss{What modules are outside of the scope.  If there are modules that are
-  developed by someone else, then you would say here if you aren't planning on
-  verifying them.  There may also be modules that are part of your software, but
-  have a lower priority for verification than others.  If this is the case,
-  explain your rationale for the ranking of module importance.}
+This section outlines the unit testing coverage across the module hierarchy presented in Section~5. Unit tests were implemented for all leaf modules that contain self-contained functionality. Specifically, we provide full coverage for:
+
+\begin{itemize}
+  \item \textbf{M3 - Input Format Module:} This module includes dataset loading, preprocessing, and dataloader construction. Unit tests validate both correct data splits and failure cases such as missing or malformed input files.
+  
+  \item \textbf{M6 - Output Visualization Module:} This module handles logging, checkpoint saving, and subgraph visualization. Unit tests verify file-writing routines, model serialization behavior, and visual explanation dispatching logic for supported datasets.
+  
+  \item \textbf{M8 - Inference Module:} This module runs model evaluation on test data and reports metrics. Unit tests confirm correct loss/accuracy aggregation, prediction concatenation, and logging calls.
+  
+  \item \textbf{M9 - Explanation Module:} This module implements the subgraph explanation strategy. Unit tests cover internal score computation, prototype similarity matching, recursive backpropagation, and high-level explanation behavior.
+\end{itemize}
+
+\paragraph{Rationale for Non-Tested Modules.}
+The following modules are not unit-tested either due to their indirect role, external origin, or verification through integration/system-level tests:
+
+\begin{itemize}
+  \item M1 - Hardware-Hiding Module: This module abstracts disk I/O and memory operations. Its functionality is implicitly tested through file saving/loading operations in other modules, such as checkpoint storage and dataset caching.
+  
+  \item M2 - Configuration Module: This module only contains global constants and command-line configuration structures. Since it defines no active computation, it is not unit-tested but is covered implicitly through the modules that consume its parameters.
+  
+  \item M4 - Control Module: This module is the main program and serves as the orchestrator for all other modules. Its correctness is indirectly verified through the unit tests of the functional modules it calls.
+
+  \item M5 - Training Module: While not explicitly unit-tested, the training logic is validated through system tests that observe loss convergence and model checkpoint generation during training runs.
+  
+  \item M7 - Model Module: This module imports standard GNN backbones from published codebases. These components are assumed correct and excluded from internal unit testing.
+\end{itemize}
+
+
+
 
 \subsection{Tests for Functional Requirements}
 \label{sub:unit FR}
+
 \subsubsection{Input Format Module (M3)}
 
-This module corresponds to the data ingestion and preprocessing layer responsible for loading datasets, applying transformations, and preparing batched dataloaders for graph classification. The tests below follow the specifications outlined in the MIS, covering access programs such as load\_dataset, \_get\_dataloader, and include wrapper functions for MUTAG datasets. Each test is derived from either a normal usage pattern or a defined edge case. The goal is to verify expected input-output behavior and robust error handling.
+This module corresponds to the data ingestion and preprocessing layer responsible for loading datasets, applying transformations, and preparing batched dataloaders for graph classification. The tests below follow the specifications outlined in the MIS, covering access programs such as load\_dataset, \_get\_dataloader, and include wrapper functions for MUTAG and other supported datasets. Each test is derived from either a normal usage pattern or a defined edge case. The goal is to verify expected input-output behavior and robust error handling.
 
 \begin{enumerate}
 
 \item{test-M3-1: Dataset Loading Interface Test\\}
 Type: Automatic, Functional \\
-Initial State: No data loaded \\
-Input: Dataset name (e.g., ``MUTAG''), dataset path, and training configuration \\
-Output: Dataset object with correct feature and label dimensions \\
-Test Case Derivation: This test ensures that the top-level load\_dataset() interface returns a dataset and associated metadata as required by the training pipeline. \\
-How test will be performed: Patch internal loaders, call load\_dataset, and verify returned values and internal calls.
+Initial State: No dataset is currently loaded \\
+Input: Dataset name (e.g., MUTAG), dataset path, and training configuration \\
+Output: Dataset object with valid num\_node\_features and num\_classes; a dictionary containing train, eval, and test DataLoaders \\
+Test Case Derivation: Verifies the behavior of load\_dataset() and confirms correct metadata extraction and data loader construction. \\
+How test will be performed: Patch internal helpers (\_get\_dataset, \_get\_dataloader), call load\_dataset(), and assert on returned structure and contents.
 
 \item{test-M3-2: Random Split Dataloader Construction Test\\}
 Type: Automatic, Functional \\
-Initial State: Loaded raw dataset \\
-Input: PyG list of data objects and split ratios \\
-Output: Dictionary of train, eval, and test loaders with expected sizes \\
-Test Case Derivation: The module must support random data splitting for cross-validation scenarios. \\
-How test will be performed: Construct a dummy dataset and pass it to \_get\_dataloader() with split flags enabled.
+Initial State: A PyTorch Geometric dataset object is available \\
+Input: List of synthetic Data objects, split ratio [0.6, 0.2, 0.2] \\
+Output: DataLoader dictionary with train, eval, and test splits totaling original size \\
+Test Case Derivation: Ensures that randomized dataset splitting logic in \_get\_dataloader() produces reproducible and valid splits \\
+How test will be performed: Pass a dataset into \_get\_dataloader() and assert correct sizes and keys in output dictionary.
 
 \item{test-M3-3: Predefined Split Index Test\\}
 Type: Automatic, Functional \\
-Initial State: Dataset object with embedded split indices \\
-Input: Dataset with supplement['split\_indices'] \\
-Output: DataLoader split into subsets based on those indices \\
-Test Case Derivation: Required to support externally defined splits (e.g., molecule benchmarks). \\
-How test will be performed: Patch the dataset to include custom split labels and verify proper loader construction.
+Initial State: Dataset includes a supplement['split\_indices'] attribute \\
+Input: Dataset with split indices tensor defining train, eval, and test members \\
+Output: Three DataLoaders corresponding to these index masks \\
+Test Case Derivation: Required for compatibility with datasets that ship with predefined splits. \\
+How test will be performed: Mock dataset with index labels and verify correct construction of DataLoaders using subset masks.
 
 \item{test-M3-4: Dataset Wrapper Invocation Test (MUTAG)\\}
 Type: Automatic, Functional \\
-Initial State: Dataset not yet initialized \\
-Input: Dataset directory and name ``MUTAG'' \\
-Output: Loaded and preprocessed PyG dataset object \\
-Test Case Derivation: The system should route calls correctly to dataset-specific wrappers. \\
-How test will be performed: Patch torch.load, simulate dataset content, and verify the correct class is instantiated.
+Initial State: No dataset loaded \\
+Input: Dataset name MUTAG and directory path \\
+Output: \_MUTAGDataset object loaded from saved data.pt \\
+Test Case Derivation: Verifies correct dispatching from \_get\_dataset() to MUTAG-specific wrapper and confirms the dataset inherits InMemoryDataset \\
+How test will be performed: Patch torch.load and process(), create \_MUTAGDataset, and validate class and internal attributes.
 
 \item{test-M3-5: Unsupported Dataset Handling Test\\}
 Type: Automatic, Functional \\
 Initial State: No dataset selected \\
-Input: An unrecognized dataset name (e.g., ``FakeDataset'') \\
-Output: Raised NotImplementedError \\
-Test Case Derivation: Ensures graceful failure and debuggability for unsupported options. \\
-How test will be performed: Call \_get\_dataset() with an invalid name and assert raised exception.
+Input: Dataset name not recognized by dispatch (e.g., `FakeDataset') \\
+Output: NotImplementedError is raised \\
+Test Case Derivation: Confirms graceful failure when an invalid or unsupported dataset name is passed \\
+How test will be performed: Pass a fake name into \_get\_dataset() and check the correct exception is raised.
+
 
 \end{enumerate}
 
@@ -504,53 +525,55 @@ This module handles logging, model checkpoint saving, and visual explanation ren
 
 \item{test-M6-1: Logging Append Test\\}
 Type: Automatic, Functional \\
-Initial State: Log file empty or exists \\
-Input: A string log entry \\
-Output: Appended log file with a new line containing the input string \\
-Test Case Derivation: Ensures the logging utility appends correctly to a fixed log path. \\
-How test will be performed: Patch file I/O and verify the correct write call was made.
+Initial State: Log file is empty or preexisting \\
+Input: A single-line string (e.g., test log line) \\
+Output: The string is appended to the ./results/log/hyper\_search log file with a newline character \\
+Test Case Derivation: Validates the basic logging utility used across training and inference scripts. \\
+How test will be performed: Patch open() and check that the file was opened in append mode and write() was called with the correct formatted input.
 
 \item{test-M6-2: Model Save with Best Checkpoint\\}
 Type: Automatic, Functional \\
-Initial State: Model in memory \\
-Input: Model object, accuracy, epoch, checkpoint directory, is\_best=True \\
-Output: Saved model file and best checkpoint copy \\
-Test Case Derivation: The system must persist and track the best-performing model. \\
-How test will be performed: Patch torch.save and shutil.copy, then verify both were invoked.
+Initial State: A model object is instantiated \\
+Input: Checkpoint directory, epoch number, model, model name, accuracy value, and is\_best=True flag \\
+Output: A checkpoint file is saved, and a copy is made to the best checkpoint path \\
+Test Case Derivation: Ensures that the best model is correctly tracked and persisted \\
+How test will be performed: Patch torch.save and shutil.copy, then assert both were called correctly.
 
 \item{test-M6-3: Model Save without Best Checkpoint\\}
 Type: Automatic, Functional \\
-Initial State: Model in memory \\
-Input: Same as above, but with is\_best=False \\
-Output: Saved model file only \\
-Test Case Derivation: Checkpoint should be saved without updating the best model. \\
-How test will be performed: Patch dependencies and confirm only save was called.
+Initial State: A model object is instantiated \\
+Input: Same as test-M6-2, but with is\_best=False \\
+Output: A checkpoint file is saved, but no copy is made for best checkpoint \\
+Test Case Derivation: Validates that saving logic bypasses best checkpoint logic when not applicable \\
+How test will be performed: Patch torch.save and shutil.copy, and assert only the save call is invoked.
 
 \item{test-M6-4: Explanation Dispatcher Test (MUTAG)\\}
 Type: Automatic, Functional \\
-Initial State: Plot utility initialized with MUTAG context \\
-Input: NetworkX graph, node list, feature tensor \\
-Output: Call to molecule drawing routine \\
-Test Case Derivation: Same as above, adapted for molecular feature mapping. \\
-How test will be performed: Use torch input and patch the draw method for assertion.
+Initial State: ExpPlot initialized with dataset name \\
+Input: A NetworkX graph, list of nodes to highlight, and a feature matrix \\
+Output: Call to \_draw\_molecule() subroutine with appropriate arguments \\
+Test Case Derivation: Ensures correct routing for molecule-based explanations \\
+How test will be performed: Patch \_draw\_molecule method and assert it is called with expected input.
 
 \item{test-M6-5: Subgraph Drawing Output Test\\}
 Type: Automatic, Functional \\
-Initial State: Explanation utility instantiated \\
-Input: Simple path graph and output path \\
-Output: PNG image file written to disk \\
-Test Case Derivation: Visualization should execute without error and produce a file. \\
-How test will be performed: Use tmp\_path to save figure and verify file existence.
+Initial State: ExpPlot object instantiated with a supported dataset name \\
+Input: A NetworkX graph and temporary output file path \\
+Output: An image file (e.g., PNG) is saved containing the visualized subgraph \\
+Test Case Derivation: Basic requirement that the visualization function executes without error \\
+How test will be performed: Create a test graph, call \_draw\_subgraph(), and verify that the file exists at the output location.
 
 \item{test-M6-6: Dataset Routing Failure Test\\}
 Type: Automatic, Functional \\
-Initial State: Plot utility initialized with invalid dataset name \\
-Input: Any graph and node list \\
-Output: Raised NotImplementedError \\
-Test Case Derivation: Prevent silent failures when dataset name is unsupported. \\
-How test will be performed: Patch plotting to suppress file writes and assert the exception is raised.
+Initial State: ExpPlot initialized with an unsupported dataset name \\
+Input: Any graph and a list of nodes \\
+Output: A NotImplementedError is raised \\
+Test Case Derivation: Prevents silent failures for unrecognized datasets in the drawing logic \\
+How test will be performed: Patch matplotlib.pyplot.savefig to suppress side effects and assert that an error is raised when drawing with an invalid dataset name.
 
 \end{enumerate}
+
+
 
 
 \subsubsection{Inference Module (M8)}
@@ -655,8 +678,54 @@ How test will be performed: Trigger rollout and validate state updates on the pa
 Unit testing of nonfunctional requirements is considered out of scope for this project. These requirements will primarily be evaluated through the usability survey in Section~\ref{sub:survey}.
 
 \subsection{Traceability Between Test Cases and Modules}
+\label{sec:trace-test-modules}
 
-\wss{Provide evidence that all of the modules have been considered.}
+This section provides evidence that all modules from the Module Hierarchy (Section~5) have been evaluated through targeted test cases where applicable. Each test case corresponds to a module or group of access routines within the module's responsibility.
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+  \hline
+   & M1 & M2 & M3 & M4 & M5 & M6 & M7 & M8 & M9 \\
+  \hline
+  test-M3-1   &     &     & X   &  X   &     &     &     &     &     \\ \hline
+  test-M3-2   &     &     & X   &  X   &     &     &     &     &     \\ \hline
+  test-M3-3   &     &     & X   &  X   &     &     &     &     &     \\ \hline
+  test-M3-4   &     &     & X   &  X   &     &     &     &     &     \\ \hline
+  test-M3-5   &     &     & X   &  X   &     &     &     &     &     \\ \hline
+  test-M6-1   &  X   &     &     &  X   &     & X   &     &     &     \\ \hline
+  test-M6-2   &  X   &     &     &  X   &     & X   &     &     &     \\ \hline
+  test-M6-3   &  X   &     &     &  X   &     & X   &     &     &     \\ \hline
+  test-M6-4   &     &     &     &  X   &     & X   &     &     &     \\ \hline
+  test-M6-5   &     &     &     &  X   &     & X   &     &     &     \\ \hline
+  test-M6-6   &     &     &     &  X   &     & X   &     &     &     \\ \hline
+  test-M8-1   &     &     &     &  X   &     &     &     & X   &     \\ \hline
+  test-M8-2   &     &     &     &  X   &     &     &     & X   &     \\ \hline
+  test-M8-3   &     &     &     &  X   &     &     &     & X   &     \\ \hline
+  test-M8-4   &     &     &     &  X   &     &     &     & X   &     \\ \hline
+  test-M9-1   &     &     &     &  X   &     &     &     &     & X   \\ \hline
+  test-M9-2   &     &     &     &  X   &     &     &     &     & X   \\ \hline
+  test-M9-3   &     &     &     &  X   &     &     &     &     & X   \\ \hline
+  test-M9-4   &     &     &     &  X   &     &     &     &     & X   \\ \hline
+  test-M9-5   &     &     &     &  X   &     &     &     &     & X   \\ \hline
+  test-M9-6   &     &     &     &  X   &     &     &     &     & X   \\ \hline
+  \end{tabular}
+  \caption{Traceability Matrix of Test Cases and Modules}
+  \label{Table:trace-test-modules}
+\end{table}
+
+\paragraph{Note:}
+Modules M1, M2, M4, M5, and M7 are not directly unit-tested due to the following reasons:
+
+\begin{itemize}
+  \item \textbf{M1} (Hardware-Hiding Module): Tested implicitly through I/O in M6 and system test T1.
+  \item \textbf{M2} (Configuration Module): No computational logic; parameters are exercised via other modules.
+  \item \textbf{M4} (Control Module): Acts as the main orchestrator; validated indirectly via end-to-end system tests.
+  \item \textbf{M5} (Training Module): Training logic is verified by observing loss convergence during full training cycles.
+  \item \textbf{M7} (Model Module): Uses standard GNN backbones from existing implementations and is assumed correct.
+\end{itemize}
+
+
 				
 \bibliographystyle{plainnat}
 
