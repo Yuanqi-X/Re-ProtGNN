@@ -488,7 +488,8 @@ Initial State: A PyTorch Geometric dataset object is available \\
 Input: List of synthetic Data objects, split ratio [0.6, 0.2, 0.2] \\
 Output: DataLoader dictionary with train, eval, and test splits totaling original size \\
 Test Case Derivation: Ensures that randomized dataset splitting logic in \_get\_dataloader() produces reproducible and valid splits \\
-How test will be performed: Pass a dataset into \_get\_dataloader() and assert correct sizes and keys in output dictionary.
+How test will be performed: Pass a dataset with batch size and split ratio into \_get\_dataloader() and  assert that the returned dictionary contains keys ``train'', ``eval'', and ``test''. 
+
 
 \item{test-M3-3: Predefined Split Index Test\\}
 Type: Automatic, Functional \\
