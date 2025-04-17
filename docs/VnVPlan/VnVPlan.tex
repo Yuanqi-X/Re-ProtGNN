@@ -264,6 +264,7 @@ How test will be performed: A Pytest script sys\_test\_input\_validation.py init
 
 
 \subsubsection{Area of Testing 2: Training Convergence}
+\label{sub:convergence}
 This test verifies that the model training process optimizes the objective function over time. It ensures that the model effectively minimizes training loss, thereby satisfying the requirement for stable and meaningful training behavior.
 
 \paragraph{Test for Training Loss Convergence}
@@ -438,6 +439,8 @@ This section outlines the unit testing coverage across the module hierarchy pres
 
 \begin{itemize}
   \item \textbf{M3 - Input Format Module:} This module includes dataset loading, preprocessing, and dataloader construction. Unit tests validate both correct data splits and failure cases such as missing or malformed input files.
+
+  \item \textbf{M5 - Training Module:} This module governs the model training procedure, including loss computation, prototype projection, mode configuration, and evaluation. Unit tests exercise all internal access routines except for the top-level train() function, which is validated through full-system tests (e.g., loss convergence test in~\ref{sub:convergence}).
   
   \item \textbf{M6 - Output Visualization Module:} This module handles logging, checkpoint saving, and subgraph visualization. Unit tests verify file-writing routines, model serialization behavior, and visual explanation dispatching logic for supported datasets.
   
@@ -455,8 +458,6 @@ The following modules are not unit-tested either due to their indirect role, ext
   \item M2 - Configuration Module: This module only contains global constants and command-line configuration structures. Since it defines no active computation, it is not unit-tested but is covered implicitly through the modules that consume its parameters.
   
   \item M4 - Control Module: This module is the main program and serves as the orchestrator for all other modules. Its correctness is indirectly verified through the unit tests of the functional modules it calls.
-
-  \item M5 - Training Module: While not explicitly unit-tested, the training logic is validated through system tests that observe loss convergence and model checkpoint generation during training runs.
   
   \item M7 - Model Module: This module imports standard GNN backbones from published codebases. These components are assumed correct and excluded from internal unit testing.
 \end{itemize}
@@ -515,6 +516,60 @@ How test will be performed: Pass a fake name into \_get\_dataset() and check the
 
 
 \end{enumerate}
+
+
+\subsubsection{Training Module (M5)}
+
+The Training Module coordinates the warm-up, projection, and full training phases of the prototype-based GNN. It computes loss, handles optimizer updates, evaluates validation performance, manages prototype alignment, and triggers checkpoint saving. Unit tests are implemented to cover all internal access routines as specified in the MIS, and to isolate individual components of the training logic such as loss computation, dataset statistics, training mode configuration, and prototype behavior. The primary training loop itself is indirectly tested through system-level loss convergence (see~\ref{sub:convergence}).
+
+\begin{enumerate}
+
+\item{test-M5-1: Total Loss Computation Test\\}
+Type: Automatic, Functional \\
+Initial State: Dummy model with initialized prototype identity and parameters \\
+Input: Logits, class labels, minimum distances, loss function, and regularization weights \\
+Output: Scalar tensor representing the total loss \\
+Test Case Derivation: Ensures correct aggregation of classification, cluster, separation, L1, and diversity losses. \\
+How test will be performed: Generate synthetic logits and distances, and pass them into \_compute\_total\_loss().
+
+\item{test-M5-2: Dataset Statistics Logging Test\\}
+Type: Automatic, Functional \\
+Initial State: Dataset of graphs with fixed node and edge counts \\
+Input: Dataset list of PyG-compatible data objects \\
+Output: Printed statistics and log string \\
+Test Case Derivation: Logs dataset-level statistics for monitoring purposes. \\
+How test will be performed: Use capsys to capture standard output of \_log\_dataset\_stats() and verify its format.
+
+\item{test-M5-3: Training Mode Configuration Test\\}
+Type: Automatic, Functional \\
+Initial State: Model with trainable GNN layers and classifier head \\
+Input: warm\_only=True and False flags \\
+Output: Parameters’ requires\_grad state adjusted accordingly \\
+Test Case Derivation: Distinguishes between warm-up and full joint training modes. \\
+How test will be performed: Call \_set\_training\_mode() and ensure no exceptions and state changes occur.
+
+\item{test-M5-4: Prototype Projection Test\\}
+Type: Automatic, Functional \\
+Initial State: Model and dataset with one-hot labels \\
+Input: Dataset, prototype vectors, and prototype-to-label mapping \\
+Output: Projected prototype vector aligned to closest explanation \\
+Test Case Derivation: Validates the projection of each prototype to the most similar real sample. \\
+How test will be performed: Patch get\_explanation() and call \_project\_prototypes() to check for correct assignment and execution.
+
+\item{test-M5-5: Evaluation Routine Test\\}
+Type: Automatic, Functional \\
+Initial State: Model in evaluation mode with known output predictions \\
+Input: Validation dataloader and loss function \\
+Output: Mean loss and accuracy across batches \\
+Test Case Derivation: Measures performance statistics for early stopping and model selection. \\
+How test will be performed: Use a model with fixed logits and assert expected output keys in the result dictionary.
+
+\end{enumerate}
+
+\paragraph{Additional Note:}
+While the top-level train() function is not directly unit-tested, it is indirectly verified through system test T2 (see~\ref{sub:convergence}), which performs end-to-end training runs and confirms expected loss convergence over epochs. This test implicitly validates the integration of training components such as optimizer updates, prototype projection, and checkpoint logic.
+
+
 
 
 \subsubsection{Output Visualization Module (M6)}
@@ -699,6 +754,12 @@ This section provides evidence that all modules from the Module Hierarchy (Secti
   test-M6-4   &     &     &     &  X   &     & X   &     &     &     \\ \hline
   test-M6-5   &     &     &     &  X   &     & X   &     &     &     \\ \hline
   test-M6-6   &     &     &     &  X   &     & X   &     &     &     \\ \hline
+  test-M5-1   &     &     &     &  X   & X   &     &     &     &     \\ \hline
+  test-M5-2   &     &     &     &  X   & X   &     &     &     &     \\ \hline
+  test-M5-3   &     &     &     &  X   & X   &     &     &     &     \\ \hline
+  test-M5-4   &     &     &     &  X   & X   &     &     &     &     \\ \hline
+  test-M5-5   &     &     &     &  X   & X   &     &     &     &     \\ \hline
+  test-M5-6   &     &     &     &  X   & X   &     &     &     &     \\ \hline
   test-M8-1   &     &     &     &  X   &     &     &     & X   &     \\ \hline
   test-M8-2   &     &     &     &  X   &     &     &     & X   &     \\ \hline
   test-M8-3   &     &     &     &  X   &     &     &     & X   &     \\ \hline
@@ -715,13 +776,12 @@ This section provides evidence that all modules from the Module Hierarchy (Secti
 \end{table}
 
 \paragraph{Note:}
-Modules M1, M2, M4, M5, and M7 are not directly unit-tested due to the following reasons:
+Modules M1, M2, M4, and M7 are not directly unit-tested due to the following reasons:
 
 \begin{itemize}
   \item \textbf{M1} (Hardware-Hiding Module): Tested implicitly through I/O in M6 and system test T1.
   \item \textbf{M2} (Configuration Module): No computational logic; parameters are exercised via other modules.
   \item \textbf{M4} (Control Module): Acts as the main orchestrator; validated indirectly via end-to-end system tests.
-  \item \textbf{M5} (Training Module): Training logic is verified by observing loss convergence during full training cycles.
   \item \textbf{M7} (Model Module): Uses standard GNN backbones from existing implementations and is assumed correct.
 \end{itemize}
 
