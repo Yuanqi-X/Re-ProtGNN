@@ -152,8 +152,7 @@ The following table is taken directly from the Module Guide document for this pr
 \label{TblMH}
 \end{table}
 
-%\newpage
-%~\newpage
+\newpage
 
 
 \section{MIS of Configuration Module} \label{Configurations}
@@ -162,18 +161,12 @@ The following table is taken directly from the Module Guide document for this pr
 Configuration
 
 \subsection{Uses}
-Hardware-Hiding Module
+None
 
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
-\begin{itemize}
-  \item \texttt{data\_args}: An instance of \texttt{DataParser}, containing dataset-level configuration such as name, directory, splitting strategy, and seed.
-  \item \texttt{model\_args}: An instance of \texttt{ModelParser}, containing model architecture and prototype-related hyperparameters, including GNN settings.
-  \item \texttt{exp\_args}: An instance of \texttt{ExpParser}, configuring the algorithm used in explanation, such as rollout number and exploration parameters.
-  \item \texttt{reward\_args}: An instance of \texttt{RewardParser}, specifying how explanation rewards are calculated.
-  \item \texttt{train\_args}: An instance of \texttt{TrainParser}, configuring training hyperparameters such as learning rate, epochs, batch size, and prototype projection.
-\end{itemize}
+None
 
 \subsubsection{Exported Access Programs}
 None
@@ -181,26 +174,50 @@ None
 \subsection{Semantics}
 
 \subsubsection{State Variables}
-None
-
-\subsubsection{Environment Variables}
 \begin{itemize}
-  \item GPU/CPU environment: used to determine the computing device for training and inference.
-  \item File system: used for checkpoint paths and log saving (e.g., \texttt{checkpoint/}, \texttt{datasets/}).
-  \item Global random seed: applies to PyTorch, NumPy, and Python’s random module for reproducibility.
+  \item \texttt{data\_args: DataParser} — Stores dataset-level configuration such as name, directory, splitting strategy, and seed.
+  \item \texttt{model\_args: ModelParser} — Stores GNN architecture settings and prototype-related parameters.
+  \item \texttt{train\_args: TrainParser} — Stores training hyperparameters including learning rate, batch size, and epoch count.
+  \item \texttt{mcts\_args: MCTSParser} — Stores Monte Carlo Tree Search and explanation-specific rollout parameters.
+  \item \texttt{random\_seed: int} — Stores the global seed used for generating random numbers.
 \end{itemize}
 
-\subsubsection{Assumptions}
+\subsubsection{Environment Variables}
 None
 
 \subsubsection{Access Routine Semantics}
-None -- this module serves as a global container for parameter configurations and does not define any callable functions. Other modules are expected to directly import and access \texttt{data\_args}, \texttt{model\_args}, \texttt{train\_args}, etc.
+None - The state variables in this module are initialized when the system loads and are accessed directly by other modules using:
+\begin{quote}
+\texttt{from utils.Configures import data\_args, train\_args, model\_args, mcts\_args}
+\end{quote}
+As such, no explicit accessor routines are exported.
 
 \subsubsection{Local Functions}
-None
+
+\noindent \textbf{DataParser(name: str, dir: str, split: list[\(\mathbb{R}\)], seed: int) \(\rightarrow\) DataParser}
+\begin{itemize}
+  \item output: Returns a configuration object for dataset settings including \texttt{name}, \texttt{dir}, \texttt{split}, and \texttt{seed}.
+\end{itemize}
+
+\noindent \textbf{ModelParser(model\_name: str, hidden\_dim: \(\mathbb{N}\), num\_prototypes: \(\mathbb{N}\)) \(\rightarrow\) ModelParser}
+\begin{itemize}
+  \item output: Returns a configuration object containing the GNN model name, hidden dimension, and prototype count.
+\end{itemize}
+
+\noindent \textbf{TrainParser(batch\_size: \(\mathbb{N}\), lr: \(\mathbb{R}\), epochs: \(\mathbb{N}\)) \(\rightarrow\) TrainParser}
+\begin{itemize}
+  \item output: Returns a configuration object with the training hyperparameters: \texttt{batch\_size}, \texttt{lr}, and \texttt{epochs}.
+\end{itemize}
+
+\noindent \textbf{MCTSParser(num\_rollouts: \(\mathbb{N}\), exploration\_const: \(\mathbb{R}\)) \(\rightarrow\) MCTSParser}
+\begin{itemize}
+  \item output: Returns a configuration object specifying the number of rollouts and exploration constant for MCTS-based explanation.
+\end{itemize}
+
+\vspace{0.5em}
 
 
-
+\newpage
 
 
 \section{MIS of Input Format Module} \label{InputFormat}
