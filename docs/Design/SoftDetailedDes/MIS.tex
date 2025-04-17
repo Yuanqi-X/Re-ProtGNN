@@ -142,6 +142,9 @@ The following table is taken directly from the Module Guide document for this pr
 \multirow{3}{0.3\textwidth}{Software Decision Module} & {Model Module}\\
 & Inference Module\\
 & Explanation Module\\
+& Pytorch Module\\
+& Pytorch Geometric Module\\
+& GUI Module\\
 \bottomrule
 
 \end{tabular}
@@ -722,8 +725,202 @@ None
 
 
 
+\section{MIS of PyTorch Module} \label{TorchModule}
+
+\subsection{Module}
+Torch
+
+\subsection{Uses}
+None
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.2cm} p{5.5cm} p{4cm} p{2.5cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+Tensor & shape: \texttt{list[int]}, dtype: \texttt{str} & \texttt{Tensor} & - \\
+cross\_entropy & logits: \texttt{Tensor}, labels: \texttt{Tensor} & \texttt{Tensor} & - \\
+Adam & parameters: \texttt{iterable}, lr: \(\mathbb{R}\) & \texttt{Optimizer} & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Environment Variables}
+None
+
+\subsubsection{Assumptions}
+None
+
+\subsubsection{Access Routine Semantics}
+
+\textbf{Tensor(shape, dtype)}:
+\begin{itemize}
+  \item output: Returns a tensor initialized with zeros of the given \texttt{shape} and \texttt{dtype}.
+\end{itemize}
+
+\textbf{cross\_entropy(logits, labels)}:
+\begin{itemize}
+  \item output: Computes the cross-entropy loss between \texttt{logits} and \texttt{labels}.
+\end{itemize}
+
+\textbf{Adam(parameters, lr)}:
+\begin{itemize}
+  \item output: Returns an Adam optimizer configured with the given \texttt{parameters} and learning rate \texttt{lr}.
+\end{itemize}
+
+\subsubsection{Local Functions}
+None
 
 
+
+\section{MIS of PyTorch Geometric Module} \label{PyGModule}
+
+\subsection{Module}
+PyG
+
+\subsection{Uses}
+Torch
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.2cm} p{5.5cm} p{4cm} p{2.5cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+Data & x: \texttt{Tensor}, edge\_index: \texttt{Tensor} & \texttt{Data} & - \\
+MoleculeNet & root: \texttt{str}, name: \texttt{str} & \texttt{Dataset} & \texttt{FileNotFoundError} \\
+DataLoader & dataset: \texttt{Dataset}, batch\_size: \(\mathbb{N}\) & \texttt{DataLoader} & - \\
+to\_networkx & data: \texttt{Data} & \texttt{networkx.Graph} & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Environment Variables}
+None
+
+\subsubsection{Assumptions}
+None
+
+\subsubsection{Access Routine Semantics}
+
+\textbf{Data(x, edge\_index)}:
+\begin{itemize}
+  \item output: Constructs and returns a PyG graph object using \texttt{x} as node features and \texttt{edge\_index} as edge indices.
+\end{itemize}
+
+\textbf{MoleculeNet(root, name)}:
+\begin{itemize}
+  \item output: Loads the dataset specified by \texttt{name} from directory \texttt{root} and returns a \texttt{Dataset} object.
+  \item exception: \texttt{FileNotFoundError} if \texttt{root} does not exist.
+\end{itemize}
+
+\textbf{DataLoader(dataset, batch\_size)}:
+\begin{itemize}
+  \item output: Returns a \texttt{DataLoader} that batches data from the given \texttt{dataset} with batch size \texttt{batch\_size}.
+\end{itemize}
+
+\textbf{to\_networkx(data)}:
+\begin{itemize}
+  \item output: Converts the input PyG \texttt{data} object into a NetworkX graph.
+\end{itemize}
+
+\subsubsection{Local Functions}
+None
+
+
+\section{MIS of GUI Module} \label{MatplotlibGUI}
+
+\subsection{Module}
+Matplotlib
+
+\subsection{Uses}
+None
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3.2cm} p{5.5cm} p{4cm} p{2.5cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+axis & axis\_choice: \texttt{str} & - & - \\
+title & title\_sentence: \texttt{str} & - & - \\
+save\_fig & figname: \texttt{str} & - & \texttt{FileNotFoundError} \\
+close & choice: \texttt{str} & - & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Environment Variables}
+\begin{itemize}
+  \item \texttt{figure\_path: str} — Path where the current figure will be saved.
+  \item \texttt{axis\_visible: bool} — Whether axes are displayed in the active figure.
+  \item \texttt{figure\_title: str} — Title of the current figure.
+  \item \texttt{figure\_open: bool} — Whether there are any open figures.
+\end{itemize}
+
+\subsubsection{Assumptions}
+None.
+
+\subsubsection{Access Routine Semantics}
+
+\noindent \textbf{axis(axis\_choice)}:
+\begin{itemize}
+  \item transition: If \texttt{axis\_choice == 'off'}, sets \texttt{axis\_visible := False} and disables axes using \texttt{plt.axis('off')}. Otherwise sets \texttt{axis\_visible := True}.
+\end{itemize}
+
+\noindent \textbf{title(title\_sentence)}:
+\begin{itemize}
+  \item transition: Sets \texttt{figure\_title := title\_sentence} and updates the title of the current figure using \texttt{plt.title()}.
+\end{itemize}
+
+\noindent \textbf{save\_fig(figname)}:
+\begin{itemize}
+  \item transition: Sets \texttt{figure\_path := figname} and saves the current figure to the specified path using \texttt{plt.savefig(figname)}.
+  \item exception: \texttt{FileNotFoundError} if \texttt{figname} refers to a non-existent directory.
+\end{itemize}
+
+\noindent \textbf{close(choice)}:
+\begin{itemize}
+  \item transition: Closes all active figure windows using \texttt{plt.close(choice)} and sets \texttt{figure\_open := False}.
+\end{itemize}
+
+
+\subsubsection{Local Functions}
+None
 
 
 
