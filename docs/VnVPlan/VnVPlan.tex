@@ -11,6 +11,7 @@
     urlcolor=blue
 }
 \usepackage[round]{natbib}
+\usepackage{amsmath}
 
 \input{../Comments}
 \input{../Common}
@@ -194,7 +195,7 @@ GitHub Actions will be configured to automate testing after each commit. The wor
 
 \subsection{Software Validation Plan}
 \label{sec:svp}
-A separate 20\% test split from the MUTAG dataset~\citep{debnath1991structure} will be used to assess the model’s classification effectiveness and the clarity of its prototype-based explanations, with accuracy serving as the main benchmark.
+A testing dataset (i.e., a separate 20\% test split from the MUTAG dataset~\citep{debnath1991structure}) will be used to assess the model’s classification effectiveness and the clarity of its prototype-based explanations, with accuracy serving as the main benchmark.
 
 \section{System Tests}
 \label{sec:system-tests}
@@ -204,93 +205,139 @@ This section outlines the system tests designed to evaluate both functional and 
 \label{sub:FR}
 This section outlines the tests designed to validate the functional requirements of Re-ProtGNN, ensuring the system behaves as expected under various conditions. The testing areas include input verification, model training correctness, and inference validation, which corresponds to the R1, R2, and R3 of \href{https://github.com/Yuanqi-X/Re-ProtGNN/blob/main/docs/SRS/SRS.pdf}{SRS} ~\citep{Yuanqi_ReProtGNN_SRS}.
 
-\subsubsection{Area of Testing1: Input Verification}
 
-We need to make sure that all input graphs follow the correct format and structure before training begins. This test checks whether the system properly handles the input dataset files and follows the constraints listed in the \href{https://github.com/Yuanqi-X/Re-ProtGNN/blob/main/docs/SRS/SRS.pdf}{SRS} ~\citep{Yuanqi_ReProtGNN_SRS}.
-		
-\paragraph{Test for Valid Inputs}
+\subsubsection{Area of Testing 1: Input Validation}
 
-\begin{enumerate}
+This section ensures the system can correctly detect and handle invalid or missing input files before dataset processing, as required to fulfill input robustness and error traceability.
 
-
-\item{T1: Valid Inputs\\}
-
-Control: Automated Test
-					
-Initial State: Pending Input
-					
-Input: The MUTAG dataset files~\citep{debnath1991structure}.
-					
-Output:  If the input is valid, the system should load it successfully. Otherwise, it should return an appropriate error message, as in Table~\ref{tab:graph_validation}.
-					
-Test Case Derivation: Since Graph Neural Networks (GNNs) rely on structured input, this test makes sure the model doesn't break when given bad data.
-					
-How test will be performed: An automated script will try loading the MUTAG dataset using the data loader and check whether the system correctly accepts or rejects them.
-
-\begin{table}[h]
-    \centering
-    \setlength{\tabcolsep}{10pt} % Reduce column spacing
-    \begin{tabularx}{\linewidth}{l X c c X} 
-        \toprule
-        \textbf{ID} & \textbf{Graph Type} & \textbf{Valid?} & \textbf{Error Message} \\
-        \midrule
-        TI-1 & MUTAG (Adj+Feat) & Yes & NONE \\
-        TI-2 & MUTAG (Missing Feats) & No & Missing Node Features \\
-        TI-3 & Corrupted Graph & No & Invalid Adjacency Matrix \\
-        TI-4 & Non-Graph Input & No & Incorrect Input Type \\
-        \bottomrule
-    \end{tabularx}
-    \caption{Validation results for loading the MUTAG dataset}
-    \label{tab:graph_validation}
-\end{table}
-
-\end{enumerate}
-
-\subsubsection{Area of Testing2: Model Training Verification}
-We need to make sure the training process work. In other words, the model should be able to optimize its loss function and learn properly.
-
-\paragraph{Test for Training Loss Optimization}
+\paragraph{Test for Raw Input Integrity}
 
 \begin{enumerate}
-					
-\item{T2: Model Training Test\\}
+
+\item{T1: Missing File Handling Test\\}
 
 Control: Automatic
-					
-Initial State: Model is initialized with random weights.
-					
-Input: The loaded MUTAG dataset.
-					
-Output: The system should optimize the loss function and display a decreasing loss curve over multiple epochs.
 
-Test Case Derivation: Ensures that the model is learning from the input data instead of failing due to improper gradients or data mismatches.
+Initial State: Dataset folder exists, but no raw input files are present.
 
-How test will be performed: Train the model on valid datasets and log the loss over time. A Pytest script will validate loss reduction.
+Input: A folder named MUTAG/raw with no content.
 
-\end{enumerate}
+Output: The system should raise a FileNotFoundError indicating which required raw file is missing.
 
-\subsubsection{Area of Testing3: Inference Verification}
-This test ensures that the trained model makes accurate predictions and correctly retrieves prototype-based explanations.
+Test Case Derivation: Ensures that the system validates file existence prior to processing. This corresponds to preconditions for requirement R1.
 
-\paragraph{Test for Inference}
+How test will be performed: A Pytest script sys\_test\_input\_validation.py creates an empty raw input directory and initializes the MUTAG dataset wrapper. It passes if FileNotFoundError is raised and the error message references the correct file path.
 
-\begin{enumerate}
-					
-\item{T3: Inference Test\\}
+\vspace{0.3em}
+
+\item{T2: Format Consistency and Type Validation Test\\}
 
 Control: Automatic
-					
-Initial State: Model is trained and ready for inference.
-					
-Input: The testing dataset.
-					
-Output: The model should output a predicted label for each graph and a set of prototypes.
 
-Test Case Derivation: Ensures that the trained model can be used in the inference phase for classifying inputs and generating a customized numbers of prototypes.
+Initial State: All required files are present but contain incorrectly formatted (non-numeric or corrupted) content.
 
-How test will be performed: A Pytest script will run inference on the test dataset, comparing the predicted labels with the ground truth to compute classification accuracy. The system should also generate a set of representative prototypes for the entire dataset. Pytest will verify that the correct number of prototypes is produced.
+Input: A folder named MUTAG/raw with files such as MUTAG\_A.txt and MUTAG\_graph\_labels.txt containing malformed strings.
+
+Output: The system should raise a ValueError if the file content is not parseable (e.g., containing strings instead of numerical values).
+
+Test Case Derivation: Ensures that the dataset loader enforces structural correctness, file consistency, and semantic type assumptions.
+
+How test will be performed: A Pytest script sys\_test\_input\_validation.py populates all required files with junk data (e.g., strings instead of integers) and verifies that a ValueError is raised during parsing or validation.
+
+\vspace{0.3em}
+
+\item{T3: Valid Dataset Load Test\\}
+
+Control: Automatic
+
+Initial State: The full MUTAG dataset is properly placed under the ./data/MUTAG directory with correctly formatted raw files.
+
+Input: All required raw text files (adjacency, node labels, graph labels, and graph indicators) with valid data.
+
+Output: The dataset should load successfully, returning a valid dataset instance with length greater than zero. No exceptions should be raised.
+
+Test Case Derivation: Confirms the system can successfully load and parse a standard benchmark dataset, satisfying R1 under nominal conditions.
+
+How test will be performed: A Pytest script sys\_test\_input\_validation.py initializes the dataset wrapper using the default data path and asserts the dataset loads correctly and contains nonzero graphs.
 
 \end{enumerate}
+
+
+\subsubsection{Area of Testing 2: Training Convergence}
+This test verifies that the model training process optimizes the objective function over time. It ensures that the model effectively minimizes training loss, thereby satisfying the requirement for stable and meaningful training behavior.
+
+\paragraph{Test for Training Loss Convergence}
+
+\begin{enumerate}
+
+\item{T2: Loss Convergence Test\\}
+
+Control: Automatic
+
+Initial State: The training pipeline is configured using the default parameters, and the training dataset is loaded from the dataset folder. No manual intervention is required.
+
+Input: A graph classification dataset split into training, validation, and test sets; an untrained model initialized with random weights; and the configuration parameters defined in the system (e.g., maximum number of epochs, early stopping patience).
+
+Output: A sequence of training loss values recorded after each epoch. The final loss should be less than or equal to the initial loss, indicating convergence.
+
+Test Case Derivation: This test confirms that the model satisfies the training requirement by reducing the loss function across epochs, as expected in successful optimization procedures. If the training loss increases over time or fluctuates abnormally, the test will fail, revealing instability in training.
+
+How the test will be performed:
+\begin{itemize}
+    \item In the Pytest script sys\_test\_loss\_converge.py, The system’s main training pipeline is launched using the `main` entry point with loss coefficient values set to zero to isolate base training behavior.
+    \item The append\_record function is temporarily patched to intercept and store loss values across epochs in a list.
+    \item Once training is complete, the list of recorded losses is analyzed.
+    \item The test asserts the condition that the final loss must be less than or equal to the initial loss, indicating that training successfully reduced the loss.
+\end{itemize}
+
+A successful result can demonstrates that the system is capable of learning meaningful representations in the training phase.
+
+\end{enumerate}
+
+
+
+\subsubsection{Area of Testing 3: Inference Verification}
+This test ensures that the trained model can correctly classify unseen test samples and that the predictions returned during the inference phase are complete, numerically valid, and structurally consistent.
+
+\paragraph{Test for Inference Accuracy}
+
+\begin{enumerate}
+
+\item{T3: Inference Accuracy Test\\}
+
+Control: Automatic
+
+Initial State: A trained model checkpoint is saved in the src/checkpoint directory and available for loading.
+
+Input: A test data loader produced from the configured dataset split, and a graph neural network model initialized and updated using the saved checkpoint weights.
+
+Output: The system should return a scalar classification accuracy value, a scalar loss value, a 1D tensor of predicted class labels, and a 2D tensor or array of class probability scores for each test instance.
+
+Test Case Derivation: This test verifies that the trained model satisfies R3 in SRS~\citep{Yuanqi_ReProtGNN_SRS} by making predictions on the test set and reporting classification performance. It also confirms that the returned predictions and probabilities are well-formed and aligned with the dataset.
+
+How test will be performed: 
+\begin{itemize}
+    \item In the Pytest script sys\_test\_input\_validation.py, the test begins by loading the full dataset and applying a fixed ratio-based split into training, validation, and test sets using load\_dataset().
+    \item The model is constructed using the input and output dimensions inferred from the dataset and updated with the best checkpoint saved during training.
+    \item Inference is performed on the test split using run\_inference().
+    \begin{itemize}
+        \item The returned dictionary contains the keys acc (accuracy) and loss, both of which must be real-valued scalars.
+        \item The accuracy must be strictly greater than 50\%, which confirms that the model is performing above chance level on a binary classification task.
+        \item The shape of the prediction tensor all\_preds must match the number of samples in the test set, meaning that there is exactly one predicted label for every input graph.
+        \item The probability tensor all\_probs must be two-dimensional, with shape \((N, C)\), where \(N\) is the number of test samples and \(C\) is the number of classes. This ensures that the model outputs a complete probability distribution for each test instance.
+        \item The first dimension (number of rows) of all\_probs must exactly equal the length of all\_preds, confirming that the predicted label and associated probability scores correspond to the same set of inputs.
+    \end{itemize}
+\end{itemize}
+
+The classification accuracy is computed using the formula:å
+\[
+\text{Accuracy} = \frac{\text{Number of Correct Predictions}}{\text{Total Number of Data Points}} = \frac{1}{N} \sum_{i=1}^{N} 1(\hat{y}_i = y_i)
+\]
+where \(N\) is the total number of graphs in the test set, \(\hat{y}_i\) is the predicted label for the \(i\)th graph, and \(y_i\) is the corresponding ground-truth label. The indicator function \(1(\cdot)\) evaluates to 1 if the predicted label is correct, and 0 otherwise.
+
+\end{enumerate}
+
+
 
 
 \subsection{Tests for Nonfunctional Requirements}
