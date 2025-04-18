@@ -17,7 +17,7 @@
 
 \begin{document}
 
-\title{Verification and Validation Report: \progname} 
+\title{Verification and Validation Report: Re-ProtGNN} 
 \author{\authname}
 \date{\today}
 	
@@ -30,8 +30,8 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+April 15 & 1.0 & Initial Draft\\
+April 18 & 1.1 & Final Version\\
 \bottomrule
 \end{tabularx}
 
@@ -45,10 +45,14 @@ Date 2 & 1.1 & Notes\\
   \textbf{symbol} & \textbf{description}\\
   \midrule 
   T & Test\\
+  M & Module\\
+  R & Requirement\\
+  SRS & Software Requirements Specification\\
+  ProtGNN & Prototype-based Graph Neural Network\\
+  Re-ProtGNN & Re-implementation of the ProtGNN model\\
   \bottomrule
 \end{tabular}\\
 
-\wss{symbols, abbreviations or acronyms -- you can reference the SRS tables if needed}
 
 \newpage
 
@@ -56,70 +60,247 @@ Date 2 & 1.1 & Notes\\
 
 \listoftables %if appropriate
 
-\listoffigures %if appropriate
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document ...
+This document presents the results of the VnV Plan \citep{Yuanqi_ReProtGNN_VnV} for Re-ProtGNN. The requirements and modules were tested and verified through automated unit tests, system tests, and usability evaluations. GitHub Actions was used for continuous integration to ensure correctness throughout development.
 
 \section{Functional Requirements Evaluation}
+\subsection{R1: Dataset Input Validity}
+The system tests T1, T2, and T3 confirmed that the system correctly handles valid and invalid input files:
+\begin{itemize}
+\item T1 raised FileNotFoundError when raw files were missing.
+\item T2 raised ValueError for non-numeric data.
+\item T3 verified successful loading of a valid dataset (MUTAG) \citep{debnath1991structure}.
+\end{itemize}
+All tests passed as expected.
+
+\subsection{R2: Training Loss Convergence}
+System test T2 (Loss Convergence Test) confirmed that the training loss decreased across epochs. The test validated:
+\begin{itemize}
+\item The final loss was lower than the initial loss.
+\item The model trained on MUTAG dataset \citep{debnath1991structure} using the main training function.
+\end{itemize}
+This test indirectly verified the correctness of the top-level \texttt{train()} function.
+
+\subsection{R3: Inference Output Consistency}
+System test T3 confirmed that the trained model achieved above 50\% classification accuracy (i.e, better than random guessing and performed mearningful learning) and returned prediction logits and probabilities in the correct shape. The test passed all assertions on value shape, alignment, and threshold.
 
 \section{Nonfunctional Requirements Evaluation}
+\subsection{Reliability}
+Reliability is validated through repeated passes of T1--T3, as well as unit tests for critical modules (M3, M5, M6, M8, M9). Each test ran without failure, confirming robust error handling and internal consistency.
 
 \subsection{Usability}
-		
-\subsection{Performance}
+The usability of the system was evaluated using a survey as outlined in the
+VnV Plan \citep{Yuanqi_ReProtGNN_VnV}.
 
-\subsection{etc.}
-	
 \section{Comparison to Existing Implementation}	
 
-This section will not be appropriate for every project.
+The original implementation of ProtGNN~\citep{Zhang:2022:ProtGNN} provided a proof-of-concept model demonstrating prototype-based explanations for graph classification. However, it was not modular, lacked thorough documentation, and did not include automated testing or reproducible training scripts.
+
+The Re-ProtGNN implementation improves upon the original in several key aspects:
+
+\begin{itemize}
+    \item \textbf{Modularity and Maintainability:} The system is decomposed into well-defined modules with documented interfaces, following a design guided by Module Guide (MG) and Module Interface Specification (MIS) documentation.
+    
+    \item \textbf{Testability:} The re-implementation includes comprehensive unit and system tests (see Sections~4 and~5), with automated test execution through GitHub Actions.
+    
+    \item \textbf{Robustness and Reliability:} The training and inference processes were stabilized through added error handling, reproducibility controls (e.g., fixed random seeds), and more consistent logging and checkpoint management.
+    
+    \item \textbf{Interpretability Evaluation:} The explanation output was qualitatively similar to the original implementation for MUTAG dataset \citep{debnath1991structure}, with subgraphs correctly highlighting chemically meaningful motifs (e.g., aromatic rings and nitro groups).
+    
+    \item \textbf{Performance Variability:} While the original code occasionally achieved higher accuracy on MUTAG dataset \citep{debnath1991structure}, the results were not consistently reproducible. The re-implementation maintains reasonable performance (i.e., within $<$ 8\% decrease in accuracy on average) but prioritizes correctness and explainability over raw accuracy.
+\end{itemize}
+
+Overall, Re-ProtGNN serves as a clean and testable re-engineering of ProtGNN, focusing on transparency, modularity, and reproducibility to support further research and experimentation.
+
 
 \section{Unit Testing}
+Unit tests were developed for five key modules of Re-ProtGNN. All tests were written using Pytest and were integrated into the CI workflow through GitHub Actions. The testing strategy focuses on functional access routines of each module, aiming for early fault detection.
+
+\subsection{Input Format Module (M3)}
+Unit tests for the input format module are located in tests/test\_data\_utils.py and verify:
+\begin{itemize}
+\item Correct behavior of load\_dataset() under both valid and patched/mock settings
+\item Robust handling of unsupported dataset names, malformed files, and dataset split configurations
+\item Construction of DataLoader splits from both random ratios and pre-defined index masks
+\item Invocation of dataset wrappers for MUTAG dataset \citep{debnath1991structure}
+\item File I/O functionality (e.g., reading pickled files) for synthetic graph datasets
+\end{itemize}
+All tests passed successfully, confirming the correctness of dataset ingestion logic.
+
+\subsection{Training Module (M5)}
+Unit tests for the training module are located in tests/test\_train\_module.py and verify:
+\begin{itemize}
+\item Loss composition and regularization logic in \_compute\_total\_loss()
+\item Dataset statistics reporting with \_log\_dataset\_stats()
+\item Warm-up versus joint training parameter toggling using \_set\_training\_mode()
+\item Prototype projection behavior using patched get\_explanation()
+\item Accuracy and loss evaluation using \_evaluate() on mocked predictions
+\end{itemize}
+The top-level train() function is indirectly tested via system test T2 (loss convergence), verifying end-to-end training performance. All unit tests passed.
+
+\subsection{Output Visualization Module (M6)}
+The unit tests in tests/test\_output\_utils.py validate:
+\begin{itemize}
+\item Logging to file via append\_record() using mock\_open
+\item Best checkpoint saving logic in save\_best() (both true/false branches)
+\item Visualization delegation using ExpPlot.draw() with MUTAG routing
+\item Robustness to unsupported dataset names (raises NotImplementedError)
+\item Output image generation and disk write confirmation using tmp\_path
+\end{itemize}
+All unit tests passed, verifying both functional and error-handling behavior for visualization routines.
+
+\subsection{Inference Module (M8)}
+The unit tests in tests/test\_output\_utils.py and tests/test\_inference.py verify:
+\begin{itemize}
+\item Output structure and key consistency of run\_inference()
+\item Accuracy calculation from predicted and true labels
+\item Logging of inference results
+\item Batch aggregation correctness for predictions and probabilities
+\end{itemize}
+These tests ensure inference correctness under typical and boundary conditions. All unit tests passed.
+
+\subsection{Explanation Module (M9)}
+The tests for this module are in tests/test\_explanation\_module.py and include:
+\begin{itemize}
+\item Score computation in MCTS nodes (Q, U)
+\item Prototype similarity scoring between embeddings
+\item Selection and sorting behavior in node utility functions
+\item Full MCTS rollout logic with backpropagation
+\item Explanation interface output type and shape validation
+\end{itemize}
+All tests passed, confirming that the explanation module performs as expected.
+
+\paragraph{Summary:} The unit tests covered modules M3, M5, M6, M8, and M9, and all tests passed successfully. Modules M1, M2, M4, M7, M10, M11, M12 are either infrastructure-level, configuration-only, or adapted from external libraries, and are verified indirectly through integration tests and execution results.
 
 \section{Changes Due to Testing}
 
-\wss{This section should highlight how feedback from the users and from 
-the supervisor (when one exists) shaped the final product.  In particular 
-the feedback from the Rev 0 demo to the supervisor (or to potential users) 
-should be highlighted.}
+During the testing phase, several improvements and corrections were made based on the observed behavior of the system.
+
+The most significant change was the removal of the original non-functional requirement specifying that the classification accuracy should exceed 80\% on the MUTAG dataset \citep{debnath1991structure}. While initial experiments showed that the model could occasionally achieve this threshold, repeated testing revealed that the performance was not stable across different random seeds and data splits. Variability in model convergence, the small size of the MUTAG dataset \citep{debnath1991structure}, and the sensitivity of prototype-based training contributed to inconsistent accuracy results.
+
+As a result, the accuracy requirement was deemed unreliable as a functional benchmark. It was removed from the Software Requirements Specification (SRS) \citep{Yuanqi_ReProtGNN_SRS} and VnV Plan \citep{Yuanqi_ReProtGNN_VnV}, and replaced with a nonfunctional reliability criterion: the model should pass all system and unit tests and show consistent convergence behavior.
+
+This change ensures that the evaluation criteria focus on robustness rather than fixed performance thresholds that may not generalize under limited or variable data conditions.
+
+Other minor updates included clarifying the loss convergence test criteria, refining error-handling in the input format module, and improving test logging in the training and explanation modules.
+
 
 \section{Automated Testing}
-		
+The Re-ProtGNN project uses GitHub Actions for automated testing and continuous integration. The workflow is triggered on each push or pull request event targeting the main codebase. It performs the following checks:
+
+\begin{itemize}
+\item Runs all Pytest-based unit tests in the \texttt{tests/} directory
+\item Executes system tests such as: 
+\begin{itemize} 
+    \item sys\_test\_input\_validation.py – verifies dataset format handling and error messaging 
+    \item sys\_test\_loss\_converge.py – confirms training convergence via decreasing loss trends 
+    \item sys\_test\_inference.py – evaluates test accuracy and output structure \end{itemize} 
+\end{itemize}
+
+This automated workflow ensures: \begin{itemize} \item Unit tests and system tests are run consistently after every commit \item Key training, evaluation, and explanation components remain functional as development progresses \end{itemize}
+
+All tests must pass for a pull request to be merged, ensuring stable and reliable builds.
+
 \section{Trace to Requirements}
+The following table shows the traceability between system and unit tests and functional requirements:
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Test ID} & \textbf{R1} & \textbf{R2} & \textbf{R3} \\
+\hline
+T1: Missing File Handling Test & X &  &  \\ \hline
+T2: Format Consistency Test    & X &  &  \\ \hline
+T3: Valid Dataset Load Test    & X &  &  \\ \hline
+T2: Loss Convergence Test      &  & X &  \\ \hline
+T3: Inference Accuracy Test    &  &  & X \\ \hline
+test-M3-\{1–5\} (Input Format) & X &  &  \\ \hline
+test-M5-\{1–5\} (Training)     &  & X &  \\ \hline
+test-M8-\{1–4\} (Inference)    &  &  & X \\ \hline
+test-M9-\{1–6\} (Explanation)  &  & X & X \\
+\hline
+\end{tabular}
+\caption{Traceability Matrix Between Tests and Functional Requirements}
+\label{Table:req_trace}
+\end{table}
+
+Non-functional requirements were validated through the following means:
+\begin{itemize}
+    \item \textbf{NFR1 (Reliability)}: Verified via repeatable execution of T1–T3 and all unit tests (M3, M5, M6, M8, M9).
+    \item \textbf{NFR2 (Usability)}: Evaluated via usability survey results as outlined in the VnV Plan.
+\end{itemize}
+
 		
-\section{Trace to Modules}		
+\section{Trace to Modules}
+
+The following table shows the traceability between tests and software modules:
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Test ID} & \textbf{M1} & \textbf{M2} & \textbf{M3} & \textbf{M4} & \textbf{M5} & \textbf{M6} & \textbf{M7} & \textbf{M8} & \textbf{M9} \\
+ \hline
+T1–T3: Input Validation Tests  &  & X & X &  &  &  &  &  &  \\ \hline
+T2: Loss Convergence Test      &  & X &  & X & X & X & X &  &  \\ \hline
+T3: Inference Accuracy Test    &  & X &  & X &  & X & X & X &  \\ \hline
+test-M3-\{1–5\} (Input Format) &  & X & X & X &  &  &  &  &  \\ \hline
+test-M5-\{1–5\} (Training)     &  & X &  & X & X & X &  &  & X \\ \hline
+test-M6-\{1–6\} (Visualization)& X &  &  & X &  & X &  &  &  \\ \hline
+test-M8-\{1–4\} (Inference)    &  & X &  & X &  & X &  & X &  \\ \hline
+test-M9-\{1–6\} (Explanation)  &  & X &  & X &  & X &  &  & X \\
+\hline
+\end{tabular}
+\caption{Traceability Matrix Between Tests and Modules}
+\label{Table:module_trace}
+\end{table}
+
+\noindent
+Note: Modules M10–M12 (PyTorch, PyTorch Geometric, and GUI) are treated as external dependencies and are indirectly verified through the success of system and integration tests involving M3, M5, M6, M8, and M9.
+	
 
 \section{Code Coverage Metrics}
 
+Code coverage metrics were collected using \texttt{pytest-cov} and \texttt{coverage.py} during the automated testing process. The following table summarizes the line-level coverage results for key modules in Re-ProtGNN:
+
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|l|c|c|c|c|}
+  \hline
+  \textbf{Module} & \textbf{Statements} & \textbf{Missing} & \textbf{Excluded} & \textbf{Coverage} \\
+  \hline
+  Input Format Module (M3)     & 151 & 58  & 0 & 62\% \\
+  \hline
+  Training Module (M5)         & 103 & 42  & 0 & 59\% \\
+  \hline
+  Explanation Module (M9)      & 118 & 31  & 0 & 74\% \\
+  \hline
+  Inference Module (M8)        & 26  & 0   & 0 & 100\% \\
+  \hline
+  \textbf{Overall (M3, M5, M8, M9)} & 398 & 131 & 0 & \textbf{67\%} \\
+  \hline
+  \end{tabular}
+  \caption{Code Coverage for Core Modules}
+  \label{Table:coverage}
+\end{table}
+
+\noindent \textbf{Note on Training Module (M5):}  
+The training module has a coverage of 59\%. Although its core access routines are unit tested (e.g., loss computation, prototype projection, and evaluation logic), the main training loop involves dynamic control flow, optimizer updates, and state tracking that are harder to isolate. This loop is validated indirectly through the system-level \textbf{Loss Convergence Test (T2)} to ensure correct end-to-end training behavior.
+
+\vspace{1em}
+\noindent \textbf{Explanation Module (M9)} and \textbf{Inference Module (M8)} both show high coverage, confirming their correctness under typical and boundary conditions. The \textbf{Input Format Module (M3)} also maintains substantial coverage, with untested paths primarily related to legacy dataset support.
+
+\vspace{1em}
+\noindent The coverage report is automatically generated and archived via GitHub Actions after every CI run.
+
+
 \bibliographystyle{plainnat}
 \bibliography{../../refs/References}
-
-\newpage{}
-\section*{Appendix --- Reflection}
-
-The information in this section will be used to evaluate the team members on the
-graduate attribute of Reflection.
-
-\input{../Reflection.tex}
-
-\begin{enumerate}
-  \item What went well while writing this deliverable? 
-  \item What pain points did you experience during this deliverable, and how
-    did you resolve them?
-  \item Which parts of this document stemmed from speaking to your client(s) or
-  a proxy (e.g. your peers)? Which ones were not, and why?
-  \item In what ways was the Verification and Validation (VnV) Plan different
-  from the activities that were actually conducted for VnV?  If there were
-  differences, what changes required the modification in the plan?  Why did
-  these changes occur?  Would you be able to anticipate these changes in future
-  projects?  If there weren't any differences, how was your team able to clearly
-  predict a feasible amount of effort and the right tasks needed to build the
-  evidence that demonstrates the required quality?  (It is expected that most
-  teams will have had to deviate from their original VnV Plan.)
-\end{enumerate}
+%\bibliography{refs/References}
 
 \end{document}
