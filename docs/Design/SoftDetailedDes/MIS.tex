@@ -217,16 +217,21 @@ As such, no explicit accessor routines are exported.
 \vspace{0.5em}
 
 
+
+
+
+
 \newpage
+
 
 
 \section{MIS of Input Format Module} \label{InputFormat}
 
 \subsection{Module}
-Data
+dataUtils
 
 \subsection{Uses}
-Hardware-Hiding Module
+PyTorch Geometric Module (\ref{PyGModule}), PyTorch Module (\ref{TorchModule}), Configuration Module (\ref{Configurations}), Output Visualization Module (\ref{OutputVisualization})
 
 \subsection{Syntax}
 
@@ -234,14 +239,12 @@ Hardware-Hiding Module
 None
 
 \subsubsection{Exported Access Programs}
-
 \begin{center}
-\begin{tabular}{p{3.2cm} p{5.5cm} p{4cm} p{2.5cm}}
+\begin{tabular}{p{3cm} p{3cm} p{4.3cm} p{4cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-get\_dataset & dataset\_dir: \texttt{str}, dataset\_name: \texttt{str} & \texttt{Dataset} & \texttt{FileNotFoundError} \\
-get\_dataloader & dataset: \texttt{Dataset}, batch\_size: \(\mathbb{N}\), data\_split\_ratio: \texttt{list[\(\mathbb{R}\)]} & \texttt{dict[str \(\rightarrow\) DataLoader]} & \texttt{AssertionError} \\
+load\_dataset & - & \texttt{tuple[Dataset, int, int, dict[str $\rightarrow$ DataLoader]]} & \texttt{FileNotFoundError}, \texttt{ValueError}, \texttt{NotImplementedError} \\
 \hline
 \end{tabular}
 \end{center}
@@ -252,35 +255,57 @@ get\_dataloader & dataset: \texttt{Dataset}, batch\_size: \(\mathbb{N}\), data\_
 None
 
 \subsubsection{Environment Variables}
-Filesystem: the file system for reading dataset files.
-
-\subsubsection{Assumptions}
-None
+\begin{itemize}
+  \item \texttt{dataset\_dir: str} — Filesystem path to the dataset root directory, obtained from \texttt{data\_args.dataset\_dir} defined in the Configuration Module.
+  \item \texttt{log\_file: str} — Path to the log file used by the \texttt{append\_record()} routine exported from the Output Visualization Module.
+\end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{get\_dataset(dataset\_dir, dataset\_name)}:
+\noindent \textbf{load\_dataset()}:
 \begin{itemize}
-  \item transition: None
-  \item output: A PyTorch Geometric's \texttt{Dataset} object containing all graphs in the dataset.
-  \item exception:
+  \item transition:
   \begin{itemize}
-    \item \texttt{FileNotFoundError}: if the dataset directory is invalid.
+    \item Loads the dataset using \texttt{data\_args.dataset\_name} and \texttt{data\_args.dataset\_dir}, where \texttt{data\_args} are defined in the Configuration Module.
+    \item Logs the dataset name using \texttt{append\_record(data\_args.dataset\_name)}, where \texttt{append\_record()} is a routine exported from the Output Visualization Module
   \end{itemize}
-\end{itemize}
+  \item output:
+  \begin{itemize}
+    \item Returns a tuple: (\texttt{dataset}, \texttt{input\_dim}, \texttt{output\_dim}, \texttt{dataloader}) where:
+    \begin{itemize}
+      \item \texttt{dataset}: graph dataset object loaded using \texttt{\_get\_dataset()}
+      \item \texttt{input\_dim}: number of node features from \texttt{dataset.num\_node\_features}
+      \item \texttt{output\_dim}: number of output classes from \texttt{dataset.num\_classes}
+      \item \texttt{dataloader}: dictionary of DataLoaders split via \texttt{\_get\_dataloader()}
+    \end{itemize}
+  \end{itemize}
+\item exception:
+\begin{itemize}
+  \item \texttt{FileNotFoundError}: 
+  Raised if required dataset files are missing in the specified directory, such as missing raw `.pkl` or `.txt` files for the dataset.
+  
+  \item \texttt{ValueError}: 
+  Raised if raw data files exist but are empty or malformed (e.g., missing node labels).
 
-\noindent \textbf{get\_dataloader(dataset, batch\_size, data\_split\_ratio)}:
-\begin{itemize}
-  \item transition: None
-  \item output: A dictionary of PyTorch Geometric's \texttt{DataLoader} objects with keys \texttt{"train"}, \texttt{"eval"}, and \texttt{"test"}.
-  \item exception:
-  \begin{itemize}
-    \item \texttt{AssertionError}: if a custom split is requested but missing from the dataset.
-  \end{itemize}
+  \item \texttt{NotImplementedError}: 
+  Raised if \texttt{data\_args.dataset\_name} does not match any supported dataset (i.e., not MUTAG, BA\_2Motifs, or a MoleculeNet dataset).
 \end{itemize}
 
 \subsubsection{Local Functions}
-None
+
+\noindent \textbf{\_get\_dataset(dataset\_dir: str, dataset\_name: str) $\rightarrow$ Dataset}
+\begin{itemize}
+  \item output: Selects an appropriate dataset loader based on \texttt{dataset\_name} and returns the resulting dataset loaded from \texttt{dataset\_dir}. See the Pytroch Geometric Module~\ref{PyGModule} for the type \texttt{Dataset}.
+\end{itemize}
+
+\noindent \textbf{\_get\_dataloader(dataset: Dataset, batch\_size: \(\mathbb{N}\), data\_split\_ratio: list[\(\mathbb{R}\)]) $\rightarrow$ dict[str $\rightarrow$ DataLoader]}
+\begin{itemize}
+  \item output: Splits the input \texttt{dataset} into train/eval/test sets according to \texttt{data\_split\_ratio}, and returns DataLoaders batched by \texttt{batch\_size}. See the PyTorch Geometric Module~\ref{PyGModule} for the type \texttt{DataLoader}.
+\end{itemize}
+
+
+
+\newpage
 
 
 
