@@ -254,7 +254,7 @@ How test will be performed: A Pytest script sys\_test\_input\_validation.py popu
 
 Control: Automatic
 
-Initial State: The full MUTAG dataset is properly placed under the ./data/MUTAG directory with correctly formatted raw files.
+Initial State: The full MUTAG dataset \citep{debnath1991structure} is properly placed under the ./data/MUTAG directory with correctly formatted raw files.
 
 Input: All required raw text files (adjacency, node labels, graph labels, and graph indicators) with valid data.
 
@@ -475,14 +475,14 @@ The following modules are not unit-tested either due to their indirect role, ext
 
 \subsubsection{Input Format Module (M3)}
 
-This module corresponds to the data ingestion and preprocessing layer responsible for loading datasets, applying transformations, and preparing batched dataloaders for graph classification. The tests below follow the specifications outlined in the MIS, covering access programs such as load\_dataset, \_get\_dataloader, and include wrapper functions for MUTAG and other supported datasets. Each test is derived from either a normal usage pattern or a defined edge case. The goal is to verify expected input-output behavior and robust error handling.
+This module corresponds to the data ingestion and preprocessing layer responsible for loading datasets, applying transformations, and preparing batched dataloaders for graph classification. The tests below follow the specifications outlined in the MIS, covering access programs such as load\_dataset, \_get\_dataloader, and include wrapper functions for MUTAG \citep{debnath1991structure} and other supported datasets. Each test is derived from either a normal usage pattern or a defined edge case. The goal is to verify expected input-output behavior and robust error handling.
 
 \begin{enumerate}
 
 \item{test-M3-1: Dataset Loading Interface Test\\}
 Type: Automatic, Functional \\
 Initial State: No dataset is currently loaded \\
-Input: Dataset name (e.g., MUTAG), dataset path, and training configuration \\
+Input: Dataset name (e.g., MUTAG \citep{debnath1991structure}), dataset path, and training configuration \\
 Output: Dataset object with valid num\_node\_features and num\_classes; a dictionary containing train, eval, and test DataLoaders \\
 Test Case Derivation: Verifies the behavior of load\_dataset() and confirms correct metadata extraction and data loader construction. \\
 How test will be performed: Patch internal helpers (\_get\_dataset, \_get\_dataloader), call load\_dataset(), and assert on returned structure and contents.
