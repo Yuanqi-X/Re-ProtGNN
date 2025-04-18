@@ -619,10 +619,10 @@ None
 \section{MIS of Inference Module} \label{Test}
 
 \subsection{Module}
-Test
+evaluation.inference
 
 \subsection{Uses}
-Model Module (\ref{Model}), Output Visualization Module (\ref{OutputVisualization})
+Model Module (\ref{Model}), Output Visualization Module (\ref{OutputVisualization}), PyTorch Module (\ref{TorchModule})
 
 \subsection{Syntax}
 
@@ -630,13 +630,12 @@ Model Module (\ref{Model}), Output Visualization Module (\ref{OutputVisualizatio
 None
 
 \subsubsection{Exported Access Programs}
-
 \begin{center}
-\begin{tabular}{p{2cm} p{6cm} p{4cm} p{3.5cm}}
+\begin{tabular}{p{3cm} p{6cm} p{5cm} p{2.5cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-test & model: \texttt{GnnNets}, dataloader: \texttt{DataLoader} & - & \texttt{RuntimeError} \\
+run\_inference & test\_dataloader: \texttt{DataLoader}, model: \texttt{GnnNets}, criterion: \texttt{Customized Function} & tuple[dict[str $\rightarrow$ \(\mathbb{R}\)], \(\mathbb{R}^{n \times c}\), \(\mathbb{N}^n\)] & None \\
 \hline
 \end{tabular}
 \end{center}
@@ -647,21 +646,28 @@ test & model: \texttt{GnnNets}, dataloader: \texttt{DataLoader} & - & \texttt{Ru
 None
 
 \subsubsection{Environment Variables}
-None
-
-\subsubsection{Assumptions}
-The model has been trained and its best checkpoint has been loaded.
+\begin{itemize}
+  \item \texttt{log\_file: str} — Path to the log file where final test performance is recorded via \texttt{append\_record()}.
+\end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent test(model, dataloader):
+\noindent \textbf{run\_inference(test\_dataloader, model, criterion)}:
 \begin{itemize}
-\item transition: Evaluates the trained model on the test set. Computes loss and accuracy, and uses the Output Visualization Module to log results.
-\item output: None
-\item exception:     
+  \item transition:
+  \begin{itemize}
+    \item Appends the final test loss and accuracy to the \texttt{log\_file} using \texttt{append\_record()}.
+  \end{itemize}
+  \item output:
+  \begin{itemize}
+    \item Returns a tuple \texttt{(test\_state, all\_probs, all\_preds)}:
     \begin{itemize}
-        \item \texttt{RuntimeError}: if inference fails due to an invalid model state or shape mismatch
+      \item \texttt{test\_state}: \texttt{dict[str $\rightarrow$ \(\mathbb{R}\)]} containing keys \texttt{"loss"} and \texttt{"acc"}.
+      \item \texttt{all\_probs}: \(\mathbb{R}^{n \times c}\) — class probability matrix for \(n\) test samples and \(c\) classes, obtained by passing the data in \texttt{test\_dataloader} into \texttt{model}.
+      \item \texttt{all\_preds}: \(\mathbb{N}^n\) — vector of predicted class labels.
     \end{itemize}
+  \end{itemize}
+  \item exception: None
 \end{itemize}
 
 \subsubsection{Local Functions}
@@ -671,11 +677,7 @@ None
 
 
 
-
-
-
-
-
+\newpage
 
 
 
