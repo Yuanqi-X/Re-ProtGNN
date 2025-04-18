@@ -558,7 +558,7 @@ None
 GnnNets
 
 \subsection{Uses}
-None
+PyTorch Module (\ref{TorchModule}), Output Visualization Module (\ref{OutputVisualization})
 
 \subsection{Syntax}
 
@@ -566,17 +566,12 @@ None
 None
 
 \subsubsection{Exported Access Programs}
-
 \begin{center}
-\begin{tabular}{p{3cm} p{4.5cm} p{4.5cm} p{3cm}}
+\begin{tabular}{p{3.2cm} p{6cm} p{4cm} p{3cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-GnnNets & input\_dim: \texttt{int}, output\_dim: \texttt{int}, model\_args: \texttt{dict} & \texttt{GnnNets} & \texttt{NotImplementedError} \\
-forward & data: \texttt{Data}, protgnn\_plus: \texttt{bool}, similarity: \texttt{Tensor} & logits: \texttt{Tensor}, prob: \texttt{Tensor}, emb1: \texttt{Tensor}, emb2: \texttt{Tensor}, min\_distances: \texttt{Tensor} & - \\
-update\_state\_dict & state\_dict: \texttt{dict} & - & - \\
-to\_device & - & - & - \\
-
+setup\_model & input\_dim: \(\mathbb{N}\), output\_dim: \(\mathbb{N}\), model\_args: \texttt{dict} & tuple[\texttt{GnnNets}, \texttt{Customized Function}] & - \\
 \hline
 \end{tabular}
 \end{center}
@@ -584,60 +579,38 @@ to\_device & - & - & - \\
 \subsection{Semantics}
 
 \subsubsection{State Variables}
-\begin{itemize}
-  \item \texttt{self.model}: the internal GNN encoder consisting of learnable layers.
-  \item \texttt{self.prototype\_vectors}: a tensor containing learnable prototype embeddings, where each prototype represents a latent concept tied to a specific class.
-  \item \texttt{self.device}: the computing device (e.g., 'cpu' or 'cuda') on which the model is running.
-\end{itemize}
+None
 
 \subsubsection{Environment Variables}
-GPU/CPU hardware for model training and inference.
-
-\subsubsection{Assumptions}
-None
+\begin{itemize}
+  \item \texttt{device: str} — Target device (e.g., `cuda' or `cpu'), used to move the model after initialization.
+  \item \texttt{log\_file: str} — Path to the log file used in \texttt{append\_record()}.
+\end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{GnnNets(input\_dim, output\_dim, model\_args)}:
+\noindent \textbf{setup\_model(input\_dim, output\_dim, model\_args)}:
 \begin{itemize}
-  \item transition: None
-  \item output: Returns an instance of the \texttt{GnnNets} class with specified input/output dimensions and model hyperparameters.
-  \item exception:     
-    \begin{itemize}
-      \item \texttt{NotImplementedError}: if the specified model name in \texttt{model\_args} is unsupported.
-    \end{itemize}
-\end{itemize}
-
-\noindent \textbf{forward(data, protgnn\_plus, similarity)}:
-\begin{itemize}
-  \item transition: Moves graph data to the correct device and performs a forward pass through the model.
-  \item output:
-    \begin{itemize}
-      \item \texttt{logits}: raw output scores for each class.
-      \item \texttt{prob}: predicted class probabilities for each input graph, obtained by applying softmax to logits.
-      \item \texttt{emb1}: intermediate representation from an early layer of the model.
-      \item \texttt{emb2}: deeper-level embedding capturing higher-level graph features after additional processing layers.
-      \item \texttt{min\_distances}: for each input graph, the minimum distance to each prototype vector.
-    \end{itemize}
-  \item exception: None
-\end{itemize}
-
-\noindent \textbf{update\_state\_dict(state\_dict)}:
-\begin{itemize}
-  \item transition: Loads and updates model parameters from a dictionary of saved weights.
-  \item output: None
-  \item exception: None
-\end{itemize}
-
-\noindent \textbf{to\_device()}:
-\begin{itemize}
-  \item transition: Moves all model components to the device.
-  \item output: None
+  \item transition: Instantiates a GNN model with specified \texttt{input\_dim}, \texttt{output\_dim}, and \texttt{model\_args}. Moves the model to \texttt{device}. Writes the model name to \texttt{log\_file} using \texttt{append\_record()}.
+  \item output: A tuple containing:
+  \begin{itemize}
+    \item \texttt{gnnNets}: a model instance supporting GNN forward/inference
+    \item \texttt{criterion}: a cross-entropy loss function
+  \end{itemize}
   \item exception: None
 \end{itemize}
 
 \subsubsection{Local Functions}
 None
+
+
+
+
+
+\newpage
+
+
+
 
 
 
