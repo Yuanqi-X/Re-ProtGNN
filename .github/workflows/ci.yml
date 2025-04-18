@@ -1,26 +1,31 @@
-name: CI
+name: test
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: [self-hosted, Linux, X64]  # will fall back to GitHub-hosted if no runner available
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Set up Python 3.8
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: 3.8
+
+      - name: Set PYTHONPATH for tests
+        run: echo "PYTHONPATH=./src" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Pytest with PYTHONPATH
-        run: |
-          export PYTHONPATH=./src
-          pytest tests/
+      - name: Run Pytest
+        run: pytest tests/
