@@ -16,4 +16,3 @@ src - Source code
 
 test - System and unit tests
 
-etc.
