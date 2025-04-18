@@ -493,7 +493,7 @@ None
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-ExpPlot & dataset\_name: \texttt{str} & \texttt{ExpPlot instance} & - \\
+ExpPlot & dataset\_name: \texttt{str} & \texttt{ExpPlot} & - \\
 draw & graph: \texttt{networkx.Graph}, nodelist: \texttt{list[int]}, figname: \texttt{str}, kwargs: \texttt{dict} & - & \texttt{NotImplementedError} \\
 append\_record & info: \texttt{str} & - & \texttt{FileNotFoundError} \\
 save\_best & ckpt\_dir: \texttt{str}, epoch: \(\mathbb{N}\), gnnNets: \texttt{GnnNets}, model\_name: \texttt{str}, eval\_acc: \(\mathbb{R}\), is\_best: \texttt{bool} & - & - \\
@@ -517,7 +517,7 @@ None
 \noindent \textbf{ExpPlot(dataset\_name)}:
 \begin{itemize}
   \item transition: None
-  \item output: Constructs an instance for drawing explanations for \texttt{dataset\_name}. Returns an \texttt{ExpPlot} object.
+  \item output: Constructs an object for drawing explanations for \texttt{dataset\_name}. Returns an \texttt{ExpPlot} object.
   \item Note: Please see in PyTorch Geometric Module (\ref{PyGModule}) for the type \texttt{networkx.Graph}.
 \end{itemize}
 
@@ -600,7 +600,7 @@ None
   \item transition: Instantiates a GNN model with specified \texttt{input\_dim}, \texttt{output\_dim}, and \texttt{model\_args}. Moves the model to \texttt{device}. Writes the model name to \texttt{log\_file} using \texttt{append\_record()}.
   \item output: A tuple containing:
   \begin{itemize}
-    \item \texttt{gnnNets}: a model instance supporting GNN forward/inference
+    \item \texttt{gnnNets}: a model object supporting GNN forward/inference
     \item \texttt{criterion}: a cross-entropy loss function
   \end{itemize}
   \item exception: None
