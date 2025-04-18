@@ -83,10 +83,12 @@ found at \url{https://github.com/Yuanqi-X/Re-ProtGNN/tree/main}.
 
 The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
 with the addition that template modules have been adapted from
-\cite{GhezziEtAl2003}.  The mathematical notation comes from Chapter 3 of
+\citet{GhezziEtAl2003}.  The mathematical notation comes from Chapter 3 of
 \citet{HoffmanAndStrooper1995}.  For instance, the symbol := is used for a
 multiple assignment statement and conditional rules follow the form $(c_1
-\Rightarrow r_1 | c_2 \Rightarrow r_2 | ... | c_n \Rightarrow r_n )$.
+\Rightarrow r_1 \,|\, c_2 \Rightarrow r_2 \,|\, \dots \,|\, c_n \Rightarrow r_n)$.
+
+\vspace{1em}
 
 The following table summarizes the primitive data types used by Re-ProtGNN. 
 
@@ -97,26 +99,27 @@ The following table summarizes the primitive data types used by Re-ProtGNN.
 \toprule 
 \textbf{Data Type} & \textbf{Notation} & \textbf{Description}\\ 
 \midrule
-integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
-natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
-real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
-boolean & \texttt{bool} & Boolean value: either \texttt{True} or \texttt{False} \\
-string & \texttt{str} & A sequence of Unicode characters \\
-tensor & \texttt{Tensor} & A multi-dimensional array object from PyTorch \\
-graph & \texttt{Data} & A graph object from PyTorch Geometric, with node and edge attributes \\
-dataset & \texttt{Dataset} & A collection of graph objects for training or evaluation \\
-dataloader & \texttt{DataLoader} & A PyTorch Geometric data loader for batching graph data \\
-dictionary & \texttt{dict[K $\rightarrow{}$ V]} & A mapping from keys of type \texttt{K} to values of type \texttt{V} \\
-list & \texttt{list[T]} & A sequence of elements of type \texttt{T} \\
-function & \texttt{Customized Function} & A self-defined callable function\\
+Integer & $\mathbb{Z}$ & A whole number in $(-\infty, \infty)$ \\
+Natural Number & $\mathbb{N}$ & A positive integer in $[1, \infty)$ \\
+Real Number & $\mathbb{R}$ & A real value in $(-\infty, \infty)$ \\
+Boolean & \texttt{bool} & Logical value: \texttt{True} or \texttt{False} \\
+Vector of dimension $d$ & $\mathbb{R}^d$ & A $d$-dimensional real-valued vector \\
+Matrix of size $n \times m$ & $\mathbb{R}^{n \times m}$ & A real-valued matrix with $n$ rows and $m$ columns \\
+Index Vector & $\mathbb{N}^n$ & A length-$n$ vector of natural number indices \\
+List of type $T$ & \texttt{list[$T$]} & A finite sequence of values of type $T$ \\
+String & \texttt{str} & A sequence of characters \\
+Dictionary & \texttt{dict[K $\rightarrow$ V]} & A mapping from keys of type $K$ to values of type $V$ \\
+Tuple & \texttt{tuple[$T_1$, $T_2$, $\dots$]} & An ordered, fixed-length collection of elements where each element can have a different type. \\
+Function & \texttt{Customized Function} & A user-defined function or callable \\
 \bottomrule
 \end{tabular} 
 \end{center}
 
 \noindent
-Re-ProtGNN uses functions, which
-are defined by the data types of their inputs and outputs. Local functions are
+Functions in Re-ProtGNN are defined using their argument and return types.
+For instance, a function $f: \mathbb{N} \rightarrow \mathbb{R}$ takes a natural number and returns a real number. Local functions are
 described by giving their type signature followed by their specification.
+
 
 \section{Module Decomposition}
 
@@ -795,7 +798,7 @@ None
 \hline
 Tensor & shape: \texttt{list[int]}, dtype: \texttt{str} & \texttt{Tensor} & - \\
 cross\_entropy & logits: \texttt{Tensor}, labels: \texttt{Tensor} & \texttt{Tensor} & - \\
-Adam & parameters: \texttt{iterable}, lr: \(\mathbb{R}\) & \texttt{Optimizer} & - \\
+Adam & parameters: \texttt{list[Tensor]}, lr: \(\mathbb{R}\) & \texttt{Optimizer} & - \\
 \hline
 \end{tabular}
 \end{center}
