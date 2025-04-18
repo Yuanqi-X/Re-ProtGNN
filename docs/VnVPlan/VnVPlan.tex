@@ -33,6 +33,10 @@
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
 Feb 24 & 1.0 & Initial Draft\\
+April 10 & 2.0 & Updated by Feedback\\
+April 12 & 3.0 & Updated by Feedback\\
+April 13 & 4.0 & Updated by Feedback\\
+April 18 & 5.0 & Final Version\\
 \bottomrule
 \end{tabularx}
 
@@ -460,6 +464,7 @@ The following modules are not unit-tested either due to their indirect role, ext
   \item M4 - Control Module: This module is the main program and serves as the orchestrator for all other modules. Its correctness is indirectly verified through the unit tests of the functional modules it calls.
   
   \item M7 - Model Module: This module imports standard GNN backbones from published codebases. These components are assumed correct and excluded from internal unit testing.
+  \item M10, M11, M12 - Pytorch Module, Pytorch Geometric Module, GUI Module: These modules are external libraries (i.e., Pytorch, Pytroch Geometric, and Matplotlib) and are assumed correct.
 \end{itemize}
 
 
@@ -739,51 +744,51 @@ Unit testing of nonfunctional requirements is considered out of scope for this p
 This section provides evidence that all modules from the Module Hierarchy (Section~5) have been evaluated through targeted test cases where applicable. Each test case corresponds to a module or group of access routines within the module's responsibility.
 
 \begin{table}[h!]
-  \centering
-  \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
-  \hline
-   & M1 & M2 & M3 & M4 & M5 & M6 & M7 & M8 & M9 \\
-  \hline
-  test-M3-1   &     &     & X   &  X   &     &     &     &     &     \\ \hline
-  test-M3-2   &     &     & X   &  X   &     &     &     &     &     \\ \hline
-  test-M3-3   &     &     & X   &  X   &     &     &     &     &     \\ \hline
-  test-M3-4   &     &     & X   &  X   &     &     &     &     &     \\ \hline
-  test-M3-5   &     &     & X   &  X   &     &     &     &     &     \\ \hline
-  test-M6-1   &  X   &     &     &  X   &     & X   &     &     &     \\ \hline
-  test-M6-2   &  X   &     &     &  X   &     & X   &     &     &     \\ \hline
-  test-M6-3   &  X   &     &     &  X   &     & X   &     &     &     \\ \hline
-  test-M6-4   &     &     &     &  X   &     & X   &     &     &     \\ \hline
-  test-M6-5   &     &     &     &  X   &     & X   &     &     &     \\ \hline
-  test-M6-6   &     &     &     &  X   &     & X   &     &     &     \\ \hline
-  test-M5-1   &     &     &     &  X   & X   &     &     &     &     \\ \hline
-  test-M5-2   &     &     &     &  X   & X   &     &     &     &     \\ \hline
-  test-M5-3   &     &     &     &  X   & X   &     &     &     &     \\ \hline
-  test-M5-4   &     &     &     &  X   & X   &     &     &     &     \\ \hline
-  test-M5-5   &     &     &     &  X   & X   &     &     &     &     \\ \hline
-  test-M5-6   &     &     &     &  X   & X   &     &     &     &     \\ \hline
-  test-M8-1   &     &     &     &  X   &     &     &     & X   &     \\ \hline
-  test-M8-2   &     &     &     &  X   &     &     &     & X   &     \\ \hline
-  test-M8-3   &     &     &     &  X   &     &     &     & X   &     \\ \hline
-  test-M8-4   &     &     &     &  X   &     &     &     & X   &     \\ \hline
-  test-M9-1   &     &     &     &  X   &     &     &     &     & X   \\ \hline
-  test-M9-2   &     &     &     &  X   &     &     &     &     & X   \\ \hline
-  test-M9-3   &     &     &     &  X   &     &     &     &     & X   \\ \hline
-  test-M9-4   &     &     &     &  X   &     &     &     &     & X   \\ \hline
-  test-M9-5   &     &     &     &  X   &     &     &     &     & X   \\ \hline
-  test-M9-6   &     &     &     &  X   &     &     &     &     & X   \\ \hline
-  \end{tabular}
-  \caption{Traceability Matrix of Test Cases and Modules}
-  \label{Table:trace-test-modules}
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\hline
+& M1 & M2 & M3 & M4 & M5 & M6 & M7 & M8 & M9 & M10 & M11 & M12 \\
+\hline
+test-M3-1   &     & X   & X   &  X   &     &     &     &     &     & X   & X   &     \\ \hline
+test-M3-2   &     & X   & X   &  X   &     &     &     &     &     & X   & X   &     \\ \hline
+test-M3-3   &     & X   & X   &  X   &     &     &     &     &     & X   & X   &     \\ \hline
+test-M3-4   &     & X   & X   &  X   &     &     &     &     &     & X   & X   &     \\ \hline
+test-M3-5   &     & X   & X   &  X   &     &     &     &     &     & X   & X   &     \\ \hline
+test-M5-1   &     & X   &     &  X   & X   &     &     &     & X   & X   &     &     \\ \hline
+test-M5-2   &     & X   &     &  X   & X   &     &     &     &     &     &     &     \\ \hline
+test-M5-3   &     & X   &     &  X   & X   &     &     &     &     &     &     &     \\ \hline
+test-M5-4   &     & X   &     &  X   & X   &     &     &     & X   & X   &     &     \\ \hline
+test-M5-5   &     & X   &     &  X   & X   &     &     &     &     &     &     &     \\ \hline
+test-M6-1   & X   &     &     &  X   &     & X   &     &     &     & X   &     & X   \\ \hline
+test-M6-2   & X   &     &     &  X   &     & X   &     &     &     & X   &     & X   \\ \hline
+test-M6-3   & X   &     &     &  X   &     & X   &     &     &     & X   &     & X   \\ \hline
+test-M6-4   &     &     &     &  X   &     & X   &     &     &     &     &     &     \\ \hline
+test-M6-5   &     &     &     &  X   &     & X   &     &     &     &     &     &     \\ \hline
+test-M6-6   &     &     &     &  X   &     & X   &     &     &     &     &     &     \\ \hline
+test-M8-1   &     &     &     &  X   &     &     & X   & X   &     & X   &     &     \\ \hline
+test-M8-2   &     &     &     &  X   &     &     & X   & X   &     & X   &     &     \\ \hline
+test-M8-3   &     &     &     &  X   &     &     & X   & X   &     & X   &     &     \\ \hline
+test-M8-4   &     &     &     &  X   &     &     & X   & X   &     & X   &     &     \\ \hline
+test-M9-1   &     & X   &     &  X   &     &     &     &     & X   & X   &     &     \\ \hline
+test-M9-2   &     & X   &     &  X   &     &     &     &     & X   & X   &     &     \\ \hline
+test-M9-3   &     & X   &     &  X   &     &     &     &     & X   & X   &     &     \\ \hline
+test-M9-4   &     & X   &     &  X   &     &     &     &     & X   & X   &     &     \\ \hline
+test-M9-5   &     & X   &     &  X   &     &     &     &     & X   & X   &     &     \\ \hline
+test-M9-6   &     & X   &     &  X   &     &     &     &     & X   & X   &     &     \\ \hline
+\end{tabular}
+\caption{Traceability Matrix of Test Cases and Modules}
+\label{Table:trace-test-modules}
 \end{table}
 
 \paragraph{Note:}
-Modules M1, M2, M4, and M7 are not directly unit-tested due to the following reasons:
+Modules M1, M2, M4, M7, M10, M11, and M12 are not directly unit-tested due to the following reasons:
 
 \begin{itemize}
   \item \textbf{M1} (Hardware-Hiding Module): Tested implicitly through I/O in M6 and system test T1.
   \item \textbf{M2} (Configuration Module): No computational logic; parameters are exercised via other modules.
   \item \textbf{M4} (Control Module): Acts as the main orchestrator; validated indirectly via end-to-end system tests.
   \item \textbf{M7} (Model Module): Uses standard GNN backbones from existing implementations and is assumed correct.
+  \item \textbf{M10, M11, M12} (Pytorch Module, Pytorch Geometric Module, GUI Module): External libraries (i.e., Pytorch, Pytroch Geometric, and Matplotlib).
 \end{itemize}
 
 
