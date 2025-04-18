@@ -8,7 +8,11 @@ A re-implementation of the AAAI 2022 paper:
 pytorch                   1.8.1             
 torch-geometric           2.0.2
 ```
-For the full list of dependencies, see [`requirements.txt`](./requirements.txt).
+For the full list of dependencies, see [`requirements.txt`](../requirements.txt).
+
+## Included Results
+
+A Jupyter notebook containing pre-run results is available in the `src` directory.
 
 
 ## Usage
