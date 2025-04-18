@@ -471,10 +471,10 @@ None
 \section{MIS of Output Visualization Module} \label{OutputVisualization}
 
 \subsection{Module}
-OutputVisualize
+outputUtils
 
 \subsection{Uses}
-Hardware-Hiding Module
+PyTorch Module (\ref{TorchModule}), PyTorch Geometric Module (\ref{PyGModule}), GUI Module (\ref{MatplotlibGUI})
 
 \subsection{Syntax}
 
@@ -482,15 +482,15 @@ Hardware-Hiding Module
 None
 
 \subsubsection{Exported Access Programs}
-
 \begin{center}
-\begin{tabular}{p{3cm} p{5cm} p{4.5cm} p{3cm}}
+\begin{tabular}{p{3.2cm} p{6cm} p{3.5cm} p{3.3cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-PlotUtils & dataset\_name: \texttt{str} & \texttt{PlotUtils instance} & - \\
-plot & graph: \texttt{Data}, nodelist: \texttt{list[int]}, figname: \texttt{str}, kwargs: \texttt{dict} & - & - \\
+ExpPlot & dataset\_name: \texttt{str} & \texttt{ExpPlot instance} & - \\
+draw & graph: \texttt{networkx.Graph}, nodelist: \texttt{list[int]}, figname: \texttt{str}, kwargs: \texttt{dict} & - & \texttt{NotImplementedError} \\
 append\_record & info: \texttt{str} & - & \texttt{FileNotFoundError} \\
+save\_best & ckpt\_dir: \texttt{str}, epoch: \(\mathbb{N}\), gnnNets: \texttt{GnnNets}, model\_name: \texttt{str}, eval\_acc: \(\mathbb{R}\), is\_best: \texttt{bool} & - & - \\
 \hline
 \end{tabular}
 \end{center}
@@ -502,41 +502,44 @@ None
 
 \subsubsection{Environment Variables}
 \begin{itemize}
-  \item Filesystem: the file system for saving log files and outputting explanation images.
+  \item \texttt{log\_file: str} — Hardcoded path to the log file: \texttt{./results/log/hyper\_search}.
+  \item \texttt{device: str} — Computation device (e.g., `cuda' or`cpu') used to store model after saving.
 \end{itemize}
-
-\subsubsection{Assumptions}
-None
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \textbf{PlotUtils(dataset\_name)}:
+\noindent \textbf{ExpPlot(dataset\_name)}:
 \begin{itemize}
   \item transition: None
-  \item output: A \texttt{PlotUtils} object with methods for graph visualization.
-  \item exception: None
+  \item output: Constructs an instance for drawing explanations for \texttt{dataset\_name}. Returns an \texttt{ExpPlot} object.
+  \item Note: Please see in PyTorch Geometric Module (\ref{PyGModule}) for the type \texttt{networkx.Graph}.
 \end{itemize}
 
-
-\noindent \textbf{plot(graph, nodelist, figname, kwargs)}:
+\noindent \textbf{draw(graph, nodelist, figname, kwargs)}:
 \begin{itemize}
-  \item transition: Generates explanation images and saves them to the specified path.
+  \item transition: Calls the drawing routine and uses GUI Module (\ref{MatplotlibGUI}) to generate and save a figure to \texttt{figname}.
   \item output: None
-  \item exception: None
+  \item exception: \texttt{NotImplementedError} if \texttt{dataset\_name} is unsupported.
 \end{itemize}
-
 
 \noindent \textbf{append\_record(info)}:
 \begin{itemize}
-  \item transition: Appends the \texttt{info} string to the log file located in the given log directory.
+  \item transition: Writes \texttt{info} as a new line to the file located at \texttt{log\_file}.
   \item output: None
-  \item exception: 
-  \begin{itemize}
-    \item \texttt{FileNotFoundError}: if the directory does not exist.
-  \end{itemize}
+  \item exception: \texttt{FileNotFoundError} if the parent directory of \texttt{log\_file} does not exist.
 \end{itemize}
 
-
+\noindent \textbf{save\_best(ckpt\_dir, epoch, gnnNets, model\_name, eval\_acc, is\_best)}:
+\begin{itemize}
+  \item transition:
+  \begin{itemize}
+    \item Saves model weights and training metadata to \texttt{ckpt\_dir}.
+    \item If \texttt{is\_best=True}, copies this file to \texttt{ckpt\_dir}.
+    \item Moves model between \texttt{`cpu'} and \texttt{device := model\_args.device}.
+  \end{itemize}
+  \item output: None
+  \item exception: None
+\end{itemize}
 
 \subsubsection{Local Functions}
 None
@@ -544,7 +547,7 @@ None
 
 
 
-
+\newpage
 
 
 
