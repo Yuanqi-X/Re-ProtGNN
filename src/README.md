@@ -12,7 +12,7 @@ For the full list of dependencies, see [`requirements.txt`](../requirements.txt)
 
 ## Included Results
 
-A Jupyter notebook containing pre-run results is available in the `src` directory.
+A Jupyter notebook containing pre-run results is available in the `notebooks` directory.
 
 
 ## Usage
