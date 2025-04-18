@@ -28,4 +28,4 @@ jobs:
 
           echo "Running tests with PYTHONPATH=./src"
           export PYTHONPATH=./src
-          pytest tests/
+          pytest test/
