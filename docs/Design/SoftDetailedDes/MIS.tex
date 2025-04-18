@@ -361,7 +361,7 @@ None
   \begin{itemize}
     \item Loads the dataset and dataloaders using \texttt{load\_dataset()}, which references \texttt{dataset\_dir}.
     \item Initializes a GNN model and loss function using \texttt{setup\_model(input\_dim, output\_dim, model\_args)} from Model Module (\ref{Model}).
-    \item Constructs \texttt{checkpoint\_dir := "./src/checkpoint/\{data\_args.dataset\_name\}/"}.
+    \item Constructs \texttt{checkpoint\_dir := `./src/checkpoint/\{data\_args.dataset\_name\}/'}.
     \item Trains the model using \texttt{train(clst, sep, dataset, dataloader, gnnNets, output\_dim, criterion, checkpoint\_dir)} from Training Module (\ref{Train}).
     \item Loads the best checkpoint from \texttt{checkpoint\_dir}, and updates model weights using \texttt{update\_state\_dict()}.
     \item Evaluates the trained model via \texttt{test(dataloader['test'], gnnNets, criterion)} from Inference Module (\ref{Test}).
@@ -442,7 +442,7 @@ None
 \noindent \textbf{\_evaluate(eval\_dataloader: DataLoader, model: GnnNets, criterion: Customized Function) \(\rightarrow\) dict[str $\rightarrow$ float]}
 \begin{itemize}
   \item transition: None
-  \item output: Runs model evaluation on \texttt{eval\_dataloader} and computes loss/accuracy basing on \texttt{criterion}. Returns a dictionary with keys \texttt{"loss"} and \texttt{"acc"}.
+  \item output: Runs model evaluation on \texttt{eval\_dataloader} and computes loss/accuracy basing on \texttt{criterion}. Returns a dictionary with keys \texttt{`loss'} and \texttt{`acc'}.
 \end{itemize}
 
 \noindent \textbf{\_log\_dataset\_stats(dataset: Dataset) \(\rightarrow\) None}
@@ -662,7 +662,7 @@ None
   \begin{itemize}
     \item Returns a tuple \texttt{(test\_state, all\_probs, all\_preds)}:
     \begin{itemize}
-      \item \texttt{test\_state}: \texttt{dict[str $\rightarrow$ \(\mathbb{R}\)]} containing keys \texttt{"loss"} and \texttt{"acc"}.
+      \item \texttt{test\_state}: \texttt{dict[str $\rightarrow$ \(\mathbb{R}\)]} containing keys \texttt{`loss'} and \texttt{`acc'}.
       \item \texttt{all\_probs}: \(\mathbb{R}^{n \times c}\) — class probability matrix for \(n\) test samples and \(c\) classes, obtained by passing the data in \texttt{test\_dataloader} into \texttt{model}.
       \item \texttt{all\_preds}: \(\mathbb{N}^n\) — vector of predicted class labels.
     \end{itemize}
@@ -688,7 +688,7 @@ None
 Explanation
 
 \subsection{Uses}
-Configuration Module (\ref{Configurations})
+Configuration Module (\ref{Configurations}), Output Visualization Module (\ref{Model}), PyTorch Geometric Module (\ref{PyGModule}), PyTorch Module (\ref{TorchModule})
 
 \subsection{Syntax}
 
@@ -698,11 +698,12 @@ None
 \subsubsection{Exported Access Programs}
 
 \begin{center}
-\begin{tabular}{p{3cm} p{5cm} p{4.5cm} p{3cm}}
+\begin{tabular}{p{3cm} p{5cm} p{5cm} p{2.5cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-get\_explanation & data: \texttt{Data}, gnnNet: \texttt{GnnNets}, prototype: \texttt{Tensor} & coalition: \texttt{list[int]}, P: \(\mathbb{R}\), embedding: \texttt{Tensor} & - \\
+get\_explanation & data: \texttt{Data}, gnnNet: \texttt{GnnNets}, prototype: \(\mathbb{R}^d\) & tuple[list[\(\mathbb{N}\)], \(\mathbb{R}\), \(\mathbb{R}^{d}\)] & None \\
+exp\_visualize & dataset: \texttt{Dataset}, dataloader: \texttt{dict[str \(\rightarrow\) DataLoader]}, gnnNets: \texttt{GnnNets}, output\_dim: \(\mathbb{N}\) & - & \texttt{FileNotFoundError} \\
 \hline
 \end{tabular}
 \end{center}
@@ -713,10 +714,9 @@ get\_explanation & data: \texttt{Data}, gnnNet: \texttt{GnnNets}, prototype: \te
 None
 
 \subsubsection{Environment Variables}
-None
-
-\subsubsection{Assumptions}
-None
+\begin{itemize}
+  \item \texttt{save\_dir: str} — Filesystem path for saving explanation plot images.
+\end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
@@ -725,47 +725,51 @@ None
   \item transition: None
   \item output:
   \begin{itemize}
-    \item \texttt{coalition}: list of node indices forming the explanation.
-    \item \texttt{P}: float score indicating similarity to the prototype.
-    \item \texttt{embedding}: matrix of floats representing the masked subgraph embedding.
+    \item Uses \texttt{data}, \texttt{gnnNet}, and \texttt{prototype} to invoke a Monte Carlo Tree Search (MCTS) via the local function \texttt{\_mcts()}.
+    \item MCTS explores subgraph coalitions within the graph structure of \texttt{data} and evaluates their similarity to the provided \texttt{prototype} using \texttt{\_prot\_similarity\_scores()}.
+    \item Returns:
+    \begin{itemize}
+      \item \texttt{coalition}: list of node indices selected as the best explanation subgraph.
+      \item \texttt{P}: similarity score (\(\in \mathbb{R}\)) between the selected subgraph and the \texttt{prototype}.
+      \item \texttt{embedding}: a masked subgraph embedding \(\in \mathbb{R}^{1 \times d}\) extracted by applying \texttt{gnnNet} to the subgraph induced by \texttt{coalition}.
+    \end{itemize}
   \end{itemize}
   \item exception: None
 \end{itemize}
 
+\noindent \textbf{exp\_visualize(dataset, dataloader, gnnNets, output\_dim)}:
+\begin{itemize}
+  \item transition:
+  \begin{itemize}
+    \item Computes $K := \texttt{output\_dim} \times \texttt{model\_args.num\_prototypes\_per\_class}$ random prototype vectors of dimension $d$, fixed for visualization.
+    \item Samples 16 graphs from \texttt{dataloader[`train']}.
+    \item For each selected graph and for each of the first 10 prototype vectors, calls \texttt{get\_explanation(data, gnnNets, prototype)} to compute explanations.
+    \item Saves the explanations to image files in the environment variable \texttt{save\_dir}.
+    \item Sets \texttt{save\_dir := `./results/plots/<dataset>\_<model>\_'} using values from \texttt{data\_args.dataset\_name} and \texttt{model\_args.model\_name}, imported from Configuration Module (\ref{Configurations}).
+  \end{itemize}
+  \item output: None
+  \item exception:
+  \begin{itemize}
+    \item \texttt{FileNotFoundError}: if \texttt{save\_dir} cannot be created due to missing parent directories, invalid paths, or insufficient filesystem permissions.
+  \end{itemize}
+\end{itemize}
+
+
 \subsubsection{Local Functions}
 
-\noindent 
-\textbf{MCTSNode(coalition: \texttt{list[int]}, data: \texttt{Data}, ori\_graph: \texttt{networkx.Graph}, c\_puct: \(\mathbb{R}\), W: \(\mathbb{R}\), N: \(\mathbb{R}\), P: \(\mathbb{R}\)) \(\rightarrow\) \texttt{MCTSNode}}
+\noindent \textbf{\_mcts(data: \texttt{Data}, gnnNet: \texttt{GnnNets}, prototype: \(\mathbb{R}^d\)) \(\rightarrow\) tuple[list[\(\mathbb{N}\)], \(\mathbb{R}\), \(\mathbb{R}^d\)]}
 \begin{itemize}
-  \item transition: None
-  \item output: A node object representing a state in the search tree.
-  \item exception: None
+  \item output: Applies a multi-step rollout procedure to search for the optimal node coalition in \texttt{data}, maximizing similarity to the reference vector \texttt{prototype} \(\in \mathbb{R}^d\). Returns the selected node indices, similarity score, and final embedding.
 \end{itemize}
 
-\noindent 
-\textbf{mcts\_rollout(tree\_node: \texttt{MCTSNode}, state\_map: \texttt{dict}, data: \texttt{Data}, graph: \texttt{networkx.Graph}, score\_func: \texttt{Customized Function}) \(\rightarrow \mathbb{R}\)}
+\noindent \textbf{\_prot\_similarity\_scores(coalition: list[\(\mathbb{N}\)], data: \texttt{Data}, gnnNet: \texttt{GnnNets}, prototype: \(\mathbb{R}^d\)) \(\rightarrow \mathbb{R}\)}
 \begin{itemize}
-  \item transition: None
-  \item output: Scalar value representing the reward from this rollout.
-  \item exception: None
+  \item output: Computes a scalar similarity score \(\in \mathbb{R}\) between the subgraph embedding of nodes in \texttt{coalition} (produced by \texttt{gnnNet}) and the given reference vector \texttt{prototype} \(\in \mathbb{R}^d\), based on squared Euclidean distance.
 \end{itemize}
 
-\noindent 
-\textbf{child\_scores(score\_func: \texttt{Customized Function}, children: \texttt{list[MCTSNode]}) \(\rightarrow\) \texttt{list[\(\mathbb{R}\)]}}
-\begin{itemize}
-  \item transition: None
-  \item output: List of float scores, one for each child.
-  \item exception: None
-\end{itemize}
 
-\noindent 
-\textbf{prot\_score(coalition: \texttt{list[int]}, data: \texttt{Data}, gnnNet: \texttt{GnnNets}, prototype: \texttt{Tensor}) \(\rightarrow \mathbb{R}\)}
-\begin{itemize}
-  \item transition: None
-  \item output: A float similarity score (higher = more aligned with prototype).
-  \item exception: None
-\end{itemize}
 
+\newpage
 
 
 
