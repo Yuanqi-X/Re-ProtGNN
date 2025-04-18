@@ -385,13 +385,13 @@ None
 
 
 
-\section{MIS of Training Module} \label{Train} 
+\section{MIS of Training Module} \label{Train}
 
 \subsection{Module}
 Train
 
 \subsection{Uses}
-Hardware-Hiding Module, Configuration Module (\ref{Configurations}), Model Module (\ref{Model}), Explanation Module (\ref{OutputVisualization}), Output Visualization Module (\ref{OutputVisualization})
+Configuration Module (\ref{Configurations}), Model Module (\ref{Model}), Explanation Module (\ref{Explanation}), Output Visualization Module (\ref{OutputVisualization}), PyTorch Module (\ref{TorchModule})
 
 \subsection{Syntax}
 
@@ -399,13 +399,12 @@ Hardware-Hiding Module, Configuration Module (\ref{Configurations}), Model Modul
 None
 
 \subsubsection{Exported Access Programs}
-
 \begin{center}
-\begin{tabular}{p{2cm} p{6cm} p{4cm} p{3.5cm}}
+\begin{tabular}{p{2.5cm} p{6.2cm} p{4cm} p{3cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-train & model: \texttt{GnnNets}, dataset: \texttt{Dataset}, dataloader: \texttt{dict[str \(\rightarrow\) DataLoader]}, clst: \(\mathbb{R}\), sep: \(\mathbb{R}\) & - & \texttt{FileNotFoundError} \\
+train & clst: \(\mathbb{R}\), sep: \(\mathbb{R}\), dataset: \texttt{Dataset}, dataloader: \texttt{dict[str $\rightarrow$ DataLoader]}, gnnNets: \texttt{GnnNets}, output\_dim: \(\mathbb{N}\), criterion: \texttt{Customized Function}, ckpt\_dir: \texttt{str} & - & None \\
 \hline
 \end{tabular}
 \end{center}
@@ -416,36 +415,53 @@ train & model: \texttt{GnnNets}, dataset: \texttt{Dataset}, dataloader: \texttt{
 None
 
 \subsubsection{Environment Variables}
-Filesystem: the file system for saving model checkpoints.
-
-\subsubsection{Assumptions}
-None
+\begin{itemize}
+  \item \texttt{checkpoint\_dir: str} — Path to the directory for saving model checkpoints.
+  \item \texttt{device: str} — Target computation device, used to allocate model weights and prototype vectors.
+\end{itemize}
 
 \subsubsection{Access Routine Semantics}
 
-\noindent train(model, dataset, dataloader, clst, sep):
+\noindent \textbf{train(clst, sep, dataset, dataloader, gnnNets, output\_dim, criterion, ckpt\_dir)}:
 \begin{itemize}
-\item transition: Trains the model using the provided data and hyperparameters. Projects prototypes periodically. Monitors evaluation accuracy, saves the best-performing model to disk.
-\item output: None
-\item exception:     
-    \begin{itemize}
-        \item \texttt{FileNotFoundError}: if the dataset path or checkpoint directory is invalid
-    \end{itemize}
+  \item transition:
+  \begin{itemize}
+    \item Initializes the optimizer using parameters from \texttt{gnnNets} and \texttt{train\_args}.
+    \item Logs statistics for \texttt{dataset} using \texttt{\_log\_dataset\_stats(dataset)}.
+    \item Iteratively trains the model using batches from \texttt{dataloader['train']} with cluster/separation losses weighted by \texttt{clst} and \texttt{sep}.
+    \item Periodically projects prototypes onto embedding space using \texttt{\_project\_prototypes(gnnNets, dataset, ...)}.
+    \item Evaluates performance on the validation set using \texttt{\_evaluate(dataloader['eval'], gnnNets, criterion)}.
+    \item Saves model checkpoints to \texttt{ckpt\_dir}.
+  \end{itemize}
+  \item output: None
+  \item exception: None
 \end{itemize}
 
 \subsubsection{Local Functions}
 
-\noindent
-\textbf{evaluate(loader: \texttt{DataLoader}, model: \texttt{GnnNets}, criterion: \texttt{Customized Function}) \(\rightarrow\) \texttt{dict[str \(\rightarrow\) float]}}
+\noindent \textbf{\_evaluate(eval\_dataloader: DataLoader, model: GnnNets, criterion: Customized Function) \(\rightarrow\) dict[str $\rightarrow$ float]}
 \begin{itemize}
   \item transition: None
-  \item output: A dictionary containing the average loss and accuracy over the input dataset split. Specifically:
-    \begin{itemize}
-      \item \texttt{"loss"}: average loss (float)
-      \item \texttt{"acc"}: classification accuracy (float)
-    \end{itemize}
-  \item exception: None
+  \item output: Runs model evaluation on \texttt{eval\_dataloader} and computes loss/accuracy basing on \texttt{criterion}. Returns a dictionary with keys \texttt{"loss"} and \texttt{"acc"}.
 \end{itemize}
+
+\noindent \textbf{\_log\_dataset\_stats(dataset: Dataset) \(\rightarrow\) None}
+\begin{itemize}
+  \item transition: Computes average number of nodes and edges from \texttt{dataset}, and prints the result.
+  \item output: None
+\end{itemize}
+
+\noindent \textbf{\_project\_prototypes(model: GnnNets, dataset: Dataset, indices: list[\(\mathbb{N}\)], output\_dim: \(\mathbb{N}\)) \(\rightarrow\) None}
+\begin{itemize}
+  \item transition: Updates each prototype vector in \texttt{model} with a real example from \texttt{dataset} using \texttt{get\_explanation()} from Explanation Module (\ref{Explanation}).
+  \item output: None
+\end{itemize}
+
+
+
+
+
+\newpage
 
 
 
