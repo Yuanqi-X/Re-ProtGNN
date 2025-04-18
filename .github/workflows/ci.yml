@@ -2,30 +2,30 @@ name: test
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  build:
-    runs-on: [self-hosted, Linux, X64]  # will fall back to GitHub-hosted if no runner available
+  test:
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-
-      - name: Set PYTHONPATH for tests
-        run: echo "PYTHONPATH=./src" >> $GITHUB_ENV
-
-      - name: Install dependencies
+      - name: Run tests in virtual environment
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          echo "Activating virtualenv..."
+          source ~/Desktop/pycharm_projects/Re-ProtGNN/protgnn_env/bin/activate
+          
+          echo "Checking Python version and location:"
+          which python
+          python -V
 
-      - name: Run Pytest
-        run: pytest tests/
+          echo "Verifying torch installation:"
+          python -c "import torch; print('Torch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available())"
+
+          echo "Running tests with PYTHONPATH=./src"
+          export PYTHONPATH=./src
+          pytest tests/
