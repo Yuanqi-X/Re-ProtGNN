@@ -320,11 +320,10 @@ None
 \section{MIS of Control Module} \label{Control}
 
 \subsection{Module}
-Main
+main
 
 \subsection{Uses}
-Hardware-Hiding Module, Configuration Module (\ref{Configurations}), Input Format Module (\ref{InputFormat}), Model Module (\ref{Model}), Training Module (\ref{Train}), Inference Module (\ref{Test}), 
-Explanation Module (\ref{Explanation}), Output Visualization Module (\ref{OutputVisualization})
+Configuration Module (\ref{Configurations}), Input Format Module (\ref{InputFormat}), Model Module (\ref{Model}), Training Module (\ref{Train}), Inference Module (\ref{Test}), Explanation Module (\ref{Explanation}), PyTorch Module (\ref{TorchModule})
 
 \subsection{Syntax}
 
@@ -332,13 +331,12 @@ Explanation Module (\ref{Explanation}), Output Visualization Module (\ref{Output
 None
 
 \subsubsection{Exported Access Programs}
-
 \begin{center}
 \begin{tabular}{p{3cm} p{6cm} p{4.5cm} p{3cm}}
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-main & clst: \(\mathbb{R}\), sep: \(\mathbb{R}\) & - & \texttt{RuntimeError} \\
+main & clst: \(\mathbb{R}\), sep: \(\mathbb{R}\) & - & - \\
 \hline
 \end{tabular}
 \end{center}
@@ -350,27 +348,36 @@ None
 
 \subsubsection{Environment Variables}
 \begin{itemize}
-  \item Filesystem: the file system for loading/saving checkpoints and writing logs/images.
-  \item GPU/CPU hardware for model training and inference.
+  \item \texttt{dataset\_dir: str} — Filesystem path to the dataset root directory (from \texttt{data\_args.dataset\_dir}).
+  \item \texttt{checkpoint\_dir: str} — Directory path for saving and loading model checkpoints, constructed using \texttt{data\_args.dataset\_name}.
+  \item \texttt{device: str} — Device identifier used by PyTorch for model training and inference (e.g., `cpu' or `cuda').
 \end{itemize}
-
-\subsubsection{Assumptions}
-None
 
 \subsubsection{Access Routine Semantics}
 
 \noindent \textbf{main(clst, sep)}:
 \begin{itemize}
-  \item transition: Loads the dataset and splits it into training, validation, and test sets. Initializes the GNN model and passes it to the \texttt{train} function for optimization. After training, the \texttt{test} function evaluates the model on the test set. Finally, explanation plots are generated and saved.
-  \item output: None
-  \item exception:
+  \item transition:
   \begin{itemize}
-    \item \texttt{RuntimeError}: if device mismatch or model loading fails.
+    \item Loads the dataset and dataloaders using \texttt{load\_dataset()}, which references \texttt{dataset\_dir}.
+    \item Initializes a GNN model and loss function using \texttt{setup\_model(input\_dim, output\_dim, model\_args)} from Model Module (\ref{Model}).
+    \item Constructs \texttt{checkpoint\_dir := "./src/checkpoint/\{data\_args.dataset\_name\}/"}.
+    \item Trains the model using \texttt{train(clst, sep, dataset, dataloader, gnnNets, output\_dim, criterion, checkpoint\_dir)} from Training Module (\ref{Train}).
+    \item Loads the best checkpoint from \texttt{checkpoint\_dir}, and updates model weights using \texttt{update\_state\_dict()}.
+    \item Evaluates the trained model via \texttt{test(dataloader['test'], gnnNets, criterion)} from Inference Module (\ref{Test}).
+    \item Generates explanations using \texttt{exp\_visualize(dataset, dataloader, gnnNets, output\_dim)} from Explanation Module (\ref{Explanation}).
   \end{itemize}
+  \item output: None
+  \item exception: None
 \end{itemize}
 
 \subsubsection{Local Functions}
 None
+
+
+
+
+\newpage
 
 
 
