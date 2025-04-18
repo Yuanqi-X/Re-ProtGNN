@@ -9,7 +9,11 @@ This project involves re-implementing an existing paper titled "Protgnn: Towards
 The folders and files for this project are as follows:
 
 docs - Documentation for the project
+
 refs - Reference material used for the project, including papers
+
 src - Source code
-test - Test cases
+
+test - System and unit tests
+
 etc.
