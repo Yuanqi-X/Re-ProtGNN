@@ -16,6 +16,9 @@ src - Source code
 
 test - System and unit tests
 
+## Directory Structure
+
+```
 ├── src/
 │   ├── modules/           # Core GNN model components
 │   ├── utils/             # Utility functions (e.g., logging, visualization)
@@ -23,3 +26,5 @@ test - System and unit tests
 ├── test/
 │   ├── unit/              # Unit tests for individual modules
 │   └── system/            # End-to-end system tests
+```
+
