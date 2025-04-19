@@ -16,3 +16,10 @@ src - Source code
 
 test - System and unit tests
 
+├── src/
+│   ├── modules/           # Core GNN model components
+│   ├── utils/             # Utility functions (e.g., logging, visualization)
+│   └── main.py            # Entry point for training and inference
+├── test/
+│   ├── unit/              # Unit tests for individual modules
+│   └── system/            # End-to-end system tests
