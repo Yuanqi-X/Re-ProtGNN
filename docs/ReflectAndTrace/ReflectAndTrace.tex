@@ -2,8 +2,9 @@
 
 \usepackage{tabularx}
 \usepackage{booktabs}
+\usepackage{natbib}
 
-\title{Reflection and Traceability Report on \progname}
+\title{Reflection and Traceability Report on Re-ProtGNN}
 
 \author{\authname}
 
@@ -16,129 +17,301 @@
 
 \maketitle
 
-\plt{Reflection is an important component of getting the full benefits from a
-learning experience.  Besides the intrinsic benefits of reflection, this
-document will be used to help the TAs grade how well your team responded to
-feedback.  Therefore, traceability between Revision 0 and Revision 1 is and
-important part of the reflection exercise.  In addition, several CEAB (Canadian
-Engineering Accreditation Board) Learning Outcomes (LOs) will be assessed based
-on your reflections.}
+This document outlines the development process of Re-ProtGNN, including revisions made in response to feedback from Dr. Smith and Yinying, the challenges encountered during implementation, the solutions applied, and the insights gained from the experience.
 
 \section{Changes in Response to Feedback}
 
-\plt{Summarize the changes made over the course of the project in response to
-feedback from TAs, the instructor, teammates, other teams, the project
-supervisor (if present), and from user testers.}
+This project received feedback from two reviewers: the course instructor, Dr. Smith, and a peer reviewer, Yinying.
 
-\plt{For those teams with an external supervisor, please highlight how the feedback 
-from the supervisor shaped your project.  In particular, you should highlight the 
-supervisor's response to your Rev 0 demonstration to them.}
+I incorporated Dr. Smith’s feedback by reviewing the annotated PDF and committing updates to the documentation accordingly. Each suggestion was carefully addressed through revisions reflected in the related commits.
 
-\plt{Version control can make the summary relatively easy, if you used issues
-and meaningful commits.  If you feedback is in an issue, and you responded in
-the issue tracker, you can point to the issue as part of explaining your
-changes.  If addressing the issue required changes to code or documentation, you
-can point to the specific commit that made the changes.  Although the links are
-helpful for the details, you should include a label for each item of feedback so
-that the reader has an idea of what each item is about without the need to click
-on everything to find out.}
+For the peer review, I responded to every GitHub issue raised by Yinying. Each issue was either resolved or clarified, and I included explanations along with links to the corresponding commits before closing the issues.
 
-\plt{If you were not organized with your commits, traceability between feedback
-and commits will not be feasible to capture after the fact.  You will instead
-need to spend time writing down a summary of the changes made in response to
-each item of feedback.}
+Below is a summary of the feedback and the changes made. Some commits listed are intermediate steps and may have been refined in the final documentation.
 
-\plt{You should address EVERY item of feedback.  A table or itemized list is
-recommended.  You should record every item of feedback, along with the source of
-that feedback and the change you made in response to that feedback.  The
-response can be a change to your documentation, code, or development process.
-The response can also be the reason why no changes were made in response to the
-feedback.  To make this information manageable, you will record the feedback and
-response separately for each deliverable in the sections that follow.}
+\subsection{SRS}
+The following feedback was received on the SRS. Each item has been addressed with a corresponding update, commit link, or an explanation where applicable.
 
-\plt{If the feedback is general or incomplete, the TA (or instructor) will not
-be able to grade your response to feedback.  In that case your grade on this
-document, and likely the Revision 1 versions of the other documents will be
-low.} 
+Feedback from Dr. Smith:
 
-\subsection{SRS and Hazard Analysis}
+\begin{enumerate}
+    \item Use \texttt{\textbackslash citep} for parenthetical citations.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/b11412a}{commit b11412a}: Applied \texttt{\textbackslash citep} for all references.
+
+    \item Use $b$ instead of b for math terms.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/63f44b3}{commit 63f44b3}: Wrapped all math variables like \texttt{b} in math mode.
+
+    \item Section 1.4 (Mathematical Notation): Use non-italic font for function names \texttt{num\_rows} and \texttt{num\_cols}.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/8bfcd9b}{commit 8bfcd9b}: Changed font style for function names to upright.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/4f1a6ef}{commit 4f1a6ef}: Fixed missed instance in a later table.
+
+    \item Section 1.4 (Mathematical Notation): ReLU definition is circular.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/8bfcd9b}{commit 8bfcd9b}: Reworded ReLU definition to avoid circularity.
+
+    \item Section 2 (Introduction): Add examples of potential classifications; Have a grammar issue.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/f347818}{commit f347818}: Added example classifications, and fixed the grammar issue.
+
+    \item Section 2.2 (Scope of Requirements): Clarify whether input graphs are validated.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/a0029b7}{commit a0029b7}: Modified scope of requirements \& added input graph validity test in VnV
+
+    \item Section 2.3 (Characteristics of Intended Reader): Remove implementation details such as specific libraries.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/2c70c32}{commit 2c70c32}: Removed references to programming languages and libraries.
+
+    \item Section 2.3: Remove assumption of gradient-based optimization knowledge.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/2c70c32}{commit 2c70c32}: Clarified that concepts like partial derivatives are not assumed for high school readers.
+
+    \item Section 3.3 (System Constraints): This is an assumption, not a constraint.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/b5abdba}{commit b5abdba}: Removed assumption from constraints section.
+
+    \item Section 4.1.1 (Terminology and Definitions): Expand dataset name.  
+    \newline \textit{Explanation:} After literature review, MUTAG has no formal expansion but is widely understood to refer to mutagenic aromatic compounds.
+
+    \item Section 4.3.3 (Theoretical Models, TM1): Include dimensions in the type declaration. Clarify input and output types of ReLU.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/b6fa0b2}{commit b6fa0b2}: Included tensor dimensions in TM1 type declarations. Clarified ReLU takes real-valued input and returns non-negative tensor.
+
+    \item Section 4.3.4 (General Definitions, GD2): Some symbols are undefined.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/8f7c3b6}{commit 8f7c3b6}: Defined all missing symbols used in GD2.
+
+    \item Section 4.3.4 (General Definitions, GD3): Type is missing.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/e2b43b9}{commit e2b43b9}: Added type declarations with dimensions for variables in GD3.
+
+    \item Section 4.3.4 (General Definitions): Reorganize theory to introduce optimization goals before methods.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/dac6a18}{commit dac6a18}: Added a new General Definitions (i.e., GDL) to bridge gap in General Definitions and to state loss minimization objective before introducing gradient methods.
+
+    \item Section 5.2 (Nonfunctional Requirements - Accuracy): Clarify what it is compared against.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/a0ff591}{commit a0ff591}: Rephrased Accuracy to Reliability and updated Traceability Matrix.
+
+    \item Section 5.2 (Usability): Currently implementation plan, not a usability definition.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/a0ff591}{commit a0ff591}: Rewrote usability as measurable NFR (e.g., survey).
+
+    \item Section 5.2 (Maintainability): Currently an implementation detail, not a requirement.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/a0ff591}{commit a0ff591}: Removed maintainability from NFRs and updated Traceability Matrix.
+
+    \item Traceability Matrix: NFRs usually trace to most components.  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/a0ff591}{commit a0ff591}: Expanded NFR trace links in the matrix.
+\end{enumerate}
+
+Feedback from Yinying:
+
+\begin{enumerate}
+    \item Section 1.2 (Table of Symbols): Group all entries related to the adjacency matrix together to improve clarity  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/3026198ef963e8147133dfdaea3d41bbbf2dfc58}{commit 3026198}: Rearranged the table entries in Section 1.2 so that all symbols related to the adjacency matrix are grouped together for readability.
+
+    \item Section 3.1 (System Context): The diagram shows the user providing graphs as input, while the text says the user downloads and loads the MUTAG dataset. This creates inconsistency  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/1579544d443df994977cba95b5ffb2a6ff44fdb5}{commit 1579544}: Clarified the text to explain that MUTAG is a dataset of graphs, aligning the textual description with the context diagram.
+
+    \item Section 3.3 (System Constraints): The described item does not limit the system design and should be classified as an assumption instead  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/b5abdba4e5394be1659cdb273f338eb027a96d34}{commit b5abdba}: Removed the assumption from system constraint, consistent with similar feedback from Dr. Smith.
+
+    \item Section 4.1.1 (Terminology and Definitions): The MUTAG dataset may not be a terminology or definition; consider relocating it  
+    \newline \textit{Explanation:} I opted to retain the MUTAG dataset in this section as a definition, since it improves clarity for readers unfamiliar with the dataset and aligns with the structure of the document.
+
+    \item Section 4.3.2 (Assumptions): Consider removing justification phrases such as “as required by 4.3.3 Theoretical Models.”  
+    \newline \textit{Explanation:} I opted to keep this reference, as linking assumptions directly to the corresponding theoretical models improves traceability and clarity for the reader.
+\end{enumerate}
+
 
 \subsection{Design and Design Documentation}
 
-\subsection{VnV Plan and Report}
+The following feedback was received on the Module Guide (MG). Each item has been addressed with a corresponding update, commit link, or an explanation where applicable.
+
+Feedback from Dr. Smith (MG):
+
+\begin{enumerate}
+    \item There is normally a module to provide GUI services  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/110e5af42b95e0e2073dd210856fcb36ee906770}{commit 110e5af}: Added a GUI module to the MG to handle output visualization responsibilities. Also incorporated PyTorch and PyTorch Geometric modules as suggested in related MIS feedback.
+
+    \item Use hierarchy figure: Use curved lines to avoid crossing the boxes  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/c63b4697d6cd24cf70065b1e395d4545e6ac8238}{commit c63b469}: Redrew the Use Hierarchy diagram using curved arrows to improve readability and ensure lines do not cross any module boxes.
+
+    \item Use hierarchy figure: Why does Inference depend on Output Visualization?  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/69eed93}{commit 69eed93}: The Inference module depends on Output Visualization because loss and accuracy values are logged during inference to monitor performance in log files. Updated the service description of the Training Module in Section 7.2.4 to reflect this more clearly.
+
+\end{enumerate}
+
+Feedback from Yinying (MG):
+
+\begin{enumerate}
+    \item Section 7.2.4: Clarify why the Training Module depends on the Output Visualization Module  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/69eed93}{commit 69eed93}: In response to Feedback 3 from Dr. Smith, the service description of the Training Module in Section 7.2.4 was updated to clarify that it depends on the Output Visualization Module to log loss and accuracy during training. 
+
+    \item Section 7.2.2: Incorrect module reference and vague service description  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/b72861c}{commit b72861c}: Replaced the outdated phrase "input parameters module" with a more accurate service description. The updated line now specifies that the module "loads and parses datasets into standardized graph representations using PyTorch Geometric data structures."
+\end{enumerate}
+
+
+The following feedback was received on the Module Guide (MIS). Each item has been addressed with a corresponding update, commit link, or an explanation where applicable.
+
+Feedback from Dr. Smith (MIS):
+
+\begin{enumerate}
+    \item Section 4 (Notations): This table is for mathematical notation. If PyTorch types are used, they should be abstracted or moved to a module  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/b2f2500c3f98faf1ccdafe4afd0e4a062896c02d}{commit b2f2500}: Revised Section 4 to remove PyTorch-specific types and express all type declarations using mathematical notation.
+
+    \item Section 5 (Module Decomposition): Which module represents PyTorch?  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/b06753aafd3dde80b4ffe4beaeaf41ffb161120a}{commit b06753a}: Added PyTorch and PyTorch Geometric modules to the decomposition and included the module specifications. Also included a GUI module per MG feedback.
+
+    \item Start each module on a new page  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/5e23feffca74ad83f935c1705ff5e9fdce232425}{commit 5e23fef}: Inserted page breaks so that each module starts on a new page.
+
+    \item Sections 6.3.1, 6.4.2, and 6.4.4: \texttt{DataParser} is undefined; constants seem to be variables; environment variable types are missing and unused; container access is unclear  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/a30422228d2ac8ab6f4aff34b6097ac21b956d8d}{commit a304222}: Moved arguments to state variables, defined \texttt{DataParser} as a local function, and clarified container access through imports.
+
+    \item Sections 7.3.2 and 7.4.4: Where is \texttt{Dataset} defined? Access routine specifications are missing method arguments; \texttt{AssertionError} in \texttt{get\_dataloader} is too vague  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/5b145b8a603e2295f37efa2c691ab6068a97f44f}{commit 5b145b8}: Updated function specs to include method arguments and clarified exceptions. Replaced \texttt{get\_dataset} and \texttt{get\_dataloader} with \texttt{load\_dataset}, and defined output types in PyTorch Geometric module.
+
+    \item Section 7.3.2: Clarify interpretation of \texttt{dict[str -> DataLoader]}  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/ec047c2a088891d818541f064a51fb49df96dab8}{commit ec047c2}: Added a definition for the type notation \texttt{dict[K → V]} to Section 4.
+
+    \item Section 8 (Control Module): What state or environment variables are being modified?  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/dd44c91f33f01d39f4493c1d3442a398dd9ce905}{commit dd44c91}: Specified transitions on relevant environment variables within the Control Module.
+
+    \item Section 9 (Training Module): Method arguments are missing in access routine semantics  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/a535ac49f4a4f4f6d281df48b081592c544095e7}{commit a535ac4}: Rewrote access routine specifications to explicitly include all method arguments.
+
+    \item Section 10 (Output Visualization Module): \texttt{Filesystem} environment variable is not used in any transitions  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/c9f06a87829ad960473694961e982bbe7a7e0fcb}{commit c9f06a8}: Updated environment variables and transitions so that every environment variable was explicitly used.
+
+    \item Section 11 (Model Module): Use ragged-right alignment to improve table readability  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/1579525c0c798a68a7c23f995fa0a201d7efdc45}{commit 1579525}: Applied ragged-right alignment to the exported access program table for improved formatting.
+\end{enumerate}
+
+
+Feedback from Yinying (MIS):
+\begin{enumerate}
+    \item Section 4 (Notation): The type \texttt{string} is defined as a sequence of characters, but \texttt{character} is not defined  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/84dcbd4eabf06aee7ffdc28fa216cd3c709e1319}{commit 84dcbd4}: Added \texttt{character} as a defined type in the Notation table to support the definition of \texttt{string}.
+
+    \item Section 4 (Notation): \texttt{dataloader} seems more like a function or class instance, not a type  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/b06753aafd3dde80b4ffe4beaeaf41ffb161120a}{commit b06753a}: Clarified the use of \texttt{DataLoader}, \texttt{Dataset}, and \texttt{Data} by adding a PyTorch Geometric Module that defines these as external object types originating from the PyG library.
+
+    \item Section 10.3.2 and 10.4.4: Distinction between \texttt{PlotUtils instance} and \texttt{PlotUtils object} is unclear  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/8debb26d964d72f62ae948cf14a9c546b37195d2}{commit 8debb26}: Updated all references to use consistent terminology, referring to class-based entities as “objects” rather than mixing with “instances,” and clarified the output types accordingly.
+\end{enumerate}
+
+
+
+\subsection{VnV Plan}
+
+The following feedback was received on the Verification and Validation (VnV) Plan. Each issue will be addressed with an appropriate update and commit link.
+
+Feedback from Dr. Smith:
+\begin{enumerate}
+    \item Title: Use the correct program name (\progname)  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/4e72d42dd9060d9d03a0bc1e06f10c875d0fc2a6}{commit 4e72d42}: Updated the document title to correctly reflect \progname.
+
+    \item Section 2.2 (Objectives): It is easier to describe the accuracy you achieve rather than a prior specified target  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/a7fe22e434ac9329a8bd4bbd7fdc718acea58e64}{commit a7fe22e}: Removed Accuracy from Objectives to avoid predefining it as a target metric.
+
+    \item Use \texttt{\textbackslash citep\{\}} for parenthetical citations  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/60ca569a555215b4b755d09cba4b2ea118b8c585}{commit 60ca569}: Replaced \texttt{\textbackslash cite} with \texttt{\textbackslash citep} throughout the VnV Plan.
+
+    \item Section 2.3 (Challenge Level and Extras): What extra would be included?  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/ab82a692b7cb83c2d0b891d8743f9db70de83a0a}{commit ab82a69}: Clarified the absence of extras and rephrased the section accordingly.
+
+    \item Section 2.4 (Relevant Documentation): Add MG, MIS, and VnV Plan  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/10f89fb8cbd2f7d6c391a65936aeced2210e9fb1}{commit 10f89fb}: Added MG, MIS, and VnV Plan to the relevant documentation list.
+
+    \item Section 3.2–3.4: Add link or citation to the SRS, MG, MIS, and VnV checklist  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/e4b0545cea4b5f0768a212cc86b48ad29c140f97}{commit e4b0545}: Added checklist references for SRS, MG, MIS, and VnV to Sections 3.2–3.4.
+
+    \item Section 3.5 (Implementation Verification Plan): Presentation time isn’t enough for a typical code walkthrough  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/3b05733b10487030f556c6c1e09b1e0b9a60fd9b}{commit 3b05733}: Removed the code walkthrough due to time constraints in presentation.
+
+    \item Section 3.6 (Automated Testing and Verification Tools): "Analyzed how?"  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/35cea6a25da0cb5d2aaed04dcd19579cb0354402}{commit 35cea6a}: Removed regression test analysis after considering randomness in model behavior.
+
+    \item Section 3.7 \& 4.1: Add link or citation to the dataset  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/2c32201bed39d4a71140e5821c3c7bc47cd089b6}{commit 2c32201}: Added dataset citation in Software Validation and Functional Testing sections.
+
+    \item Section 4.1.1 (Input Verification): Unclear test specification – someone else should be able to execute your plan  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/62a53ef0b6e3976fa655f35fff21a876cd84d82a}{commit 62a53ef}: Rewrote input verification with three detailed test cases (missing file, format consistency, and valid dataset load).
+
+    \item Section 4.1.2 (Model Training Verification): Ambiguity – test passes based on what?  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/62a53ef0b6e3976fa655f35fff21a876cd84d82a}{commit 62a53ef}: Revised training verification to include pass/fail criteria based on loss convergence and training stability.
+
+    \item Section 4.1.3 (Inference Verification): Clarify dataset, formula, and expected output  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/62a53ef0b6e3976fa655f35fff21a876cd84d82a}{commit 62a53ef}: Added accuracy formula and identified test dataset and reference accuracy.
+
+    \item Section 4.2.1 (Accuracy): Specify dataset and how classification accuracy is calculated  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/7879f77}{commit 7879f77}: To align with the SRS, Accuracy was removed as a nonfunctional requirement and replaced with Reliability. While this specific feedback no longer applies directly, it helped guide the revision of the Reliability test case, which is now written with clear criteria.
+    
+
+    \item Section 4.2.2 (Usability): Be specific—how is feedback collected?  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/7879f77}{commit 7879f77}: Updated Usability test to specify use of a user survey for evaluation.
+
+    \item Section 4.2.3 (Area of Testing 3 – Portability): How is this measured?  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/7879f772b68f66d5ba42c32c317a3e061d493f88}{commit 7879f77}: Portability was removed from the nonfunctional requirements due to complex dependencies on specific CUDA versions, compatibility issues with PyTorch Geometric, and the limited timeline of the project.
+
+\end{enumerate}
+
+Feedback from Yinying:
+
+\begin{enumerate}
+    \item Section 4.1.2 (Test for Training Loss Optimization): Use training dataset rather than full MUTAG, and graph-based output makes trend verification difficult 
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/62a53ef}{commit 62a53ef}: Updated "T2: Loss Convergence Test" to use the training split of the dataset instead of the entire MUTAG set. Return a list of loss values and verify decreasing trend programmatically, replacing visual inspection of the curve.
+
+    \item Section 4.2.1 (T4 Accuracy Test): Traceability matrix and test label unclear  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/7879f77}{commit 7879f77}: Replaced T4 Accuracy test with a Reliability test and updated the traceability matrix to reflect the proper links to R2 and R3.
+
+    \item Unit Test \texttt{test-M3-2}: Output is ambiguous — be specific about dictionary keys  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/3fa35e8}{commit 3fa35e8}: Updated the test to explicitly specify the expected keys of the returned dictionary.
+
+    \item Unit Test \texttt{test-M6-3}: Input says "Same as above" — should restate all input values  
+    \newline \textit{Update:} \href{https://github.com/Yuanqi-X/Re-ProtGNN/commit/4e3e294}{commit 4e3e294}: Revised \texttt{test-M6-3} to fully state all input parameters instead of referring back to previous tests.
+\end{enumerate}
+
+
 
 \section{Challenge Level and Extras}
 
 \subsection{Challenge Level}
-
-\plt{State the challenge level (advanced, general, basic) for your project.  Your challenge level should exactly match what is included in your problem statement.  This should be the challenge level agreed on between you and the course instructor.}
+Research Project
 
 \subsection{Extras}
-
-\plt{Summarize the extras (if any) that were tackled by this project.  Extras
-can include usability testing, code walkthroughs, user documentation, formal
-proof, GenderMag personas, Design Thinking, etc.  Extras should have already
-been approved by the course instructor as included in your problem statement.}
+No applicable.
 
 \section{Design Iteration (LO11 (PrototypeIterate))}
 
-\plt{Explain how you arrived at your final design and implementation.  How did
-the design evolve from the first version to the final version?} 
+The design of Re-ProtGNN evolved significantly throughout the course of the project in response to formal feedback, implementation challenges, and iterative improvements in usability, modularity, and correctness.
 
-\plt{Don't just say what you changed, say why you changed it.  The needs of the
-client should be part of the explanation.  For example, if you made changes in
-response to usability testing, explain what the testing found and what changes
-it led to.}
+The earliest version of the system lacked modular separation for core libraries and hardware-hiding layers. After feedback from Dr. Smith and subsequent MIS revisions, we introduced three new modules: PyTorch, PyTorch Geometric, and GUI, to isolate external library usage and visualization responsibilities. These changes helped clarify module dependencies and improved maintainability.
+
+Another major change came from feedback on data handling. Originally, the Input Format Module did not clearly expose its internal logic or support reusable access routines. After Yinying's feedback and reflection on testability, I redesigned it to expose a single \texttt{load\_dataset()} routine that handles preprocessing, validation, and returns data loaders. This change also enabled clearer specification and testing of its behavior in the VnV Plan.
+
+The VnV Plan itself underwent substantial iteration. Initially, tests such as "Loss Convergence" relied on visual plots. Based on usability feedback, we rewrote the tests to return numeric values and assess convergence programmatically. We also reorganized test specifications to be self-contained, addressing peer feedback that descriptions like “same as above” were ambiguous to readers.
+
+Finally, the use of types and notation was cleaned up iteratively. For example, the \texttt{dataloader} type was initially used without clear context. After suggestions from both reviewers, we updated the Notation table to define all mathematical notation and have modules for external libraries (e.g., PyTorch Geometric) to define library-specifc types. I also include a note to reference to section where types are defined, if feeling it would be ambiguous. The same refinement was applied to terminology like “PlotUtils instance,” now uniformly referred to as “object” for consistency.
+
+These changes were not only driven by reviewer suggestions but also by the evolving understanding of what would make the system easier to extend, verify, and explain.
 
 \section{Design Decisions (LO12)}
 
-\plt{Reflect and justify your design decisions.  How did limitations,
- assumptions, and constraints influence your decisions?  Discuss each of these
- separately.}
+\textbf{Limitations.} A key limitation was imposed by the project’s reliance on PyTorch Geometric, which has known compatibility issues across CUDA versions and platform-specific behavior (e.g., CPU vs. GPU). This directly influenced the decision to remove “Portability” as a non-functional requirement in the SRS and VnV Plan, since meeting portability guarantees would require time and resource investments beyond scope.
 
-\section{Economic Considerations (LO23)}
+\textbf{Assumptions.} One core assumption was that all datasets (e.g., MUTAG) were available in standard format and accessible via PyTorch Geometric. This assumption was encoded in the theoretical models and tested in VnV (e.g., T3: Valid Dataset Load Test) before inputting the data into the model. We also assumed the training loss would decrease for a well-behaved model, which informed the design of the Loss Convergence Test.
 
-\plt{Is there a market for your product? What would be involved in marketing your 
-product? What is your estimate of the cost to produce a version that you could 
-sell?  What would you charge for your product?  How many units would you have to 
-sell to make money? If your product isn't something that would be sold, like an 
-open source project, how would you go about attracting users?  How many potential 
-users currently exist?}
+\textbf{Constraints.} Due to project deadlines, we prioritized modular readability and documentation correctness over performance optimization. This is reflected in decisions such as implementing full parser functions for each configuration class (e.g., \texttt{DataParser}, \texttt{TrainParser}), rather than relying on external YAML parsing. Additionally, we constrained our model backbone to GCN for stability across runs, even though more expressive architectures like GAT or GIN were briefly considered.
+
+\textbf{Design trade-offs.} In designing the Output Visualization Module, we chose to log accuracy and loss to file rather than render interactive plots. This decision improved compatibility with automated testing tools, even though it reduced usability during real-time training.
+
+The design decisions were refined throughout iterative feedback and guided by both usability and testability principles.
+
 
 \section{Reflection on Project Management (LO24)}
 
-\plt{This question focuses on processes and tools used for project management.}
-
-\subsection{How Does Your Project Management Compare to Your Development Plan}
-
-\plt{Did you follow your Development plan, with respect to the team meeting plan, 
-team communication plan, team member roles and workflow plan.  Did you use the 
-technology you planned on using?}
-
 \subsection{What Went Well?}
 
-\plt{What went well for your project management in terms of processes and 
-technology?}
+One of the most satisfying aspects of this project was successfully integrating GitHub Actions for automated testing and verification. Although GitHub-hosted runners only support CPU-based execution and lack compatibility with GPU-dependent components (like specific CUDA versions required by PyTorch Geometric), I was able to overcome this limitation by configuring a self-hosted GitHub Actions runner on my local development server. This setup allowed me to run all system and unit tests within a consistent environment, using the exact versions of CUDA and PyTorch needed for reproducibility.
 
 \subsection{What Went Wrong?}
 
-\plt{What went wrong in terms of processes and technology?}
+The system’s final performance was lower than initially anticipated, particularly in terms of accuracy consistency across multiple runs. Due to the stochastic nature of training deep models on small datasets like MUTAG, the accuracy metric varied significantly between runs, even when using fixed seeds. As a result, I had to remove “Accuracy” as a non-functional requirement in the SRS and VnV Plan and replace it with a more robust measure of “Reliability,” which better reflects the correctness of the system. This was a necessary adjustment but also a reminder of the importance of setting realistic and measurable goals for evaluation.
 
-\subsection{What Would you Do Differently Next Time?}
+\subsection{What Would You Do Differently Next Time?}
 
-\plt{What will you do differently for your next project?}
+For future projects, especially those involving machine learning pipelines, I would define evaluation criteria more conservatively upfront and anticipate variance in model performance during the requirements specification phase. I would also allocate time earlier in the project timeline to experiment with CI pipeline configurations, particularly when GPU access or hardware-specific dependencies are involved. This would allow me to ensure CI/CD is working from the beginning instead of troubleshooting later. Lastly, I would formalize more rigorous baseline testing earlier on to determine if higher-performing architectures (e.g., GAT, GIN) are worth the additional complexity, or if simpler, more stable backbones like GCN should remain the default.
 
-\section{Reflection on Capstone}
-
-\plt{This question focuses on what you learned during the course of the capstone project.}
-
-\subsection{Which Courses Were Relevant}
-
-\plt{Which of the courses you have taken were relevant for the capstone project?}
-
-\subsection{Knowledge/Skills Outside of Courses}
-
-\plt{What skills/knowledge did you need to acquire for your capstone project
-that was outside of the courses you took?}
+One area I struggled with during this project was time management. I often found myself submitting components close to the deadline or needing to seek for extensions. This was partly due to the overall workload of the semester, but also because I underestimated the time required for debugging and refining documentation. For future projects, I plan to set internal deadlines at least two days before the official ones to leave room for unexpected issues or last-minute revisions. I also intend to better track progress across subtasks to avoid bottlenecks near submission.
 
 \end{document}
